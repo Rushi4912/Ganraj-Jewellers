@@ -1,32 +1,109 @@
 "use client";
-import React, { useState } from 'react';
-import { X, ShoppingCart, Heart, Star, Package, Shield, Truck, Award } from 'lucide-react';
-import { Product } from '../../types/product';
-import { useCart } from '../../context/CartContext';
-
+import React, { useState, useEffect } from "react";
+import {
+  X,
+  ShoppingCart,
+  Heart,
+  Star,
+  Package,
+  Shield,
+  Truck,
+  Award,
+} from "lucide-react";
+import { Product } from "../../types/product";
+import { useCart } from "../../context/CartContext";
+import VariantSelector from "./VariantSelector";
+import { SelectedVariants } from "../../types/product";
 interface ProductDetailProps {
   product: Product | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function ProductDetail({ product, isOpen, onClose }: ProductDetailProps) {
+export default function ProductDetail({
+  product,
+  isOpen,
+  onClose,
+}: ProductDetailProps) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [activeTab, setActiveTab] = useState<'description' | 'reviews' | 'details'>('description');
+  const [activeTab, setActiveTab] = useState<
+    "description" | "reviews" | "details"
+  >("description");
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>(
+    {}
+  ); // NEW
+
+  useEffect(() => {
+    if (product && isOpen) {
+      setIsLoading(true);
+      setSelectedVariants({}); // Reset variants
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [product?.id, isOpen]);
 
   if (!isOpen || !product) return null;
 
   const isInWishlist = wishlist.includes(product.id);
 
-  const handleAddToCart = () => {
-    addToCart(product);
+  // Handle variant selection
+  const handleVariantChange = (type: string, value: string) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [type]: value,
+    }));
   };
 
+  // Calculate final price with variants
+  const calculateFinalPrice = () => {
+    let price = product.price;
+
+    if (selectedVariants && product.variants) {
+      product.variants.forEach((variantOption) => {
+        const selectedValue = selectedVariants[variantOption.type];
+        if (selectedValue) {
+          const variant = variantOption.options.find(
+            (opt) => opt.id === selectedValue
+          );
+          if (variant && variant.priceModifier) {
+            price += variant.priceModifier;
+          }
+        }
+      });
+    }
+
+    return price;
+  };
+
+  // Check if all required variants are selected
+  const canAddToCart = () => {
+    if (!product.variants) return true;
+
+    return product.variants
+      .filter((v) => v.required)
+      .every((v) => selectedVariants[v.type]);
+  };
+
+  const handleAddToCart = () => {
+    if (!canAddToCart()) {
+      alert("Please select all required options");
+      return;
+    }
+    addToCart(product, selectedVariants);
+  };
+
+  const finalPrice = calculateFinalPrice();
   // Calculate average rating from user reviews
   const calculateAverageRating = () => {
     if (product.userReviews.length === 0) return product.rating;
-    const sum = product.userReviews.reduce((acc, review) => acc + review.rating, 0);
+    const sum = product.userReviews.reduce(
+      (acc, review) => acc + review.rating,
+      0
+    );
     return (sum / product.userReviews.length).toFixed(1);
   };
 
@@ -77,7 +154,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                   {product.badge && (
                     <span
                       className={`absolute top-6 left-6 px-4 py-2 rounded-full text-sm font-bold text-white shadow-lg ${
-                        product.badge === 'SALE' ? 'bg-red-500' : 'bg-green-500'
+                        product.badge === "SALE" ? "bg-red-500" : "bg-green-500"
                       }`}
                     >
                       {product.badge}
@@ -87,7 +164,9 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                   {/* Stock Status */}
                   {!product.inStock && (
                     <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
-                      <span className="text-white font-bold text-2xl">Out of Stock</span>
+                      <span className="text-white font-bold text-2xl">
+                        Out of Stock
+                      </span>
                     </div>
                   )}
                 </div>
@@ -101,8 +180,8 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                         onClick={() => setSelectedImage(index)}
                         className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                           selectedImage === index
-                            ? 'border-amber-500 shadow-lg'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? "border-amber-500 shadow-lg"
+                            : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
                         <img
@@ -127,8 +206,8 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                         size={20}
                         className={
                           i < Math.floor(product.rating)
-                            ? 'text-amber-400 fill-amber-400'
-                            : 'text-gray-300'
+                            ? "text-amber-400 fill-amber-400"
+                            : "text-gray-300"
                         }
                       />
                     ))}
@@ -145,7 +224,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                 <div className="mb-6">
                   <div className="flex items-center gap-4 mb-2">
                     <span className="text-4xl font-bold text-gray-900">
-                      ${product.price.toFixed(2)}
+                      ${finalPrice.toFixed(2)}
                     </span>
                     {product.originalPrice && (
                       <>
@@ -153,52 +232,98 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                           ${product.originalPrice.toFixed(2)}
                         </span>
                         <span className="px-3 py-1 bg-red-100 text-red-600 text-sm font-bold rounded-full">
-                          Save{' '}
+                          Save{" "}
                           {Math.round(
-                            ((product.originalPrice - product.price) / product.originalPrice) * 100
+                            ((product.originalPrice - product.price) /
+                              product.originalPrice) *
+                              100
                           )}
                           %
                         </span>
                       </>
                     )}
                   </div>
+                  {finalPrice !== product.price && (
+                    <p className="text-sm text-green-600 font-semibold">
+                      +${(finalPrice - product.price).toFixed(2)} for selected
+                      options
+                    </p>
+                  )}
                   <p className="text-sm text-green-600 font-semibold">
                     ✓ In stock and ready to ship
                   </p>
                 </div>
-
                 {/* Description */}
                 <p className="text-gray-600 leading-relaxed mb-6">
                   {product.description}
                 </p>
+                {/* Variant Selector */}
+                {product.variants && product.variants.length > 0 && (
+                  <div className="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                    <h3 className="font-bold text-lg text-gray-900 mb-4">
+                      Customize Your Item
+                    </h3>
+                    <VariantSelector
+                      variants={product.variants}
+                      selectedVariants={selectedVariants}
+                      onChange={handleVariantChange}
+                    />
+                  </div>
+                )}
 
                 {/* Key Features */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
                   <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                    <Truck className="text-amber-600 flex-shrink-0 mt-1" size={24} />
+                    <Truck
+                      className="text-amber-600 flex-shrink-0 mt-1"
+                      size={24}
+                    />
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm mb-1">Free Shipping</h4>
-                      <p className="text-xs text-gray-600">On orders over $100</p>
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                        Free Shipping
+                      </h4>
+                      <p className="text-xs text-gray-600">
+                        On orders over $100
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                    <Shield className="text-amber-600 flex-shrink-0 mt-1" size={24} />
+                    <Shield
+                      className="text-amber-600 flex-shrink-0 mt-1"
+                      size={24}
+                    />
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm mb-1">30-Day Returns</h4>
-                      <p className="text-xs text-gray-600">Money back guarantee</p>
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                        30-Day Returns
+                      </h4>
+                      <p className="text-xs text-gray-600">
+                        Money back guarantee
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                    <Award className="text-amber-600 flex-shrink-0 mt-1" size={24} />
+                    <Award
+                      className="text-amber-600 flex-shrink-0 mt-1"
+                      size={24}
+                    />
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm mb-1">Certified Authentic</h4>
-                      <p className="text-xs text-gray-600">Certificate included</p>
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                        Certified Authentic
+                      </h4>
+                      <p className="text-xs text-gray-600">
+                        Certificate included
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                    <Package className="text-amber-600 flex-shrink-0 mt-1" size={24} />
+                    <Package
+                      className="text-amber-600 flex-shrink-0 mt-1"
+                      size={24}
+                    />
                     <div>
-                      <h4 className="font-semibold text-gray-900 text-sm mb-1">Gift Packaging</h4>
+                      <h4 className="font-semibold text-gray-900 text-sm mb-1">
+                        Gift Packaging
+                      </h4>
                       <p className="text-xs text-gray-600">Free luxury box</p>
                     </div>
                   </div>
@@ -208,23 +333,33 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                 <div className="space-y-3 mt-auto">
                   <button
                     onClick={handleAddToCart}
-                    disabled={!product.inStock}
+                    disabled={!product.inStock || !canAddToCart()}
                     className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
-                    <ShoppingCart size={24} className="group-hover:scale-110 transition-transform" />
-                    {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                    <ShoppingCart
+                      size={24}
+                      className="group-hover:scale-110 transition-transform"
+                    />
+                    {!product.inStock
+                      ? "Out of Stock"
+                      : !canAddToCart()
+                      ? "Select Options"
+                      : "Add to Cart"}
                   </button>
 
                   <button
                     onClick={() => toggleWishlist(product.id)}
                     className={`w-full py-4 rounded-lg border-2 flex items-center justify-center gap-3 font-bold text-lg transition-all ${
                       isInWishlist
-                        ? 'border-red-500 text-red-500 bg-red-50'
-                        : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+                        ? "border-red-500 text-red-500 bg-red-50"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50"
                     }`}
                   >
-                    <Heart size={24} className={isInWishlist ? 'fill-red-500' : ''} />
-                    {isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                    <Heart
+                      size={24}
+                      className={isInWishlist ? "fill-red-500" : ""}
+                    />
+                    {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
                   </button>
                 </div>
               </div>
@@ -235,37 +370,41 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
               {/* Tab Navigation */}
               <div className="flex gap-8 mb-8 border-b">
                 <button
-                  onClick={() => setActiveTab('description')}
+                  onClick={() => setActiveTab("description")}
                   className={`pb-4 font-semibold transition-colors relative ${
-                    activeTab === 'description'
-                      ? 'text-amber-600'
-                      : 'text-gray-500 hover:text-gray-700'
+                    activeTab === "description"
+                      ? "text-amber-600"
+                      : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
                   Description
-                  {activeTab === 'description' && (
+                  {activeTab === "description" && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600"></span>
                   )}
                 </button>
                 <button
-                  onClick={() => setActiveTab('reviews')}
+                  onClick={() => setActiveTab("reviews")}
                   className={`pb-4 font-semibold transition-colors relative ${
-                    activeTab === 'reviews' ? 'text-amber-600' : 'text-gray-500 hover:text-gray-700'
+                    activeTab === "reviews"
+                      ? "text-amber-600"
+                      : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
                   Reviews ({product.userReviews.length})
-                  {activeTab === 'reviews' && (
+                  {activeTab === "reviews" && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600"></span>
                   )}
                 </button>
                 <button
-                  onClick={() => setActiveTab('details')}
+                  onClick={() => setActiveTab("details")}
                   className={`pb-4 font-semibold transition-colors relative ${
-                    activeTab === 'details' ? 'text-amber-600' : 'text-gray-500 hover:text-gray-700'
+                    activeTab === "details"
+                      ? "text-amber-600"
+                      : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
                   Details
-                  {activeTab === 'details' && (
+                  {activeTab === "details" && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600"></span>
                   )}
                 </button>
@@ -273,15 +412,19 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
 
               {/* Tab Content */}
               <div className="min-h-[200px]">
-                {activeTab === 'description' && (
+                {activeTab === "description" && (
                   <div className="prose max-w-none">
                     <p className="text-gray-700 leading-relaxed text-lg mb-4">
                       {product.description}
                     </p>
-                    <h4 className="font-bold text-gray-900 mb-3">Product Highlights:</h4>
+                    <h4 className="font-bold text-gray-900 mb-3">
+                      Product Highlights:
+                    </h4>
                     <ul className="space-y-2 text-gray-700">
                       <li>✨ Premium quality craftsmanship</li>
-                      <li>💎 Genuine materials with certificate of authenticity</li>
+                      <li>
+                        💎 Genuine materials with certificate of authenticity
+                      </li>
                       <li>🎁 Perfect for gifting on special occasions</li>
                       <li>♻️ Ethically sourced and sustainably made</li>
                       <li>🔒 Secure clasp/closure mechanism</li>
@@ -289,7 +432,7 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                   </div>
                 )}
 
-                {activeTab === 'reviews' && (
+                {activeTab === "reviews" && (
                   <div>
                     {product.userReviews.length > 0 ? (
                       <div className="space-y-6">
@@ -306,9 +449,12 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                                     key={i}
                                     size={20}
                                     className={
-                                      i < Math.floor(parseFloat(calculateAverageRating()))
-                                        ? 'text-amber-400 fill-amber-400'
-                                        : 'text-gray-300'
+                                      i <
+                                      Math.floor(
+                                        parseFloat(calculateAverageRating())
+                                      )
+                                        ? "text-amber-400 fill-amber-400"
+                                        : "text-gray-300"
                                     }
                                   />
                                 ))}
@@ -322,11 +468,18 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
 
                         {/* Individual Reviews */}
                         {product.userReviews.map((review, index) => (
-                          <div key={index} className="border-b pb-6 last:border-b-0">
+                          <div
+                            key={index}
+                            className="border-b pb-6 last:border-b-0"
+                          >
                             <div className="flex items-start justify-between mb-3">
                               <div>
-                                <h4 className="font-bold text-gray-900">{review.name}</h4>
-                                <p className="text-sm text-gray-500">{review.date}</p>
+                                <h4 className="font-bold text-gray-900">
+                                  {review.name}
+                                </h4>
+                                <p className="text-sm text-gray-500">
+                                  {review.date}
+                                </p>
                               </div>
                               <div className="flex items-center">
                                 {[...Array(5)].map((_, i) => (
@@ -335,8 +488,8 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                                     size={16}
                                     className={
                                       i < review.rating
-                                        ? 'text-amber-400 fill-amber-400'
-                                        : 'text-gray-300'
+                                        ? "text-amber-400 fill-amber-400"
+                                        : "text-gray-300"
                                     }
                                   />
                                 ))}
@@ -348,43 +501,64 @@ export default function ProductDetail({ product, isOpen, onClose }: ProductDetai
                       </div>
                     ) : (
                       <div className="text-center py-12">
-                        <Star size={48} className="mx-auto text-gray-300 mb-4" />
+                        <Star
+                          size={48}
+                          className="mx-auto text-gray-300 mb-4"
+                        />
                         <h3 className="text-xl font-semibold text-gray-900 mb-2">
                           No reviews yet
                         </h3>
-                        <p className="text-gray-600">Be the first to review this product!</p>
+                        <p className="text-gray-600">
+                          Be the first to review this product!
+                        </p>
                       </div>
                     )}
                   </div>
                 )}
 
-                {activeTab === 'details' && (
+                {activeTab === "details" && (
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
-                      <h4 className="font-bold text-gray-900 mb-4">Product Specifications</h4>
+                      <h4 className="font-bold text-gray-900 mb-4">
+                        Product Specifications
+                      </h4>
                       <dl className="space-y-3">
                         <div className="flex justify-between py-2 border-b">
                           <dt className="text-gray-600">Category:</dt>
-                          <dd className="font-semibold text-gray-900 capitalize">{product.category}</dd>
+                          <dd className="font-semibold text-gray-900 capitalize">
+                            {product.category}
+                          </dd>
                         </div>
                         <div className="flex justify-between py-2 border-b">
                           <dt className="text-gray-600">Material:</dt>
-                          <dd className="font-semibold text-gray-900">18K Gold</dd>
+                          <dd className="font-semibold text-gray-900">
+                            18K Gold
+                          </dd>
                         </div>
                         <div className="flex justify-between py-2 border-b">
                           <dt className="text-gray-600">Weight:</dt>
-                          <dd className="font-semibold text-gray-900">Varies</dd>
+                          <dd className="font-semibold text-gray-900">
+                            Varies
+                          </dd>
                         </div>
                         <div className="flex justify-between py-2 border-b">
                           <dt className="text-gray-600">Availability:</dt>
-                          <dd className={`font-semibold ${product.inStock ? 'text-green-600' : 'text-red-600'}`}>
-                            {product.inStock ? 'In Stock' : 'Out of Stock'}
+                          <dd
+                            className={`font-semibold ${
+                              product.inStock
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {product.inStock ? "In Stock" : "Out of Stock"}
                           </dd>
                         </div>
                       </dl>
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 mb-4">Care Instructions</h4>
+                      <h4 className="font-bold text-gray-900 mb-4">
+                        Care Instructions
+                      </h4>
                       <ul className="space-y-3 text-gray-700">
                         <li className="flex items-start gap-2">
                           <span className="text-amber-600 mt-1">•</span>

@@ -1,8 +1,11 @@
 "use client";
-import React from 'react';
-import { X, ShoppingCart, Heart, Star } from 'lucide-react';
-import { Product } from '../../types/product';
-import { useCart } from '../../context/CartContext';
+import React from "react";
+import { useState, useEffect } from "react";
+import { X, ShoppingCart, Heart, Star } from "lucide-react";
+import { Product } from "../../types/product";
+import { useCart } from "../../context/CartContext";
+import VariantSelector from "./VariantSelector";
+import { SelectedVariants } from "../../types/product";
 
 interface QuickViewProps {
   product: Product | null;
@@ -18,16 +21,70 @@ export default function QuickView({
   onViewFullDetails,
 }: QuickViewProps) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>(
+    {}
+  );
+
+  useEffect(() => {
+    if (product && isOpen) {
+      setIsLoading(true);
+      setSelectedVariants({});
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [product?.id, isOpen]);
 
   if (!isOpen || !product) return null;
 
   const isInWishlist = wishlist.includes(product.id);
+  const handleVariantChange = (type: string, value: string) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [type]: value,
+    }));
+  };
+
+  const calculateFinalPrice = () => {
+    let price = product.price;
+
+    if (selectedVariants && product.variants) {
+      product.variants.forEach((variantOption) => {
+        const selectedValue = selectedVariants[variantOption.type];
+        if (selectedValue) {
+          const variant = variantOption.options.find(
+            (opt) => opt.id === selectedValue
+          );
+          if (variant && variant.priceModifier) {
+            price += variant.priceModifier;
+          }
+        }
+      });
+    }
+
+    return price;
+  };
+
+  const canAddToCart = () => {
+    if (!product.variants) return true;
+
+    return product.variants
+      .filter((v) => v.required)
+      .every((v) => selectedVariants[v.type]);
+  };
 
   const handleAddToCart = () => {
-    addToCart(product);
+    if (!canAddToCart()) {
+      alert("Please select all required options");
+      return;
+    }
+    addToCart(product, selectedVariants);
     onClose();
   };
 
+  const finalPrice = calculateFinalPrice();
   return (
     <>
       {/* Overlay */}
@@ -75,7 +132,7 @@ export default function QuickView({
                 {product.badge && (
                   <span
                     className={`absolute top-4 left-4 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-lg ${
-                      product.badge === 'SALE' ? 'bg-red-500' : 'bg-green-500'
+                      product.badge === "SALE" ? "bg-red-500" : "bg-green-500"
                     }`}
                   >
                     {product.badge}
@@ -114,8 +171,8 @@ export default function QuickView({
                           size={18}
                           className={
                             i < Math.floor(product.rating)
-                              ? 'text-amber-400 fill-amber-400'
-                              : 'text-gray-300'
+                              ? "text-amber-400 fill-amber-400"
+                              : "text-gray-300"
                           }
                         />
                       ))}
@@ -129,27 +186,35 @@ export default function QuickView({
                   </div>
 
                   {/* Price */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <span className="text-3xl font-bold text-gray-900">
-                      ${product.price.toFixed(2)}
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-2xl font-bold text-gray-900">
+                      ${finalPrice.toFixed(2)}
                     </span>
                     {product.originalPrice && (
-                      <span className="text-xl text-gray-400 line-through">
+                      <span className="text-lg text-gray-400 line-through">
                         ${product.originalPrice.toFixed(2)}
                       </span>
                     )}
-                    {product.originalPrice && (
-                      <span className="px-3 py-1 bg-red-100 text-red-600 text-sm font-semibold rounded-full">
-                        Save{' '}
-                        {Math.round(
-                          ((product.originalPrice - product.price) /
-                            product.originalPrice) *
-                            100
-                        )}
-                        %
-                      </span>
-                    )}
                   </div>
+                  {finalPrice !== product.price && (
+                    <p className="text-sm text-green-600 font-semibold mb-2">
+                      +${(finalPrice - product.price).toFixed(2)} for selected
+                      options
+                    </p>
+                  )}
+
+                  <p className="text-gray-600 mb-6">{product.description}</p>
+
+                  {/* Variant Selector */}
+                  {product.variants && product.variants.length > 0 && (
+                    <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                      <VariantSelector
+                        variants={product.variants}
+                        selectedVariants={selectedVariants}
+                        onChange={handleVariantChange}
+                      />
+                    </div>
+                  )}
 
                   {/* Description */}
                   <p className="text-gray-600 leading-relaxed mb-6">
@@ -180,14 +245,14 @@ export default function QuickView({
                   {/* Add to Cart Button */}
                   <button
                     onClick={handleAddToCart}
-                    disabled={!product.inStock}
+                    disabled={!product.inStock || !canAddToCart()}
                     className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
                     <ShoppingCart
                       size={22}
                       className="group-hover:scale-110 transition-transform"
                     />
-                    {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                    {product.inStock ? "Add to Cart" : "Out of Stock"}
                   </button>
 
                   {/* Secondary Actions */}
@@ -197,15 +262,15 @@ export default function QuickView({
                       onClick={() => toggleWishlist(product.id)}
                       className={`py-3 rounded-lg border-2 flex items-center justify-center gap-2 font-semibold transition-all ${
                         isInWishlist
-                          ? 'border-red-500 text-red-500 bg-red-50'
-                          : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+                          ? "border-red-500 text-red-500 bg-red-50"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50"
                       }`}
                     >
                       <Heart
                         size={20}
-                        className={isInWishlist ? 'fill-red-500' : ''}
+                        className={isInWishlist ? "fill-red-500" : ""}
                       />
-                      {isInWishlist ? 'Wishlisted' : 'Wishlist'}
+                      {isInWishlist ? "Wishlisted" : "Wishlist"}
                     </button>
 
                     {/* View Full Details */}

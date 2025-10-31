@@ -100,7 +100,7 @@ export default function ShoppingCartSidebar({
             <div className="space-y-6">
               {cart.map((item) => (
                 <div
-                  key={item.id}
+                  key={item.variantId || item.id}
                   className="flex gap-4 pb-6 border-b border-gray-200 last:border-b-0"
                 >
                   {/* Product Image */}
@@ -137,11 +137,47 @@ export default function ShoppingCartSidebar({
                       )}
                     </div>
 
+                    {/* Display Selected Variants */}
+                    {item.selectedVariants &&
+                      Object.keys(item.selectedVariants).length > 0 && (
+                        <div className="mb-2">
+                          {Object.entries(item.selectedVariants).map(
+                            ([type, value]) => {
+                              const variant = item.variants?.find(
+                                (v) => v.type === type
+                              );
+                              const option = variant?.options.find(
+                                (o) => o.id === value
+                              );
+                              return (
+                                <p key={type} className="text-xs text-gray-500">
+                                  {variant?.label}:{" "}
+                                  <span className="font-semibold">
+                                    {option?.name}
+                                  </span>
+                                </p>
+                              );
+                            }
+                          )}
+                        </div>
+                      )}
+
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-lg font-bold text-amber-600">
+                        ${item.price.toFixed(2)}
+                      </span>
+                      {item.originalPrice && (
+                        <span className="text-sm text-gray-400 line-through">
+                          ${item.originalPrice.toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+
                     {/* Quantity Controls */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
                         <button
-                          onClick={() => updateCartQuantity(item.id, -1)}
+                          onClick={() => updateCartQuantity(item.id, -1, item.variantId)}
                           className="p-1.5 hover:bg-white rounded transition-colors"
                           aria-label="Decrease quantity"
                         >
@@ -151,7 +187,7 @@ export default function ShoppingCartSidebar({
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateCartQuantity(item.id, 1)}
+                          onClick={() => updateCartQuantity(item.id, 1, item.variantId)}
                           className="p-1.5 hover:bg-white rounded transition-colors"
                           aria-label="Increase quantity"
                         >
@@ -161,7 +197,7 @@ export default function ShoppingCartSidebar({
 
                       {/* Remove Button */}
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.id, item.variantId)}
                         className="text-red-500 hover:text-red-700 flex items-center gap-1 text-sm font-medium transition-colors"
                       >
                         <Trash2 size={16} />

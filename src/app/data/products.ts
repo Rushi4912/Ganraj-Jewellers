@@ -17,17 +17,19 @@ export const products: Product[] = [
     description: "Stunning gemstone earrings that sparkle with every movement. Perfect for special occasions.",
     inStock: true,
     userReviews: [
-      { 
-        name: "Sarah M.", 
-        rating: 5, 
-        comment: "Absolutely beautiful! Worth every penny.", 
-        date: "2 days ago" 
-      },
-      { 
-        name: "Emily R.", 
-        rating: 4, 
-        comment: "Lovely earrings, slight color variation from photo.", 
-        date: "1 week ago" 
+      { name: "Sarah M.", rating: 5, comment: "Absolutely beautiful! Worth every penny.", date: "2 days ago" },
+      { name: "Emily R.", rating: 4, comment: "Lovely earrings, slight color variation from photo.", date: "1 week ago" }
+    ],
+    variants: [
+      {
+        type: 'material',
+        label: 'Material',
+        required: true,
+        options: [
+          { id: 'gold', name: 'Gold', value: '18K Gold', inStock: true, priceModifier: 0 },
+          { id: 'silver', name: 'Silver', value: 'Sterling Silver', inStock: true, priceModifier: -10 },
+          { id: 'rose-gold', name: 'Rose Gold', value: '18K Rose Gold', inStock: true, priceModifier: 5 },
+        ]
       }
     ]
   },
@@ -46,11 +48,28 @@ export const products: Product[] = [
     description: "Elegant silver pendant featuring a delicate daisy design. Handcrafted with attention to detail.",
     inStock: true,
     userReviews: [
-      { 
-        name: "Jessica L.", 
-        rating: 5, 
-        comment: "Perfect gift! She loved it.", 
-        date: "3 days ago" 
+      { name: "Jessica L.", rating: 5, comment: "Perfect gift! She loved it.", date: "3 days ago" }
+    ],
+    variants: [
+      {
+        type: 'length',
+        label: 'Chain Length',
+        required: true,
+        options: [
+          { id: '16', name: '16\"', value: '16 inches', inStock: true, priceModifier: 0 },
+          { id: '18', name: '18\"', value: '18 inches', inStock: true, priceModifier: 5 },
+          { id: '20', name: '20\"', value: '20 inches', inStock: true, priceModifier: 10 },
+          { id: '22', name: '22\"', value: '22 inches', inStock: false, priceModifier: 15 },
+        ]
+      },
+      {
+        type: 'material',
+        label: 'Material',
+        required: true,
+        options: [
+          { id: 'silver', name: 'Silver', value: 'Sterling Silver', inStock: true, priceModifier: 0 },
+          { id: 'gold', name: 'Gold', value: '18K Gold', inStock: true, priceModifier: 50 },
+        ]
       }
     ]
   },
@@ -68,7 +87,32 @@ export const products: Product[] = [
     badge: "NEW",
     description: "Timeless solitaire ring with brilliant cut stone. A symbol of eternal love.",
     inStock: true,
-    userReviews: []
+    userReviews: [],
+    variants: [
+      {
+        type: 'size',
+        label: 'Ring Size',
+        required: true,
+        options: [
+          { id: '5', name: '5', value: 'Size 5', inStock: true, priceModifier: 0 },
+          { id: '6', name: '6', value: 'Size 6', inStock: true, priceModifier: 0 },
+          { id: '7', name: '7', value: 'Size 7', inStock: true, priceModifier: 0 },
+          { id: '8', name: '8', value: 'Size 8', inStock: true, priceModifier: 0 },
+          { id: '9', name: '9', value: 'Size 9', inStock: false, priceModifier: 0 },
+          { id: '10', name: '10', value: 'Size 10', inStock: true, priceModifier: 0 },
+        ]
+      },
+      {
+        type: 'material',
+        label: 'Material',
+        required: true,
+        options: [
+          { id: 'white-gold', name: 'White Gold', value: '18K White Gold', inStock: true, priceModifier: 0 },
+          { id: 'yellow-gold', name: 'Yellow Gold', value: '18K Yellow Gold', inStock: true, priceModifier: 10 },
+          { id: 'platinum', name: 'Platinum', value: 'Platinum', inStock: true, priceModifier: 50 },
+        ]
+      }
+    ]
   },
   {
     id: 4,
@@ -117,23 +161,20 @@ export const products: Product[] = [
     badge: "SALE",
     description: "Graceful pearl ring combining classic beauty with contemporary design.",
     inStock: true,
-    userReviews: []
-  },
-  {
-    id: 7,
-    name: "Diamond Solitaire Pendant",
-    category: "necklaces",
-    price: 203.10,
-    rating: 4.7,
-    reviews: 145,
-    image: "https://images.pexels.com/photos/1432407/pexels-photo-1432407.jpeg?auto=compress&cs=tinysrgb&w=400",
-    images: [
-      "https://images.pexels.com/photos/1432407/pexels-photo-1432407.jpeg?auto=compress&cs=tinysrgb&w=400"
-    ],
-    badge: null,
-    description: "Brilliant diamond pendant that catches light from every angle. Pure luxury.",
-    inStock: true,
-    userReviews: []
+    userReviews: [],
+    variants: [
+      {
+        type: 'size',
+        label: 'Ring Size',
+        required: true,
+        options: [
+          { id: '5', name: '5', value: 'Size 5', inStock: true, priceModifier: 0 },
+          { id: '6', name: '6', value: 'Size 6', inStock: true, priceModifier: 0 },
+          { id: '7', name: '7', value: 'Size 7', inStock: true, priceModifier: 0 },
+          { id: '8', name: '8', value: 'Size 8', inStock: true, priceModifier: 0 },
+        ]
+      }
+    ]
   },
   {
     id: 8,
@@ -150,39 +191,20 @@ export const products: Product[] = [
     badge: "SALE",
     description: "Romantic ruby heart bracelet expressing love and passion. Perfect for gifting.",
     inStock: true,
-    userReviews: []
-  },
-  {
-    id: 9,
-    name: "Tennis Diamond Bracelet",
-    category: "bracelets",
-    price: 299.00,
-    rating: 5,
-    reviews: 67,
-    image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop",
-    images: [
-      "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&h=400&fit=crop"
-    ],
-    badge: null,
-    description: "Classic tennis bracelet with brilliant diamonds. Timeless elegance for any occasion.",
-    inStock: true,
-    userReviews: []
-  },
-  {
-    id: 10,
-    name: "Gold Hoop Earrings",
-    category: "earrings",
-    price: 56.00,
-    rating: 4.4,
-    reviews: 189,
-    image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=400&fit=crop",
-    images: [
-      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=400&fit=crop"
-    ],
-    badge: null,
-    description: "Classic gold hoop earrings that never go out of style. Versatile and chic.",
-    inStock: true,
-    userReviews: []
+    userReviews: [],
+    variants: [
+      {
+        type: 'length',
+        label: 'Bracelet Length',
+        required: true,
+        options: [
+          { id: '6.5', name: '6.5\"', value: '6.5 inches', inStock: true, priceModifier: 0 },
+          { id: '7', name: '7\"', value: '7 inches', inStock: true, priceModifier: 0 },
+          { id: '7.5', name: '7.5\"', value: '7.5 inches', inStock: true, priceModifier: 5 },
+          { id: '8', name: '8\"', value: '8 inches', inStock: true, priceModifier: 5 },
+        ]
+      }
+    ]
   },
   {
     id: 11,
@@ -198,24 +220,19 @@ export const products: Product[] = [
     badge: "NEW",
     description: "Bold emerald statement ring that commands attention. For the confident woman.",
     inStock: true,
-    userReviews: []
-  },
-  {
-    id: 12,
-    name: "Charm Bracelet Collection",
-    category: "bracelets",
-    price: 98.00,
-    originalPrice: 120.00,
-    rating: 4.5,
-    reviews: 112,
-    image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop",
-    images: [
-      "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=400&fit=crop"
-    ],
-    badge: "SALE",
-    description: "Customizable charm bracelet to tell your unique story. Add your favorite charms.",
-    inStock: true,
-    userReviews: []
+    userReviews: [],
+    variants: [
+      {
+        type: 'size',
+        label: 'Ring Size',
+        required: true,
+        options: [
+          { id: '6', name: '6', value: 'Size 6', inStock: true, priceModifier: 0 },
+          { id: '7', name: '7', value: 'Size 7', inStock: true, priceModifier: 0 },
+          { id: '8', name: '8', value: 'Size 8', inStock: true, priceModifier: 0 },
+        ]
+      }
+    ]
   }
 ];
 
