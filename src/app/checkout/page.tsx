@@ -7,6 +7,7 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { useOrder } from '../../app/context/OrderContext';
 import {
   CreditCard,
   Truck,
@@ -35,6 +36,7 @@ export default function CheckoutPage() {
   const toast = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isClient, setIsClient] = useState(false);
+  const { addOrder } = useOrder();
 
   // Shipping Information
   const [shipping, setShipping] = useState<ShippingAddress>({
@@ -193,17 +195,49 @@ if (!isClient) {
     }
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!validatePayment()) return;
-
-    // Simulate order placement
-    toast.success("Order placed successfully!");
+    
+    setIsPlacingOrder(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Generate order
+    const orderNumber = `ORD-${Date.now()}`;
+    const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Calculate estimated delivery (7-10 business days)
+    const estimatedDelivery = new Date();
+    estimatedDelivery.setDate(estimatedDelivery.getDate() + 9);
+    
+    const order: Order = {
+      id: orderId,
+      orderNumber: orderNumber,
+      items: cart,
+      shipping: shipping,
+      payment: payment,
+      subtotal: cartSubtotal,
+      discount: discountAmount,
+      discountCode: appliedDiscount?.description,
+      shippingCost: shippingCost,
+      total: finalTotal,
+      date: new Date().toISOString(),
+      estimatedDelivery: estimatedDelivery.toISOString(),
+      status: 'processing',
+    };
+    
+    // Save order
+    addOrder(order);
+    
+    toast.success('Order placed successfully!');
     clearCart();
-
-    // Redirect to order confirmation (we'll create this later)
+    setIsPlacingOrder(false);
+    
+    // Redirect to confirmation page
     setTimeout(() => {
-      router.push("/");
-    }, 2000);
+      router.push(`/order-confirmation?orderId=${orderId}`);
+    }, 1000);
   };
 
   const formatCardNumber = (value: string) => {

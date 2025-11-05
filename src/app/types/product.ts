@@ -17,18 +17,22 @@
     expiryDate?: string;
     cvv?: string;
   }
-  
+
+
   export interface Order {
     id: string;
+    orderNumber: string;
     items: CartItem[];
     shipping: ShippingAddress;
     payment: PaymentMethod;
     subtotal: number;
     discount: number;
-    shipping_cost: number;
+    discountCode?: string;
+    shippingCost: number;
     total: number;
     date: string;
-    status: 'pending' | 'processing' | 'shipped' | 'delivered';
+    estimatedDelivery: string;
+    status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   }
   export interface UserReview {
     name: string;
