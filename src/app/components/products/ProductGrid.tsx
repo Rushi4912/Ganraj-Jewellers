@@ -28,12 +28,12 @@ export default function ProductGrid({ products, onQuickView, onViewDetails }: Pr
         selectedCategory === 'all' || product.category === selectedCategory;
 
       let matchesPrice = true;
-      if (priceRange === 'under50') matchesPrice = product.price < 50;
+      if (priceRange === 'under50') matchesPrice = product.price < 500;
       else if (priceRange === '50to100')
-        matchesPrice = product.price >= 50 && product.price <= 100;
+        matchesPrice = product.price >= 500 && product.price <= 1000;
       else if (priceRange === '100to200')
-        matchesPrice = product.price >= 100 && product.price <= 200;
-      else if (priceRange === 'over200') matchesPrice = product.price > 200;
+        matchesPrice = product.price >= 1000 && product.price <= 2000;
+      else if (priceRange === 'over200') matchesPrice = product.price > 2000;
 
       return matchesSearch && matchesCategory && matchesPrice;
     });
@@ -99,10 +99,10 @@ export default function ProductGrid({ products, onQuickView, onViewDetails }: Pr
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent appearance-none bg-white cursor-pointer"
               >
                 <option value="all">All Prices</option>
-                <option value="under50">Under $50</option>
-                <option value="50to100">$50 - $100</option>
-                <option value="100to200">$100 - $200</option>
-                <option value="over200">$200+</option>
+                <option value="under50">Under ₹500</option>
+                <option value="50to100">₹500 - ₹1000</option>
+                <option value="100to200">₹1000 - ₹2000</option>
+                <option value="over200">₹2000+</option>
               </select>
             </div>
 

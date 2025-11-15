@@ -224,12 +224,12 @@ export default function ProductDetail({
                 <div className="mb-6">
                   <div className="flex items-center gap-4 mb-2">
                     <span className="text-4xl font-bold text-gray-900">
-                      ${finalPrice.toFixed(2)}
+                      ₹ {finalPrice.toFixed(2)}
                     </span>
                     {product.originalPrice && (
                       <>
                         <span className="text-2xl text-gray-400 line-through">
-                          ${product.originalPrice.toFixed(2)}
+                          ₹ {product.originalPrice.toFixed(2)}
                         </span>
                         <span className="px-3 py-1 bg-red-100 text-red-600 text-sm font-bold rounded-full">
                           Save{" "}
@@ -245,7 +245,7 @@ export default function ProductDetail({
                   </div>
                   {finalPrice !== product.price && (
                     <p className="text-sm text-green-600 font-semibold">
-                      +${(finalPrice - product.price).toFixed(2)} for selected
+                      +₹ {(finalPrice - product.price).toFixed(2)} for selected
                       options
                     </p>
                   )}
@@ -283,7 +283,7 @@ export default function ProductDetail({
                         Free Shipping
                       </h4>
                       <p className="text-xs text-gray-600">
-                        On orders over $100
+                        On orders over ₹100
                       </p>
                     </div>
                   </div>

@@ -126,17 +126,7 @@ export default function ShoppingCartSidebar({
                     <h3 className="font-semibold text-gray-900 mb-1 truncate">
                       {item.name}
                     </h3>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-lg font-bold text-amber-600">
-                        ${item.price.toFixed(2)}
-                      </span>
-                      {item.originalPrice && (
-                        <span className="text-sm text-gray-400 line-through">
-                          ${item.originalPrice.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-
+                    
                     {/* Display Selected Variants */}
                     {item.selectedVariants &&
                       Object.keys(item.selectedVariants).length > 0 && (
@@ -164,11 +154,11 @@ export default function ShoppingCartSidebar({
 
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-lg font-bold text-amber-600">
-                        ${item.price.toFixed(2)}
+                        ₹ {item.price.toFixed(2)}
                       </span>
                       {item.originalPrice && (
                         <span className="text-sm text-gray-400 line-through">
-                          ${item.originalPrice.toFixed(2)}
+                          ₹ {item.originalPrice.toFixed(2)}
                         </span>
                       )}
                     </div>
@@ -210,7 +200,7 @@ export default function ShoppingCartSidebar({
                       <span className="text-sm text-gray-600">
                         Item total:{" "}
                         <span className="font-semibold text-gray-900">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₹ {(item.price * item.quantity).toFixed(2)}
                         </span>
                       </span>
                     </div>
@@ -298,7 +288,7 @@ export default function ShoppingCartSidebar({
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal:</span>
                 <span className="font-semibold">
-                  ${cartSubtotal.toFixed(2)}
+                  ₹ {cartSubtotal.toFixed(2)}
                 </span>
               </div>
 
@@ -308,7 +298,7 @@ export default function ShoppingCartSidebar({
                     Discount ({(appliedDiscount.discount * 100).toFixed(0)}%):
                   </span>
                   <span className="font-semibold">
-                    -${discountAmount.toFixed(2)}
+                    -₹ {discountAmount.toFixed(2)}
                   </span>
                 </div>
               )}
@@ -324,7 +314,7 @@ export default function ShoppingCartSidebar({
                     Total:
                   </span>
                   <span className="text-2xl font-bold text-amber-600">
-                    ${cartTotal.toFixed(2)}
+                    ₹ {cartTotal.toFixed(2)}
                   </span>
                 </div>
               </div>

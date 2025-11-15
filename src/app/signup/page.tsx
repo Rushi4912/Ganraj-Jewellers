@@ -45,6 +45,8 @@ export default function SignupPage() {
             />
           </div>
 
+
+  
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Password</label>
             <input

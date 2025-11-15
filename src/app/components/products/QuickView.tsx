@@ -188,17 +188,17 @@ export default function QuickView({
                   {/* Price */}
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-2xl font-bold text-gray-900">
-                      ${finalPrice.toFixed(2)}
+                      ₹ {finalPrice.toFixed(2)}
                     </span>
                     {product.originalPrice && (
                       <span className="text-lg text-gray-400 line-through">
-                        ${product.originalPrice.toFixed(2)}
+                        ₹ {product.originalPrice.toFixed(2)}
                       </span>
                     )}
                   </div>
                   {finalPrice !== product.price && (
                     <p className="text-sm text-green-600 font-semibold mb-2">
-                      +${(finalPrice - product.price).toFixed(2)} for selected
+                      +₹ {(finalPrice - product.price).toFixed(2)} for selected
                       options
                     </p>
                   )}
@@ -226,7 +226,7 @@ export default function QuickView({
                     <ul className="space-y-2 text-sm">
                       <li className="flex items-center gap-2 text-gray-700">
                         <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
-                        Free shipping on orders over $100
+                        Free shipping on orders over ₹100
                       </li>
                       <li className="flex items-center gap-2 text-gray-700">
                         <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>

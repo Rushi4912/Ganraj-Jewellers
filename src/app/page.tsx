@@ -20,6 +20,7 @@ export default function HomePage(){
    <div>
     <Navbar/>
     <HeroSection/>
+    
     <Features/>
     <VideoSection/>
     <TrendingProducts/>

@@ -94,26 +94,6 @@ export default function CheckoutPage() {
     );
   }
 
-// Show loading state while checking
-// if (!isClient) {
-//   return (
-//     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-//       <div className="text-center">
-//         <div className="relative">
-//           {/* Outer spinning ring */}
-//           <div className="w-20 h-20 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-6"></div>
-//           {/* Inner pulsing circle */}
-//           <div className="absolute inset-0 flex items-center justify-center">
-//             <div className="w-8 h-8 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full animate-pulse"></div>
-//           </div>
-//         </div>
-//         <h3 className="text-xl font-bold text-gray-800 mb-2">Loading Your Cart</h3>
-//         <p className="text-gray-600">Getting your items ready...</p>
-//       </div>
-//     </div>
-//   );
-// }
-  
 if (!isClient) {
   return (
     <LoadingSpinner 
@@ -239,6 +219,7 @@ if (!isClient) {
       router.push(`/order-confirmation?orderId=${orderId}`);
     }, 1000);
   };
+
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");

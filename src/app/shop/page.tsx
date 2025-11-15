@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Product } from '../types/product';
-import { products } from '../data/products';
+import { supabase } from '../lib/supabase';
 import ProductGrid from '../components/products/ProductGrid';
 import QuickView from '../components/products/QuickView';
 import ProductDetail from '../components/products/ProductDetails';
@@ -10,9 +10,50 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
   const [showCart, setShowCart] = useState(false);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Transform Supabase data to match Product type
+      const transformedProducts: Product[] = (data || []).map((item, index) => ({
+        id: index + 1, // Use index as numeric ID for compatibility
+        name: item.name,
+        category: 'rings' as const, // Default category, you can enhance this later
+        price: item.discount_price ? Number(item.discount_price) : Number(item.price),
+        originalPrice: item.discount_price ? Number(item.price) : undefined,
+        rating: 4.5, // Default rating
+        reviews: Math.floor(Math.random() * 100) + 10, // Random review count
+        image: item.images[0] || '',
+        images: item.images || [],
+        badge: item.discount_price ? 'SALE' : (item.is_featured ? 'NEW' : null),
+        description: item.description || 'Beautiful handcrafted jewelry piece.',
+        inStock: item.stock > 0,
+        userReviews: [],
+        variants: undefined
+      }));
+
+      setProducts(transformedProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleQuickView = (product: Product) => {
     setQuickViewProduct(product);
@@ -52,11 +93,20 @@ export default function ShopPage() {
       </section>
 
       {/* Product Grid */}
-      <ProductGrid
-        products={products}
-        onQuickView={handleQuickView}
-        onViewDetails={handleViewDetails}
-      />
+      {loading ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading products...</p>
+          </div>
+        </div>
+      ) : (
+        <ProductGrid
+          products={products}
+          onQuickView={handleQuickView}
+          onViewDetails={handleViewDetails}
+        />
+      )}
 
       {/* Quick View Modal */}
       <QuickView
