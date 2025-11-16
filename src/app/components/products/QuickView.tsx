@@ -216,10 +216,7 @@ export default function QuickView({
                     </div>
                   )}
 
-                  {/* Description */}
-                  <p className="text-gray-600 leading-relaxed mb-6">
-                    {product.description}
-                  </p>
+              
 
                   {/* Features */}
                   <div className="bg-amber-50 rounded-lg p-4 mb-6 border border-amber-200">

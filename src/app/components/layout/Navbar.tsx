@@ -1,5 +1,5 @@
 "use client";
-import { Search, ShoppingCart, User, Heart, Menu, X , GitCompare } from "lucide-react";
+import { Search, ShoppingCart, User, Heart, Menu, X, GitCompare } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
@@ -10,7 +10,16 @@ interface NavbarProps {
 
 export default function Navbar({ onCartOpen }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { cartCount, wishlist,compareList } = useCart();
+  const { cartCount, wishlist, compareList } = useCart();
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/shop", label: "Shop" },
+    { href: "/about", label: "About" },
+    { href: "/blog", label: "Blog" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/contact", label: "Contact" },
+  ];
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -31,42 +40,15 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
 
           {/* Center section (Navigation Links) */}
           <div className="hidden md:flex space-x-8">
-            <Link
-              href="/"
-              className="text-gray-700 hover:text-gray-900 font-medium"
-            >
-              Home
-            </Link>
-            <Link
-              href="/shop"
-              className="text-gray-700 hover:text-gray-900 font-medium"
-            >
-              Shop
-            </Link>
-            <Link
-              href="/collections"
-              className="text-gray-700 hover:text-gray-900 font-medium"
-            >
-              Collections
-            </Link>
-            <Link
-              href="/products"
-              className="text-gray-700 hover:text-gray-900 font-medium"
-            >
-              Products
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-700 hover:text-gray-900 font-medium"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="text-gray-700 hover:text-gray-900 font-medium"
-            >
-              Contact
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
           {/* Right section (Icons) */}
@@ -128,42 +110,16 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link
-              href="/"
-              className="block px-3 py-2 text-gray-700 hover:bg-gray-50"
-            >
-              Home
-            </Link>
-            <Link
-              href="/shop"
-              className="block px-3 py-2 text-gray-700 hover:bg-gray-50"
-            >
-              Shop
-            </Link>
-            <Link
-              href="/collections"
-              className="block px-3 py-2 text-gray-700 hover:bg-gray-50"
-            >
-              Collections
-            </Link>
-            <Link
-              href="/products"
-              className="block px-3 py-2 text-gray-700 hover:bg-gray-50"
-            >
-              Products
-            </Link>
-            <Link
-              href="/about"
-              className="block px-3 py-2 text-gray-700 hover:bg-gray-50"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="block px-3 py-2 text-gray-700 hover:bg-gray-50"
-            >
-              Contact
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
         </div>
       )}

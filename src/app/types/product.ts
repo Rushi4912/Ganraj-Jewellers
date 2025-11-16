@@ -72,6 +72,8 @@
   
   export interface Product {
     id: number;
+    remoteId?: string;
+    slug?: string;
     name: string;
     category: 'rings' | 'necklaces' | 'earrings' | 'bracelets';
     price: number;

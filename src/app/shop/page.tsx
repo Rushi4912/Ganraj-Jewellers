@@ -1,19 +1,20 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Product } from '../types/product';
 import { supabase } from '../lib/supabase';
+import { transformSupabaseProductList } from '../utils/transformSupabaseProduct';
 import ProductGrid from '../components/products/ProductGrid';
 import QuickView from '../components/products/QuickView';
-import ProductDetail from '../components/products/ProductDetails';
 import ShoppingCartSidebar from '../components/cart/ShoppingCart';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 
 export default function ShopPage() {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
-  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
   const [showCart, setShowCart] = useState(false);
 
   useEffect(() => {
@@ -30,22 +31,7 @@ export default function ShopPage() {
       if (error) throw error;
 
       // Transform Supabase data to match Product type
-      const transformedProducts: Product[] = (data || []).map((item, index) => ({
-        id: index + 1, // Use index as numeric ID for compatibility
-        name: item.name,
-        category: 'rings' as const, // Default category, you can enhance this later
-        price: item.discount_price ? Number(item.discount_price) : Number(item.price),
-        originalPrice: item.discount_price ? Number(item.price) : undefined,
-        rating: 4.5, // Default rating
-        reviews: Math.floor(Math.random() * 100) + 10, // Random review count
-        image: item.images[0] || '',
-        images: item.images || [],
-        badge: item.discount_price ? 'SALE' : (item.is_featured ? 'NEW' : null),
-        description: item.description || 'Beautiful handcrafted jewelry piece.',
-        inStock: item.stock > 0,
-        userReviews: [],
-        variants: undefined
-      }));
+      const transformedProducts = transformSupabaseProductList(data);
 
       setProducts(transformedProducts);
     } catch (error) {
@@ -59,9 +45,9 @@ export default function ShopPage() {
     setQuickViewProduct(product);
   };
 
-  const handleViewDetails = (product: Product) => {
-    setDetailProduct(product);
-    setQuickViewProduct(null);
+  const handleNavigateToProduct = (product: Product) => {
+    const destination = product.slug ?? product.remoteId ?? product.id.toString();
+    router.push(`/shop/${destination}`);
   };
 
   return (
@@ -104,7 +90,6 @@ export default function ShopPage() {
         <ProductGrid
           products={products}
           onQuickView={handleQuickView}
-          onViewDetails={handleViewDetails}
         />
       )}
 
@@ -113,14 +98,7 @@ export default function ShopPage() {
         product={quickViewProduct}
         isOpen={!!quickViewProduct}
         onClose={() => setQuickViewProduct(null)}
-        onViewFullDetails={handleViewDetails}
-      />
-
-      {/* Product Detail Modal */}
-      <ProductDetail
-        product={detailProduct}
-        isOpen={!!detailProduct}
-        onClose={() => setDetailProduct(null)}
+        onViewFullDetails={handleNavigateToProduct}
       />
 
       {/* Shopping Cart Sidebar */}

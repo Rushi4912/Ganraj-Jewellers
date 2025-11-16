@@ -1,4 +1,21 @@
-import { Facebook, Instagram, Twitter, Youtube, MapPin, Phone, Mail } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Youtube, MapPin, Phone, Mail } from "lucide-react";
+import Link from "next/link";
+
+const quickLinks = [
+  { label: "About Us", href: "/about" },
+  { label: "Shop", href: "/shop" },
+  { label: "Blog", href: "/blog" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contact", href: "/contact" },
+];
+
+const serviceLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Shipping Info", href: "/faq#shipping" },
+  { label: "Returns & Exchanges", href: "/faq#orders" },
+  { label: "Track Order", href: "/profile" },
+];
 
 export default function Footer() {
   return (
@@ -11,40 +28,41 @@ export default function Footer() {
               Your trusted destination for exquisite jewelry. Crafting elegance since 1990.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors">
-                <Facebook size={18} />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors">
-                <Instagram size={18} />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors">
-                <Twitter size={18} />
-              </a>
-              <a href="#" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors">
-                <Youtube size={18} />
-              </a>
+              {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
+                <a
+                  key={Icon.name + index}
+                  href="#"
+                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors"
+                >
+                  <Icon size={18} />
+                </a>
+              ))}
             </div>
           </div>
 
           <div>
             <h4 className="text-white font-semibold mb-6">Quick Links</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="hover:text-amber-500 transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">Shop</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">Collections</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">Contact</a></li>
+              {quickLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="hover:text-amber-500 transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-6">Customer Service</h4>
+            <h4 className="text-white font-semibold mb-6">Customer Care</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="hover:text-amber-500 transition-colors">My Account</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">Track Order</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">Returns</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">Shipping Info</a></li>
-              <li><a href="#" className="hover:text-amber-500 transition-colors">FAQs</a></li>
+              {serviceLinks.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="hover:text-amber-500 transition-colors">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -61,21 +79,25 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={20} className="text-amber-500 flex-shrink-0" />
-                <span>infoJwellery4u.com</span>
+                <span>hello@jwellery4u.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
-              &copy; 2025 Jwellery4u. All rights reserved.
-            </p>
-            <div className="flex gap-6 text-sm">
-              <a href="#" className="hover:text-amber-500 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-amber-500 transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-amber-500 transition-colors">Cookie Policy</a>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
+            <p className="text-gray-400">&copy; 2025 Jwellery4u. All rights reserved.</p>
+            <div className="flex gap-6">
+              <Link href="/privacy-policy" className="hover:text-amber-500 transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-of-service" className="hover:text-amber-500 transition-colors">
+                Terms of Service
+              </Link>
+              <Link href="/faq#care" className="hover:text-amber-500 transition-colors">
+                Jewelry Care
+              </Link>
             </div>
           </div>
         </div>

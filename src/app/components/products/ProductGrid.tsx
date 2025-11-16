@@ -8,10 +8,9 @@ import ProductCard from './ProductCard';
 interface ProductGridProps {
   products: Product[];
   onQuickView: (product: Product) => void;
-  onViewDetails: (product: Product) => void;
 }
 
-export default function ProductGrid({ products, onQuickView, onViewDetails }: ProductGridProps) {
+export default function ProductGrid({ products, onQuickView }: ProductGridProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [priceRange, setPriceRange] = useState('all');
@@ -154,7 +153,6 @@ export default function ProductGrid({ products, onQuickView, onViewDetails }: Pr
                 key={product.id}
                 product={product}
                 onQuickView={onQuickView}
-                onViewDetails={onViewDetails}
               />
             ))}
           </div>

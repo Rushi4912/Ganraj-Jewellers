@@ -92,8 +92,12 @@ export default function TrendingProducts() {
   };
 
   const transformToShopProduct = (product: Product, index: number): ShopProduct => {
+    const numericId = Number(product.id);
+    const resolvedId = Number.isFinite(numericId) ? numericId : index + 1;
     return {
-      id: index + 1,
+      id: resolvedId,
+      remoteId: product.id?.toString(),
+      slug: product.slug,
       name: product.name,
       category: 'rings' as const,
       price: product.discount_price ? Number(product.discount_price) : Number(product.price),
@@ -121,7 +125,7 @@ export default function TrendingProducts() {
   };
 
   const handleProductClick = (product: Product) => {
-    router.push('/shop');
+    router.push(`/shop/${product.slug ?? product.id}`);
   };
 
   const tabs = ['FEATURED', 'NEW ARRIVALS', 'BEST SELLER'];
@@ -271,7 +275,8 @@ export default function TrendingProducts() {
         onClose={() => setQuickViewProduct(null)}
         onViewFullDetails={(product) => {
           setQuickViewProduct(null);
-          router.push('/shop');
+          const destination = product.slug ?? product.remoteId ?? product.id.toString();
+          router.push(`/shop/${destination}`);
         }}
       />
     </section>

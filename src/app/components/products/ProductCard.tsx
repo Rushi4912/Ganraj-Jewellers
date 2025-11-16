@@ -1,34 +1,39 @@
 "use client";
 import React from "react";
-import { Star, Heart, ShoppingCart, Eye,GitCompare } from "lucide-react";
+import Link from "next/link";
+import { Star, Heart, ShoppingCart, Eye, GitCompare } from "lucide-react";
 import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 
 interface ProductCardProps {
   product: Product;
   onQuickView?: (product: Product) => void;
-  onViewDetails?: (product: Product) => void;
 }
 
 export default function ProductCard({
   product,
   onQuickView,
-  onViewDetails,
 }: ProductCardProps) {
-  const { addToCart, wishlist, compareList,toggleWishlist,toggleCompare } = useCart();
+  const { addToCart, wishlist, compareList, toggleWishlist, toggleCompare } = useCart();
 
   const isInWishlist = wishlist.includes(product.id);
+  const productPath = product.slug ?? product.remoteId ?? product.id;
 
   return (
     <div className="group relative">
       {/* Product Image Container */}
       <div className="relative overflow-hidden rounded-xl mb-4 bg-gray-50 aspect-square">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
-          onClick={() => onViewDetails?.(product)}
-        />
+        <Link
+          href={`/shop/${productPath}`}
+          className="block h-full"
+          aria-label={`View ${product.name}`}
+        >
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        </Link>
 
         {/* Badge */}
         {product.badge && (
@@ -102,12 +107,12 @@ export default function ProductCard({
           Gold Jewelry
         </p>
 
-        <h3
-          className="text-sm font-semibold text-gray-900 mb-2 hover:text-amber-600 transition-colors cursor-pointer"
-          onClick={() => onViewDetails?.(product)}
+        <Link
+          href={`/shop/${productPath}`}
+          className="text-sm font-semibold text-gray-900 mb-2 hover:text-amber-600 transition-colors cursor-pointer block"
         >
           {product.name}
-        </h3>
+        </Link>
 
         {/* Rating */}
         <div className="flex items-center justify-center gap-1 mb-2">
