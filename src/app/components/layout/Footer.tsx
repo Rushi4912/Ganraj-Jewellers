@@ -30,7 +30,7 @@ export default function Footer() {
             <div className="flex gap-4">
               {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
                 <a
-                  key={Icon.name + index}
+                  key={`social-${index}`}
                   href="#"
                   className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors"
                 >

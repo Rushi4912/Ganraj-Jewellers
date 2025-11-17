@@ -26,14 +26,14 @@ export default function Newsletter() {
                 </div>
                 Exclusive dispatches
               </div>
-              <div className="flex flex-col lg:flex-row gap-3">
+              <div className="flex flex-col lg:flex-row gap-3 items-center">
                 <input
                   type="email"
                   placeholder="Email address"
-                  className="flex-1 rounded-2xl border border-gray-200 px-5 py-3 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="flex-1 min-w-0 rounded-2xl border border-gray-200 px-5 py-3 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
                 />
                 <button className="rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white px-8 py-3 font-semibold shadow-lg shadow-amber-500/30">
-                  Become a muse
+                  Subscribe
                 </button>
               </div>
               <p className="text-xs text-gray-500 text-center md:text-left">

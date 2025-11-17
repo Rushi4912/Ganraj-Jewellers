@@ -56,14 +56,14 @@ export default function ShoppingCartSidebar({
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity"
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 transition-opacity"
         onClick={onClose}
       />
 
       {/* Sidebar */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
+      <div className="fixed right-0 top-0 h-full w-full max-w-full md:max-w-md bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-amber-50 to-orange-50">
+        <div className="flex items-center justify-between px-5 py-5 md:px-6 border-b bg-gradient-to-r from-amber-50 to-orange-50">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Shopping Cart</h2>
             <p className="text-sm text-gray-600 mt-1">
@@ -79,7 +79,7 @@ export default function ShoppingCartSidebar({
         </div>
 
         {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto px-5 py-6 md:px-6">
           {cart.length === 0 ? (
             <div className="text-center py-16">
               <ShoppingCart size={64} className="mx-auto text-gray-300 mb-4" />
@@ -101,14 +101,14 @@ export default function ShoppingCartSidebar({
               {cart.map((item) => (
                 <div
                   key={item.variantId || item.id}
-                  className="flex gap-4 pb-6 border-b border-gray-200 last:border-b-0"
+                  className="flex flex-col gap-4 pb-6 border-b border-gray-200 last:border-b-0 sm:flex-row"
                 >
                   {/* Product Image */}
-                  <div className="relative w-24 h-24 flex-shrink-0">
+                  <div className="relative w-full max-w-sm flex-shrink-0 sm:w-24">
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-48 sm:h-32 md:h-24 object-contain rounded-lg border border-gray-100 bg-gray-50"
                     />
                     {item.badge && (
                       <span
@@ -123,7 +123,7 @@ export default function ShoppingCartSidebar({
 
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 mb-1 truncate">
+                    <h3 className="font-semibold text-gray-900 mb-1 truncate leading-tight">
                       {item.name}
                     </h3>
                     
@@ -152,7 +152,7 @@ export default function ShoppingCartSidebar({
                         </div>
                       )}
 
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-3 flex-wrap">
                       <span className="text-lg font-bold text-amber-600">
                         ₹ {item.price.toFixed(2)}
                       </span>
@@ -164,7 +164,7 @@ export default function ShoppingCartSidebar({
                     </div>
 
                     {/* Quantity Controls */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
                         <button
                           onClick={() => updateCartQuantity(item.id, -1, item.variantId)}
@@ -213,7 +213,7 @@ export default function ShoppingCartSidebar({
 
         {/* Footer - Discount & Checkout */}
         {cart.length > 0 && (
-          <div className="border-t bg-gray-50 p-6">
+          <div className="border-t bg-gray-50 px-5 py-6 md:px-6">
             {/* Discount Code Section */}
             <div className="mb-6">
               <label className="block text-sm font-semibold text-gray-700 mb-2">

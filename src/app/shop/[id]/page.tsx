@@ -8,12 +8,17 @@ import {
 
 export const dynamic = "force-dynamic";
 
+const isUuid = (value: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+
 const fetchProductById = async (identifier: string) => {
   const numericId = Number(identifier);
   const candidates = [
     Number.isFinite(numericId) ? { column: "id" as const, value: numericId } : null,
     { column: "slug" as const, value: identifier },
-    { column: "id" as const, value: identifier },
+    isUuid(identifier)
+      ? { column: "id" as const, value: identifier }
+      : null,
   ].filter(Boolean) as { column: "id" | "slug"; value: string | number }[];
 
   for (const candidate of candidates) {
@@ -39,9 +44,10 @@ const fetchProductById = async (identifier: string) => {
 export default async function ProductPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const product = await fetchProductById(params.id);
+  const { id } = await params;
+  const product = await fetchProductById(id);
 
   if (!product) {
     notFound();

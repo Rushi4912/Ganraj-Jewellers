@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useRef } from 'react';
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react';
 
 type ToastType = 'success' | 'error' | 'info' | 'warning';
@@ -23,21 +23,41 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const showToast = (message: string, type: ToastType, duration: number = 3000) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const newToast: Toast = { id, message, type, duration };
-
-    setToasts((prev) => [...prev, newToast]);
-
-    // Auto remove after duration
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, duration);
-  };
+  const toastTimeouts = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
 
   const removeToast = (id: string) => {
+    const timeoutId = toastTimeouts.current[id];
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      delete toastTimeouts.current[id];
+    }
+
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
+  };
+
+  const showToast = (message: string, type: ToastType, duration: number = 2200) => {
+    const trimmedMessage = message.trim();
+
+    setToasts((prev) => {
+      if (
+        prev.some(
+          (toast) =>
+            toast.message === trimmedMessage && toast.type === type
+        )
+      ) {
+        return prev;
+      }
+
+      const id = Math.random().toString(36).substr(2, 9);
+      const newToast: Toast = { id, message: trimmedMessage, type };
+
+      const timeoutId = setTimeout(() => {
+        removeToast(id);
+      }, duration);
+      toastTimeouts.current[id] = timeoutId;
+
+      return [...prev, newToast];
+    });
   };
 
   const success = (message: string, duration?: number) => showToast(message, 'success', duration);
@@ -82,11 +102,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             key={toast.id}
             className={`
               ${getStyles(toast.type)}
-              px-4 py-3 rounded-lg shadow-2xl
+              px-4 py-3 rounded-xl shadow-lg
               flex items-center gap-3
-              min-w-[200px] max-w-md
+              w-full max-w-sm
               pointer-events-auto
-              transform transition-all duration-100 ease-in-out
+              transform transition-all duration-150 ease-in-out
               animate-slideIn
             `}
           >

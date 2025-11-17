@@ -131,7 +131,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       );
       
       if (existing) {
-        toast.success(`Updated ${product.name} quantity in cart!`);
+        toast.success("Cart quantity updated!");
         return prevCart.map((item) =>
           (item.variantId ? item.variantId === variantId : item.id === product.id)
             ? { ...item, quantity: item.quantity + 1 }
@@ -139,7 +139,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
       }
       
-      toast.success(`${product.name} added to cart!`);
+      toast.success("Added to cart!");
       return [...prevCart, { 
         ...product, 
         price: finalPrice,

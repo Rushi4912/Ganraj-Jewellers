@@ -36,6 +36,7 @@ export default function CheckoutPage() {
   const toast = useToast();
   const [currentStep, setCurrentStep] = useState(1);
   const [isClient, setIsClient] = useState(false);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const { addOrder } = useOrder();
 
   // Shipping Information
@@ -851,11 +852,11 @@ if (!isClient) {
                   ) : (
                     <button
                       onClick={handlePlaceOrder}
-                      disabled={!agreedToTerms}
+                      disabled={!agreedToTerms || isPlacingOrder}
                       className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:shadow-xl transition-all duration-300 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Lock size={20} />
-                      Place Order
+                      {isPlacingOrder ? "Placing order..." : "Place Order"}
                     </button>
                   )}
                 </div>

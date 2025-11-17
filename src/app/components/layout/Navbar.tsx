@@ -1,7 +1,8 @@
 "use client";
-import { Search, ShoppingCart, User, Heart, Menu, X, GitCompare } from "lucide-react";
-import { useState } from "react";
+import { Search, ShoppingCart, User, Heart, Menu, X, GitCompare, LogOut, Settings } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 import Link from "next/link";
 
 interface NavbarProps {
@@ -10,7 +11,10 @@ interface NavbarProps {
 
 export default function Navbar({ onCartOpen }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { cartCount, wishlist, compareList } = useCart();
+  const { user, profile, signOut, loading } = useAuth();
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -19,7 +23,23 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
     { href: "/blog", label: "Blog" },
     { href: "/faq", label: "FAQ" },
     { href: "/contact", label: "Contact" },
+    { href: "/orders", label: "Orders" },
   ];
+
+  useEffect(() => {
+    const handler = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setUserMenuOpen(false);
+      }
+    };
+    if (userMenuOpen) {
+      window.addEventListener("click", handler);
+    }
+    return () => window.removeEventListener("click", handler);
+  }, [userMenuOpen]);
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -44,9 +64,10 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+                className="group relative inline-flex items-center px-1 py-1 text-gray-700 font-medium transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               >
-                {link.label}
+                <span className="relative z-10">{link.label}</span>
+                <span className="absolute inset-x-0 -bottom-1 h-0.5 w-full origin-left scale-x-0 bg-gradient-to-r from-amber-500 to-orange-500 transition-transform duration-300 group-hover:scale-x-100 group-active:scale-x-100" />
               </Link>
             ))}
           </div>
@@ -87,9 +108,63 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
               )}
             </Link>
 
-            <button className="text-gray-700 hover:text-gray-900">
-              <User size={20} />
-            </button>
+            <div className="relative" ref={userMenuRef}>
+              {user ? (
+                <>
+                  <button
+                    onClick={() => setUserMenuOpen((prev) => !prev)}
+                    className="text-gray-700 hover:text-gray-900 flex items-center gap-2"
+                  >
+                    <span className="hidden lg:inline-flex text-sm font-semibold">
+                      {profile?.fullName
+                        ? profile.fullName.split(" ")[0]
+                        : user.email?.split("@")[0]}
+                    </span>
+                    <User size={20} />
+                  </button>
+                  {userMenuOpen && (
+                    <div className="absolute right-0 mt-3 w-56 bg-white shadow-2xl rounded-2xl border border-gray-100 py-2 z-50">
+                      <Link
+                        href="/account"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Settings size={16} />
+                        Account
+                      </Link>
+                      <Link
+                        href="/orders"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <GitCompare size={16} />
+                        Orders
+                      </Link>
+                      <button
+                        onClick={() => {
+                          signOut();
+                          setUserMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
+                      >
+                        <LogOut size={16} />
+                        Sign out
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link
+                  href={loading ? "#" : "/login"}
+                  className="text-gray-700 hover:text-gray-900 flex items-center gap-2"
+                >
+                  <User size={20} />
+                  <span className="hidden lg:inline text-sm font-semibold">
+                    {loading ? "Loading..." : "Sign in"}
+                  </span>
+                </Link>
+              )}
+            </div>
 
             <button
               onClick={onCartOpen}
