@@ -99,7 +99,7 @@ export default function ProductDetail({
   const finalPrice = calculateFinalPrice();
   // Calculate average rating from user reviews
   const calculateAverageRating = () => {
-    if (product.userReviews.length === 0) return product.rating;
+    if (product.userReviews.length === 0) return product.rating.toString(); // Return as string for display
     const sum = product.userReviews.reduce(
       (acc, review) => acc + review.rating,
       0
@@ -205,7 +205,7 @@ export default function ProductDetail({
                         key={i}
                         size={20}
                         className={
-                          i < Math.floor(product.rating)
+                          i < Math.floor(parseFloat(calculateAverageRating()))
                             ? "text-amber-400 fill-amber-400"
                             : "text-gray-300"
                         }

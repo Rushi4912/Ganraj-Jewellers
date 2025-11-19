@@ -6,6 +6,8 @@ import { ShippingAddress, PaymentMethod } from "../types/product";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useOrder } from '../../app/context/OrderContext';
 import {
@@ -21,7 +23,6 @@ import {
   Mail,
   Phone,
   Home,
-  DollarSign,
   ShieldCheck
 } from "lucide-react";
 
@@ -87,12 +88,12 @@ export default function CheckoutPage() {
               <p className="text-gray-600 mb-8">
                 Add some items to your cart before checking out
               </p>
-              <a
+              <Link
                 href="/shop"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-xl transition-all duration-300 font-semibold"
               >
                 Browse Products
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -752,19 +753,19 @@ export default function CheckoutPage() {
                         </div>
                         <span className="text-sm text-gray-600 leading-relaxed">
                           I agree to the{" "}
-                          <a
-                            href="#"
+                          <Link
+                            href="/terms-of-service"
                             className="text-amber-600 hover:text-amber-700 font-semibold underline decoration-amber-200 underline-offset-2"
                           >
                             Terms and Conditions
-                          </a>{" "}
+                          </Link>{" "}
                           and{" "}
-                          <a
-                            href="#"
+                          <Link
+                            href="/privacy-policy"
                             className="text-amber-600 hover:text-amber-700 font-semibold underline decoration-amber-200 underline-offset-2"
                           >
                             Privacy Policy
-                          </a>. I acknowledge that my data will be used to process my order.
+                          </Link>. I acknowledge that my data will be used to process my order.
                         </span>
                       </label>
                     </div>
@@ -875,9 +876,11 @@ export default function CheckoutPage() {
                             className="flex gap-4 p-4 bg-white border border-gray-100 rounded-xl hover:shadow-sm transition-shadow"
                           >
                             <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
-                                <img
+                                <Image
                                 src={item.image}
                                 alt={item.name}
+                                width={80}
+                                height={80}
                                 className="w-full h-full object-cover"
                                 />
                             </div>
@@ -915,12 +918,12 @@ export default function CheckoutPage() {
                       Back
                     </button>
                   ) : (
-                    <a
+                    <Link
                       href="/shop"
                       className="text-gray-600 hover:text-amber-600 font-semibold flex items-center gap-2 transition-colors"
                     >
                       <ArrowLeft size={20} /> Continue Shopping
-                    </a>
+                    </Link>
                   )}
 
                   {currentStep < 3 ? (
@@ -1015,7 +1018,7 @@ export default function CheckoutPage() {
                       </span>
                     </div>
                     <p className="text-right text-xs text-gray-400 mt-1">
-                        Including GST
+                      Including GST
                     </p>
                   </div>
                 </div>

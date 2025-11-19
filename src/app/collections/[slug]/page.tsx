@@ -1,5 +1,3 @@
-"use client";
-
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -7,7 +5,6 @@ import {
   ArrowRight,
   Check,
   Clock,
-  Gem,
   Shield,
   Star,
 } from "lucide-react";
@@ -130,12 +127,13 @@ const collectionMap = {
 
 type CollectionSlug = keyof typeof collectionMap;
 
-export default function CollectionDetailPage({
+export default async function CollectionDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const key = params.slug as CollectionSlug;
+  const { slug } = await params;
+  const key = slug as CollectionSlug;
   const collection = collectionMap[key];
 
   if (!collection) {

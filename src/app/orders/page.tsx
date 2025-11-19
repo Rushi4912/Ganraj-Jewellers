@@ -1,5 +1,7 @@
 "use client";
 import { useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { useOrder } from "../context/OrderContext";
@@ -74,13 +76,13 @@ const OrdersPage = () => {
             <p className="text-gray-600">
               Explore our latest drops and start building your collection.
             </p>
-            <a
+            <Link
               href="/shop"
               className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/30"
             >
               Browse the atelier
               <ArrowRight size={18} />
-            </a>
+            </Link>
           </div>
         </div>
         <Footer />
@@ -169,9 +171,11 @@ const OrdersPage = () => {
                         key={`${item.id}-${item.variantId || "base"}`}
                         className="border border-gray-100 rounded-2xl p-3 flex items-center gap-3"
                       >
-                        <img
-                          src={item.image}
+                        <Image
+                          src={item.image || "/placeholder.jpg"}
                           alt={item.name}
+                          width={80}
+                          height={80}
                           className="w-20 h-20 rounded-xl object-cover bg-gray-50"
                         />
                         <div className="text-sm">

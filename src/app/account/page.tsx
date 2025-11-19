@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, Address } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
 import {
   Loader2,
@@ -17,7 +17,7 @@ import {
   Shield,
 } from "lucide-react";
 
-const emptyAddress = {
+const emptyAddress: Partial<Address> & { id: string | undefined } = {
   id: undefined,
   label: "",
   recipientName: "",
@@ -77,7 +77,8 @@ export default function AccountPage() {
       toast.error("Please fill the required address fields");
       return;
     }
-    await saveAddress(addressDraft);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await saveAddress(addressDraft as any);
     setAddressFormOpen(false);
     setAddressDraft(emptyAddress);
   };
@@ -542,4 +543,3 @@ export default function AccountPage() {
     </>
   );
 }
-

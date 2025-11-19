@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { useOrder } from "../context/OrderContext";
@@ -27,7 +28,7 @@ import {
 const getStatusIndex = (status: Order["status"]) =>
   orderStatusSteps.findIndex((step) => step === status);
 
-const OrderConfirmationPage = () => {
+const OrderConfirmationContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { currentOrder, getOrderById } = useOrder();
@@ -90,12 +91,12 @@ const OrderConfirmationPage = () => {
               >
                 View Orders
               </button>
-              <a
+              <Link
                 href="/shop"
                 className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/30"
               >
                 Continue Shopping
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -426,5 +427,16 @@ const OrderConfirmationPage = () => {
   );
 };
 
-export default OrderConfirmationPage;
-
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <p className="text-gray-500">Loading order details...</p>
+        </div>
+      }
+    >
+      <OrderConfirmationContent />
+    </Suspense>
+  );
+}

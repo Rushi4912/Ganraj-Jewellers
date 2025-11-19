@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, ChevronDown, Check, Star } from 'lucide-react';
+import { Search, Filter, ChevronDown, Check } from 'lucide-react';
 import { Product } from '../../types/product';
 import { categories } from '../../data/products';
 import ProductCard from './ProductCard';
@@ -19,7 +19,7 @@ export default function ProductGrid({ products, onQuickView }: ProductGridProps)
 
   // Filter and Sort Products
   const filteredProducts = useMemo(() => {
-    let filtered = products.filter((product) => {
+    const filtered = products.filter((product) => {
       const matchesSearch = product.name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -226,7 +226,7 @@ export default function ProductGrid({ products, onQuickView }: ProductGridProps)
                   No products found
                 </h3>
                 <p className="text-gray-500 mb-6 text-sm">
-                    We couldn't find any matches for "{searchQuery}"
+                    We couldn&apos;t find any matches for &quot;{searchQuery}&quot;
                 </p>
                 <button
                   onClick={() => {

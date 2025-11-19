@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Sparkles, Lock, CreditCard, Repeat } from "lucide-react";
+import { ShieldCheck, Sparkles, Lock } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ShoppingCartSidebar from "../components/cart/ShoppingCart";

@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, ShoppingCart, Trash2, Star, AlertTriangle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { Product } from '../types/product';
@@ -122,12 +124,12 @@ export default function WishlistPage() {
               </p>
 
               {/* Fixed: missing <a> tag was causing syntax/unreachable code */}
-              <a
+              <Link
                 href="/shop"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-xl transition-all duration-300 font-semibold text-lg"
               >
                 Explore Products
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
@@ -136,10 +138,12 @@ export default function WishlistPage() {
                   key={product.id}
                   className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 group"
                 >
-                  <div className="relative aspect-square overflow-hidden bg-gray-100">
-                    <img
-                      src={product.image}
+                    <div className="relative aspect-square overflow-hidden bg-gray-100">
+                    <Image
+                      src={product.image || '/placeholder.jpg'}
                       alt={product.name}
+                      width={400}
+                      height={400}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer"
                       onClick={() => setDetailProduct(product)}
                     />

@@ -73,7 +73,7 @@ Thank you for shopping with Jewellery4u!`;
   URL.revokeObjectURL(url);
 };
 
-export const orderStatusSteps = ["pending", "processing", "shipped", "delivered"] as const;
+export const orderStatusSteps = ["pending", "processing", "shipped", "delivered", "cancelled"] as const;
 
 export type OrderStatusStep = (typeof orderStatusSteps)[number];
 
@@ -82,5 +82,5 @@ export const statusLabels: Record<OrderStatusStep, string> = {
   processing: "Processing",
   shipped: "Shipped",
   delivered: "Delivered",
+  cancelled: "Cancelled",
 };
-

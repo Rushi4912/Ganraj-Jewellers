@@ -9,6 +9,7 @@ import { X, Star, ShoppingCart, Check, Minus, AlertTriangle } from 'lucide-react
 import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import { transformSupabaseProductList } from '../utils/transformSupabaseProduct';
+import Link from 'next/link';
 
 export default function ComparePage() {
   const { compareList, toggleCompare, addToCart } = useCart();
@@ -134,12 +135,12 @@ export default function ComparePage() {
               <p className="text-gray-600 mb-8 text-lg">
                 Add up to 3 products to compare their features
               </p>
-              <a
+              <Link
                 href="/shop"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-xl transition-all duration-300 font-semibold text-lg"
               >
                 Browse Products
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
@@ -309,12 +310,12 @@ export default function ComparePage() {
 
               {/* Action Buttons */}
               <div className="p-6 bg-gray-50 border-t flex justify-between items-center">
-                <a
+                <Link
                   href="/shop"
                   className="text-gray-700 font-semibold hover:text-amber-600 transition-colors"
                 >
                   ← Back to Shop
-                </a>
+                </Link>
                 <button
                   onClick={() => {
                     compareList.forEach(id => toggleCompare(id));

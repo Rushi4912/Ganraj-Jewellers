@@ -48,7 +48,7 @@ export default function ContactPage() {
           <div className="relative max-w-4xl mx-auto text-center px-6">
             <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 text-amber-600 font-semibold">
               <MessageCircle size={18} />
-              We'd love to hear from you
+              We&apos;d love to hear from you
             </p>
             <h1 className="mt-6 text-4xl md:text-5xl font-bold text-gray-900">
               Concierge support for every milestone
@@ -155,4 +155,3 @@ export default function ContactPage() {
     </>
   );
 }
-
