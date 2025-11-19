@@ -18,12 +18,12 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
 
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/collections", label: "Collections" },
     { href: "/shop", label: "Shop" },
     { href: "/about", label: "About" },
-    { href: "/blog", label: "Blog" },
+    { href: "/blog", label: "Stories" },
     { href: "/faq", label: "FAQ" },
     { href: "/contact", label: "Contact" },
-    { href: "/orders", label: "Orders" },
   ];
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <Link href="/" className="text-2xl font-bold text-gray-900">
-              Jwellery4u
+              Ganraj Jewellers
             </Link>
           </div>
 

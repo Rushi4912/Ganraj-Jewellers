@@ -86,7 +86,7 @@ export default function PrivacyPolicyPage() {
               Your trust is the most precious gemstone.
             </h1>
             <p className="text-lg text-gray-600">
-              Updated May 2025. This policy governs every interaction you have with Jwellery4u online or in our
+              Updated May 2025. This policy governs every interaction you have with Ganraj Jewellers online or in our
               experience studio.
             </p>
           </div>

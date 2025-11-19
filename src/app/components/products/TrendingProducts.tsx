@@ -1,7 +1,7 @@
 'use client';
 
 import { Star, Heart, ShoppingCart, Eye } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/app/lib/supabase';
 import { useCart } from '@/app/context/CartContext';
 import { Product as ShopProduct } from '@/app/types/product';
@@ -23,33 +23,74 @@ interface Product {
 export default function TrendingProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [imageErrors, setImageErrors] = useState<Record<string, number>>({});
   const [quickViewProduct, setQuickViewProduct] = useState<ShopProduct | null>(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const initialLoadRef = useRef(true);
+  const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { addToCart } = useCart();
   const router = useRouter();
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+  const tabs = ['FEATURED', 'NEW ARRIVALS', 'BEST SELLER'];
 
-  const fetchProducts = async () => {
+  useEffect(() => {
+    fetchProducts(tabs[activeTab]);
+  }, [activeTab]);
+
+  const fetchProducts = async (tab: string) => {
+    const isInitialLoad = initialLoadRef.current;
+
+    if (isInitialLoad) {
+      setLoading(true);
+    } else {
+      setIsTransitioning(true);
+    }
+
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .limit(8)
-        .order('created_at', { ascending: false });
+      let query = supabase.from('products').select('*');
+
+      if (tab === 'FEATURED') {
+        // Fetch all products, limit 8 for FEATURED to show more products
+        query = query.limit(8).order('created_at', { ascending: false });
+      } else if (tab === 'NEW ARRIVALS') {
+        query = query.order('created_at', { ascending: false }).limit(6);
+      } else if (tab === 'BEST SELLER') {
+        // For best seller, fetch products ordered by created_at
+        query = query.order('created_at', { ascending: false }).limit(6);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
-      console.log('Fetched products:', data);
+      console.log(`Fetched ${tab} products:`, data);
       setProducts(data || []);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error(`Error fetching ${tab} products:`, error);
     } finally {
-      setLoading(false);
+      if (isInitialLoad) {
+        setLoading(false);
+        initialLoadRef.current = false;
+      } else {
+        if (transitionTimeoutRef.current) {
+          clearTimeout(transitionTimeoutRef.current);
+        }
+        transitionTimeoutRef.current = setTimeout(() => {
+          setIsTransitioning(false);
+          transitionTimeoutRef.current = null;
+        }, 350);
+      }
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const getImageUrl = (imagePath: string) => {
     const { data } = supabase.storage
@@ -128,20 +169,11 @@ export default function TrendingProducts() {
     router.push(`/shop/${product.slug ?? product.id}`);
   };
 
-  const tabs = ['FEATURED', 'NEW ARRIVALS', 'BEST SELLER'];
-
-  if (loading) {
-    return (
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading products...</p>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const handleTabClick = (index: number) => {
+    if (index !== activeTab) {
+      setActiveTab(index);
+    }
+  };
 
   return (
     <section className="py-20 bg-white">
@@ -154,8 +186,9 @@ export default function TrendingProducts() {
             {tabs.map((tab, index) => (
               <button
                 key={index}
+                onClick={() => handleTabClick(index)}
                 className={`text-sm font-semibold tracking-wide ${
-                  index === 0 ? 'text-amber-600 border-b-2 border-amber-600' : 'text-gray-500 hover:text-gray-900'
+                  activeTab === index ? 'text-amber-600 border-b-2 border-amber-600' : 'text-gray-500 hover:text-gray-900'
                 } pb-2 transition-colors`}
               >
                 {tab}
@@ -164,14 +197,35 @@ export default function TrendingProducts() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {products.map((product, index) => {
-            const badge = getBadge(product);
-            const rating = getRandomRating();
-            const currentImage = getCurrentImage(product);
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">Loading products...</p>
+            </div>
+          </div>
+        ) : (
+          <div className="relative">
+            {isTransitioning && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/85 backdrop-blur-sm z-10 pointer-events-none transition-opacity duration-500">
+                <div className="flex items-center gap-2 text-gray-600 text-sm">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-600"></div>
+                  Updating…
+                </div>
+              </div>
+            )}
+            <div
+              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 transition-opacity duration-500 ease-out ${
+                isTransitioning ? 'opacity-40' : 'opacity-100'
+              }`}
+            >
+            {products.map((product, index) => {
+              const badge = getBadge(product);
+              const rating = getRandomRating();
+              const currentImage = getCurrentImage(product);
 
-            return (
-              <div key={product.id} className="group relative">
+              return (
+                <div key={product.id} className="group relative">
                 <div className="relative overflow-hidden rounded-xl mb-4 bg-gray-50 aspect-square cursor-pointer"
                      onClick={() => handleProductClick(product)}>
                   {currentImage ? (
@@ -255,9 +309,11 @@ export default function TrendingProducts() {
                   </div>
                 </div>
               </div>
-            );
-          })}
-        </div>
+              );
+            })}
+            </div>
+          </div>
+        )}
 
         <div className="text-center mt-12">
           <button 

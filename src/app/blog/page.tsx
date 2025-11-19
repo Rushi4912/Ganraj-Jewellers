@@ -52,7 +52,7 @@ export default function BlogPage() {
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-6">Stories from our atelier</h1>
             <p className="mt-3 text-lg text-gray-600">
-              Styling insights, gemstone education, and glimpses of the artisans behind every Jwellery4u piece.
+              Styling insights, gemstone education, and glimpses of the artisans behind every Ganraj Jewellers piece.
             </p>
           </div>
         </section>

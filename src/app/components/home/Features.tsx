@@ -5,7 +5,7 @@ export default function Features() {
     {
       icon: Truck,
       title: 'Free Shipping',
-      description: 'On order over $100'
+      description: 'On order over ₹2000'
     },
     {
       icon: Shield,

@@ -18,7 +18,7 @@ export default function HomePage(){
 
   return(
    <div>
-    <Navbar/>
+    <Navbar onCartOpen={() => setShowCart(true)} />
     <HeroSection/>
     
     <Features/>

@@ -34,7 +34,7 @@ const termSections = [
   {
     title: "Content & Conduct",
     copy: [
-      "Editorial photography, CAD files, and copy remain Jwellery4u intellectual property.",
+      "Editorial photography, CAD files, and copy remain Ganraj Jewellers intellectual property.",
       "Usage of brand assets or scraping site content without permission is strictly prohibited.",
       "Respectful conduct toward our studio staff is expected; we reserve the right to pause service for abuse.",
     ],

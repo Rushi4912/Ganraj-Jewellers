@@ -9,8 +9,8 @@ import { AuthProvider } from "../app/context/AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Jwellery4u - Luxury Jewelry Collection",
-  description: "Discover our exquisite collection of gold, diamond, and gemstone jewelry",
+  title: "Ganraj Jewellers - Luxury Jewelry Collection",
+  description: "Discover our exquisite collection of gold, diamond, and gemstone jewelry crafted by Ganraj Jewellers",
 };
 
 export default function RootLayout({
