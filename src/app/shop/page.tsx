@@ -68,12 +68,12 @@ export default function ShopPage() {
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
             Discover Our
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
-              Jewelry Collection
+              Jewellery Collection
             </span>
           </h1>
           
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Explore our exquisite selection of handcrafted jewelry pieces designed to make every moment special
+            Explore our exquisite selection of handcrafted jewellery pieces designed to make every moment special
           </p>
         </div>
       </section>

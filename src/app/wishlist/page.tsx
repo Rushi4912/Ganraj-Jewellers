@@ -1,22 +1,73 @@
 "use client";
-import React, { useState } from 'react';
-import { Heart, ShoppingCart, Trash2, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Heart, ShoppingCart, Trash2, Star, AlertTriangle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { products } from '../data/products';
 import { Product } from '../types/product';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import ShoppingCartSidebar from '../components/cart/ShoppingCart';
 import ProductDetail from '../components/products/ProductDetails';
+import { supabase } from '../lib/supabase';
+import { transformSupabaseProductList } from '../utils/transformSupabaseProduct';
 
 export default function WishlistPage() {
   const { wishlist, toggleWishlist, addToCart } = useCart();
   const [showCart, setShowCart] = useState(false);
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const wishlistProducts = products.filter((product) =>
+  const wishlistProducts = allProducts.filter((product) =>
     wishlist.includes(product.id)
   );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchWishlistProducts = async () => {
+      if (wishlist.length === 0) {
+        if (isMounted) {
+          setAllProducts([]);
+          setLoadingProducts(false);
+          setFetchError(null);
+        }
+        return;
+      }
+
+      setLoadingProducts(true);
+      setFetchError(null);
+
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        if (!isMounted) return;
+
+        const transformed = transformSupabaseProductList(data);
+        setAllProducts(transformed);
+      } catch (error) {
+        console.error('Error fetching wishlist products:', error);
+        if (isMounted) {
+          setFetchError('Unable to load your wishlist items right now. Please try again shortly.');
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingProducts(false);
+        }
+      }
+    };
+
+    fetchWishlistProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [wishlist, reloadKey]);
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -40,7 +91,27 @@ export default function WishlistPage() {
 
       <section className="py-12 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {wishlistProducts.length === 0 ? (
+          {loadingProducts ? (
+            <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-6"></div>
+              <p className="text-gray-600 text-lg">Loading your wishlist...</p>
+            </div>
+          ) : fetchError ? (
+            <div className="bg-white rounded-2xl shadow-sm p-10 text-center">
+              <AlertTriangle size={48} className="mx-auto text-amber-500 mb-4" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+              <p className="text-gray-600 mb-6">{fetchError}</p>
+              <button
+                onClick={() => {
+                  setFetchError(null);
+                  setReloadKey((prev) => prev + 1);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : wishlistProducts.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
               <Heart size={64} className="mx-auto text-gray-300 mb-6" />
               <h2 className="text-3xl font-bold text-gray-900 mb-3">
@@ -128,11 +199,11 @@ export default function WishlistPage() {
 
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-xl font-bold text-gray-900">
-                        ${product.price.toFixed(2)}
+                        ₹ {product.price.toFixed(2)}
                       </span>
                       {product.originalPrice && (
                         <span className="text-sm text-gray-400 line-through">
-                          ${product.originalPrice.toFixed(2)}
+                          ₹ {product.originalPrice.toFixed(2)}
                         </span>
                       )}
                     </div>

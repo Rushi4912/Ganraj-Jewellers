@@ -238,7 +238,7 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
               )}
 
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Jewelry story</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Jewellery story</h3>
                 <p className="text-gray-600 leading-relaxed">
                   {product.description ||
                     "Each piece is crafted by artisans with over two decades of experience, blending traditional workmanship with contemporary silhouettes."}

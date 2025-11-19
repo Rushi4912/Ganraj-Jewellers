@@ -87,7 +87,7 @@ export default function ShoppingCartSidebar({
                 Your cart is empty
               </h3>
               <p className="text-gray-600 mb-6">
-                Add some beautiful jewelry to get started!
+                Add some beautiful jewellery to get started!
               </p>
               <button
                 onClick={onClose}

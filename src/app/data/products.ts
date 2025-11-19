@@ -237,7 +237,7 @@ export const products: Product[] = [
 ];
 
 export const categories: Category[] = [
-  { id: 'all', name: 'All Jewelry' },
+  { id: 'all', name: 'All Jewellery' },
   { id: 'rings', name: 'Rings' },
   { id: 'necklaces', name: 'Necklaces' },
   { id: 'earrings', name: 'Earrings' },

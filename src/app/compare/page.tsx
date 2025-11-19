@@ -1,22 +1,73 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import { products } from '../data/products';
 import { Product } from '../types/product';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import ShoppingCartSidebar from '../components/cart/ShoppingCart';
-import { X, Star, ShoppingCart, Check, Minus } from 'lucide-react';
+import { X, Star, ShoppingCart, Check, Minus, AlertTriangle } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { supabase } from '../lib/supabase';
+import { transformSupabaseProductList } from '../utils/transformSupabaseProduct';
 
 export default function ComparePage() {
   const { compareList, toggleCompare, addToCart } = useCart();
   const [showCart, setShowCart] = useState(false);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const toast = useToast();
 
-  const compareProducts = products.filter((product) =>
+  const compareProducts = allProducts.filter((product) =>
     compareList.includes(product.id)
   );
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchCompareProducts = async () => {
+      if (compareList.length === 0) {
+        if (isMounted) {
+          setAllProducts([]);
+          setLoadingProducts(false);
+          setFetchError(null);
+        }
+        return;
+      }
+
+      setLoadingProducts(true);
+      setFetchError(null);
+
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        if (!isMounted) return;
+
+        const transformed = transformSupabaseProductList(data);
+        setAllProducts(transformed);
+      } catch (error) {
+        console.error('Error fetching compare products:', error);
+        if (isMounted) {
+          setFetchError('Unable to load comparison data right now. Please try again in a moment.');
+        }
+      } finally {
+        if (isMounted) {
+          setLoadingProducts(false);
+        }
+      }
+    };
+
+    fetchCompareProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [compareList, reloadKey]);
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -50,7 +101,27 @@ export default function ComparePage() {
       {/* Comparison Content */}
       <section className="py-12 bg-gray-50 min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {compareProducts.length === 0 ? (
+          {loadingProducts ? (
+            <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-6"></div>
+              <p className="text-gray-600 text-lg">Loading comparison items...</p>
+            </div>
+          ) : fetchError ? (
+            <div className="bg-white rounded-2xl shadow-sm p-10 text-center">
+              <AlertTriangle size={48} className="mx-auto text-amber-500 mb-4" />
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+              <p className="text-gray-600 mb-6">{fetchError}</p>
+              <button
+                onClick={() => {
+                  setFetchError(null);
+                  setReloadKey((prev) => prev + 1);
+                }}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : compareProducts.length === 0 ? (
             <div className="bg-white rounded-2xl shadow-sm p-16 text-center">
               <div className="text-gray-300 mb-6">
                 <svg className="mx-auto h-24 w-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -63,7 +134,10 @@ export default function ComparePage() {
               <p className="text-gray-600 mb-8 text-lg">
                 Add up to 3 products to compare their features
               </p>
-              <a href='/shop'>
+              <a
+                href="/shop"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-xl transition-all duration-300 font-semibold text-lg"
+              >
                 Browse Products
               </a>
             </div>
@@ -139,11 +213,11 @@ export default function ComparePage() {
                             {feature.key === 'price' && (
                               <div>
                                 <span className="text-2xl font-bold text-gray-900">
-                                  ${product.price.toFixed(2)}
+                                  ₹ {product.price.toFixed(2)}
                                 </span>
                                 {product.originalPrice && (
                                   <div className="text-sm text-gray-400 line-through mt-1">
-                                    ${product.originalPrice.toFixed(2)}
+                                    ₹ {product.originalPrice.toFixed(2)}
                                   </div>
                                 )}
                               </div>
@@ -235,7 +309,10 @@ export default function ComparePage() {
 
               {/* Action Buttons */}
               <div className="p-6 bg-gray-50 border-t flex justify-between items-center">
-                <a>
+                <a
+                  href="/shop"
+                  className="text-gray-700 font-semibold hover:text-amber-600 transition-colors"
+                >
                   ← Back to Shop
                 </a>
                 <button

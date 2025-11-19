@@ -20,7 +20,7 @@ const termSections = [
     copy: [
       "Shipments are insured until delivery and require OTP + recipient signature.",
       "Delays from customs or force majeure are communicated promptly, and you receive alternative delivery dates.",
-      "Ownership transfers once delivery is confirmed; inspect jewelry immediately and flag concerns within 24 hours.",
+      "Ownership transfers once delivery is confirmed; inspect jewellery immediately and flag concerns within 24 hours.",
     ],
   },
   {
@@ -89,7 +89,7 @@ export default function TermsPage() {
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
             <p className="text-sm font-semibold text-amber-600 uppercase tracking-[0.5em]">Terms of Service</p>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-              The fine print for fine jewelry, written simply.
+              The fine print for fine jewellery, written simply.
             </h1>
             <p className="text-lg text-gray-600">
               Updated May 2025. These terms describe our commitments to you—from the atelier to the delivery chaperone.

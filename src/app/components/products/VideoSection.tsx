@@ -172,7 +172,7 @@ const PopularCategories = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 space-y-3">
           <p className="text-xs uppercase tracking-[0.4em] text-amber-500">Curated categories</p>
-          <h2 className="text-4xl font-bold text-gray-900">Jewelry wardrobes we love</h2>
+          <h2 className="text-4xl font-bold text-gray-900">Jewellery wardrobes we love</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             From everyday gold to ceremonial couture, each category is artfully styled and ready to make moments glow.
           </p>
@@ -210,7 +210,7 @@ const PopularCategories = () => {
   );
 };
 
-export default function JewelryShowcase() {
+export default function JewelleryShowcase() {
   return (
     <div>
       <VideoSection />

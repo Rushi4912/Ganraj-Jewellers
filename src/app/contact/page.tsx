@@ -102,7 +102,7 @@ export default function ContactPage() {
               />
               <select className="w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-transparent">
                 <option>I’m interested in...</option>
-                <option>Custom bridal jewelry</option>
+                <option>Custom bridal jewellery</option>
                 <option>Appointment at atelier</option>
                 <option>Repair / refresh service</option>
                 <option>General inquiry</option>

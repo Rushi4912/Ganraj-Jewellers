@@ -104,7 +104,7 @@ export default function ProductCard({
       {/* Product Info */}
       <div className="text-center">
         <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
-          Gold Jewelry
+          Gold Jewellery
         </p>
 
         <Link

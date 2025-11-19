@@ -48,7 +48,7 @@ export default function LoginPage() {
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
             Welcome back to the{" "}
-            <span className="text-amber-400">Jewellery4u atelier.</span>
+            <span className="text-amber-400">Ganraj Jewellers atelier.</span>
           </h1>
           <p className="text-slate-300 text-lg">
             Unlock your saved addresses, curated orders, and bespoke styling

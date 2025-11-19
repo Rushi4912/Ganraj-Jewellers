@@ -63,7 +63,7 @@ export default function SignupPage() {
           </div>
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
             Craft your{" "}
-            <span className="text-amber-500">Jewellery4u story.</span>
+            <span className="text-amber-500">Ganraj Jewellers story.</span>
           </h1>
           <p className="text-gray-600 text-lg">
             A single login unlocks order histories, atelier alerts, curated

@@ -25,7 +25,7 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl font-bold text-white mb-6">Ganraj Jewellers</h3>
             <p className="text-gray-400 mb-6 leading-relaxed">
-              Your trusted destination for exquisite jewelry. Crafting elegance since 1990.
+              Your trusted destination for exquisite jewellery. Crafting elegance since 1990.
             </p>
             <div className="flex gap-4">
               {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
@@ -71,7 +71,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin size={20} className="text-amber-500 mt-1 flex-shrink-0" />
-                <span>123 Jewelry Street, New York, NY 10001</span>
+                <span>123 Jewellery Street, New York, NY 10001</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={20} className="text-amber-500 flex-shrink-0" />
@@ -96,7 +96,7 @@ export default function Footer() {
                 Terms of Service
               </Link>
               <Link href="/faq#care" className="hover:text-amber-500 transition-colors">
-                Jewelry Care
+                Jewellery Care
               </Link>
             </div>
           </div>

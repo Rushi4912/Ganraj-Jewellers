@@ -49,7 +49,7 @@ export default function CollectionsPage() {
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?auto=format&fit=crop&w=2000&q=80"
-            alt="Jewelry Background"
+            alt="Jewellery Background"
             className="w-full h-full object-cover scale-105 animate-slow-zoom"
           />
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />

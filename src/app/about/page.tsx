@@ -67,13 +67,13 @@ export default function AboutPage() {
               <Gem size={18} /> Crafted in small batches since 1990
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-6 leading-tight">
-              Jewelry that celebrates
+              Jewellery that celebrates
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
                 every luminous moment
               </span>
             </h1>
             <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-              We are a Mumbai-born collective of designers, goldsmiths, and storytellers reimagining fine jewelry
+              We are a Mumbai-born collective of designers, goldsmiths, and storytellers reimagining fine jewellery
               for the modern muse. Our pieces are intimate, intentional, and unapologetically luxurious.
             </p>
           </div>
@@ -101,7 +101,7 @@ export default function AboutPage() {
             </h2>
             <p className="mt-6 text-gray-600 leading-relaxed">
               What started as a family-run studio in Zaveri Bazaar has blossomed into a global house of modern
-              heirlooms. Every decade, we evolve, yet our promise stays the same: to create jewelry that mirrors
+              heirlooms. Every decade, we evolve, yet our promise stays the same: to create jewellery that mirrors
               your story with fine materials, intuitive design, and obsessive craftsmanship.
             </p>
             <div className="mt-8 space-y-4">

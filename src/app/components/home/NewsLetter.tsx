@@ -15,7 +15,7 @@ export default function Newsletter() {
               Be the first to receive launches, styling diaries, and private previews.
             </h2>
             <p className="text-white/70 text-base">
-              Once a week, beautifully curated stories—crafted to elevate your jewelry wardrobe.
+              Once a week, beautifully curated stories—crafted to elevate your jewellery wardrobe.
             </p>
           </div>
           <div className="flex-1 w-full">

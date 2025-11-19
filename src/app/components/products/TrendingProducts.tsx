@@ -29,7 +29,7 @@ export default function TrendingProducts() {
   const [activeTab, setActiveTab] = useState(0);
   const initialLoadRef = useRef(true);
   const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { addToCart } = useCart();
+  const { addToCart, wishlist, toggleWishlist } = useCart();
   const router = useRouter();
 
   const tabs = ['FEATURED', 'NEW ARRIVALS', 'BEST SELLER'];
@@ -148,7 +148,7 @@ export default function TrendingProducts() {
       image: product.images[0] || '',
       images: product.images || [],
       badge: product.discount_price ? 'SALE' : (product.is_featured ? 'NEW' : null),
-      description: product.description || 'Beautiful handcrafted jewelry piece.',
+      description: product.description || 'Beautiful handcrafted jewellery piece.',
       inStock: product.stock > 0,
       userReviews: [],
       variants: undefined
@@ -223,6 +223,8 @@ export default function TrendingProducts() {
               const badge = getBadge(product);
               const rating = getRandomRating();
               const currentImage = getCurrentImage(product);
+              const shopProduct = transformToShopProduct(product, index);
+              const isInWishlist = wishlist.includes(shopProduct.id);
 
               return (
                 <div key={product.id} className="group relative">
@@ -261,12 +263,17 @@ export default function TrendingProducts() {
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Add to wishlist functionality
+                        toggleWishlist(shopProduct.id);
                       }}
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-white transition-colors shadow-lg"
-                      title="Add to Wishlist"
+                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-lg ${
+                        isInWishlist
+                          ? 'bg-red-500 text-white'
+                          : 'bg-white hover:bg-amber-500 hover:text-white'
+                      }`}
+                      title={isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                      aria-pressed={isInWishlist}
                     >
-                      <Heart size={18} />
+                      <Heart size={18} className={isInWishlist ? 'fill-white' : ''} />
                     </button>
                     <button 
                       onClick={(e) => {
@@ -282,7 +289,7 @@ export default function TrendingProducts() {
                 </div>
 
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 mb-1">Gold Jewelry</p>
+                  <p className="text-xs text-gray-500 mb-1">Gold Jewellery</p>
                   <h3 
                     onClick={() => handleProductClick(product)}
                     className="text-sm font-semibold text-gray-900 mb-2 hover:text-amber-600 transition-colors cursor-pointer">

@@ -43,7 +43,7 @@ const faqSections = [
       {
         question: "Can I return a piece?",
         answer:
-          "Returns are accepted within 14 days for unworn jewelry with tags. Custom or engraved pieces qualify for studio credit and a complimentary restyling consult.",
+          "Returns are accepted within 14 days for unworn jewellery with tags. Custom or engraved pieces qualify for studio credit and a complimentary restyling consult.",
       },
       {
         question: "Do you offer repairs?",
@@ -59,7 +59,7 @@ const faqSections = [
     summary: "Hallmarked metals, independent certificates, and care rituals.",
     items: [
       {
-        question: "How do I care for my jewelry?",
+        question: "How do I care for my jewellery?",
         answer:
           "Store in the embroidered pouches, avoid perfume contact, and wipe with a microfiber cloth. Schedule a seasonal spa refresh anytime—details are on your certificate.",
       },

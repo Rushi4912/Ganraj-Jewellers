@@ -566,7 +566,7 @@ export default function ProductDetail({
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-amber-600 mt-1">•</span>
-                          <span>Store in provided jewelry box</span>
+                          <span>Store in provided jewellery box</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span className="text-amber-600 mt-1">•</span>

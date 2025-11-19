@@ -90,7 +90,7 @@ export const transformSupabaseProduct = (
     image: primaryImage,
     images,
     badge: item.discount_price != null ? 'SALE' : item.is_featured ? 'NEW' : null,
-    description: item.description ?? 'Beautiful handcrafted jewelry piece.',
+    description: item.description ?? 'Beautiful handcrafted jewellery piece.',
     inStock: item.stock == null ? true : item.stock > 0,
     userReviews: normalizeReviews(item.user_reviews),
     variants: item.variants ?? undefined,

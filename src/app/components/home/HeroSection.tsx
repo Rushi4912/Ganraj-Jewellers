@@ -13,7 +13,7 @@ interface Slide {
 const slides: Slide[] = [
   {
     image: "https://assets.ajio.com/medias/sys_master/root/20240504/crXa/6635b9a705ac7d77bb3dedb2/-473Wx593H-467299538-white-MODEL.jpg",
-    alt: "Elegant woman wearing gold jewelry",
+    alt: "Elegant woman wearing gold jewellery",
     kicker: "Ganraj Signature",
     headline: "Bridal Couture",
   },
@@ -25,13 +25,13 @@ const slides: Slide[] = [
   },
   {
     image: "https://i.pinimg.com/originals/a0/98/0d/a0980dad0e1c42cb68d556bf6d0f6700.jpg",
-    alt: "Stylish woman wearing pearl jewelry",
+    alt: "Stylish woman wearing pearl jewellery",
     kicker: "Exclusive Collection",
     headline: "Pearl Luxury",
   },
   {
     image: "https://thumbs.dreamstime.com/b/silver-gold-new-year-jewelry-festive-numbers-realistic-form-jewelry-stores-banner-stunning-image-showcases-356437777.jpg",
-    alt: "Glamorous woman with luxury jewelry",
+    alt: "Glamorous woman with luxury jewellery",
     kicker: "Timeless Elegance",
     headline: "Gold Essentials",
   },
