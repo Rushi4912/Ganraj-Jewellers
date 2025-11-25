@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Star, Heart, ShoppingCart, Eye, GitCompare } from "lucide-react";
 import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
@@ -28,10 +29,13 @@ export default function ProductCard({
           className="block h-full"
           aria-label={`View ${product.name}`}
         >
-          <img
+          <Image
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            unoptimized
           />
         </Link>
 

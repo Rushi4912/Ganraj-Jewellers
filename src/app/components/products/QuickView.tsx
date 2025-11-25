@@ -6,6 +6,7 @@ import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import VariantSelector from "./VariantSelector";
 import { SelectedVariants } from "../../types/product";
+import Image from "next/image";
 
 interface QuickViewProps {
   product: Product | null;
@@ -21,21 +22,15 @@ export default function QuickView({
   onViewFullDetails,
 }: QuickViewProps) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>(
     {}
   );
 
   useEffect(() => {
     if (product && isOpen) {
-      setIsLoading(true);
       setSelectedVariants({});
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 300);
-      return () => clearTimeout(timer);
     }
-  }, [product?.id, isOpen]);
+  }, [product, isOpen]);
 
   if (!isOpen || !product) return null;
 
@@ -120,11 +115,14 @@ export default function QuickView({
             <div className="grid md:grid-cols-2 gap-8">
               {/* Product Image */}
               <div className="relative">
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
-                  <img
+                <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-100">
+                  <Image
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    unoptimized
                   />
                 </div>
 

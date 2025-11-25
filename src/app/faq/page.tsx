@@ -1,16 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Package,
-  Leaf,
-  Shield,
-  Sparkles,
-  Star,
-  CheckCircle,
-  Circle,
-  Clock,
-} from "lucide-react";
+import { Package, Leaf, Shield, Sparkles, CheckCircle, Circle } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ShoppingCartSidebar from "../components/cart/ShoppingCart";

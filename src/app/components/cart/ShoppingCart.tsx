@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { discountCodes } from "../../data/products";
+import Image from "next/image";
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -105,11 +106,16 @@ export default function ShoppingCartSidebar({
                 >
                   {/* Product Image */}
                   <div className="relative w-full max-w-sm flex-shrink-0 sm:w-24">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-48 sm:h-32 md:h-24 object-contain rounded-lg border border-gray-100 bg-gray-50"
-                    />
+                    <div className="relative w-full h-48 sm:h-32 md:h-24">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-contain rounded-lg border border-gray-100 bg-gray-50"
+                        sizes="(max-width: 640px) 100vw, 6rem"
+                        unoptimized
+                      />
+                    </div>
                     {item.badge && (
                       <span
                         className={`absolute -top-2 -left-2 px-2 py-1 rounded-full text-xs font-semibold text-white ${

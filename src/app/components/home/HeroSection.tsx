@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { ArrowRight, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
 
 interface Slide {
   image: string;
@@ -40,20 +41,28 @@ const slides: Slide[] = [
 export default function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const transitioningRef = useRef(false);
+
+  const handleSlideChange = useCallback(
+    (nextSlideOrFn: number | ((prev: number) => number)) => {
+      if (transitioningRef.current) return;
+      transitioningRef.current = true;
+      setIsTransitioning(true);
+      setCurrentSlide(nextSlideOrFn);
+      setTimeout(() => {
+        transitioningRef.current = false;
+        setIsTransitioning(false);
+      }, 1000);
+    },
+    []
+  );
 
   useEffect(() => {
     const timer = setInterval(() => {
       handleSlideChange((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, []);
-
-  const handleSlideChange = (nextSlideOrFn: number | ((prev: number) => number)) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrentSlide(nextSlideOrFn);
-    setTimeout(() => setIsTransitioning(false), 1000);
-  };
+  }, [handleSlideChange]);
 
   const nextSlide = () => {
     handleSlideChange((prev) => (prev + 1) % slides.length);
@@ -153,11 +162,14 @@ export default function HeroSection() {
                         isActive ? "animate-ken-burns" : ""
                       }`}
                     >
-                      <img
+                      <Image
                         src={slide.image}
                         alt={slide.headline}
-                        className="w-full h-full object-cover"
-                        loading={index === 0 ? "eager" : "lazy"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 100vw, 40vw"
+                        priority={index === 0}
+                        unoptimized
                       />
                     </div>
                     

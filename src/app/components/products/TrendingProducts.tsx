@@ -7,6 +7,7 @@ import { useCart } from '@/app/context/CartContext';
 import { Product as ShopProduct } from '@/app/types/product';
 import QuickView from './QuickView';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface Product {
   id: string;
@@ -20,6 +21,8 @@ interface Product {
   description?: string;
 }
 
+const TABS = ['FEATURED', 'NEW ARRIVALS', 'BEST SELLER'] as const;
+
 export default function TrendingProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,10 +35,8 @@ export default function TrendingProducts() {
   const { addToCart, wishlist, toggleWishlist } = useCart();
   const router = useRouter();
 
-  const tabs = ['FEATURED', 'NEW ARRIVALS', 'BEST SELLER'];
-
   useEffect(() => {
-    fetchProducts(tabs[activeTab]);
+    fetchProducts(TABS[activeTab]);
   }, [activeTab]);
 
   const fetchProducts = async (tab: string) => {
@@ -91,14 +92,6 @@ export default function TrendingProducts() {
       }
     };
   }, []);
-
-  const getImageUrl = (imagePath: string) => {
-    const { data } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(imagePath);
-    console.log('Image path:', imagePath, '→ URL:', data.publicUrl);
-    return data.publicUrl;
-  };
 
   const handleImageError = (productId: string) => {
     setImageErrors(prev => {
@@ -183,7 +176,7 @@ export default function TrendingProducts() {
             Trending Products
           </h2>
           <div className="flex justify-center gap-8 flex-wrap">
-            {tabs.map((tab, index) => (
+            {TABS.map((tab, index) => (
               <button
                 key={index}
                 onClick={() => handleTabClick(index)}
@@ -231,11 +224,14 @@ export default function TrendingProducts() {
                 <div className="relative overflow-hidden rounded-xl mb-4 bg-gray-50 aspect-square cursor-pointer"
                      onClick={() => handleProductClick(product)}>
                   {currentImage ? (
-                    <img
+                    <Image
                       src={currentImage}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       onError={() => handleImageError(product.id)}
+                      unoptimized
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">

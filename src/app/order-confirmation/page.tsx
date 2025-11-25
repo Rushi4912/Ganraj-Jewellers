@@ -16,6 +16,7 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
+import Image from "next/image";
 import {
   downloadInvoice,
   formatCurrency,
@@ -280,11 +281,16 @@ const OrderConfirmationContent = () => {
                     key={`${item.id}-${item.variantId || "base"}`}
                     className="flex flex-col sm:flex-row gap-4 border border-gray-100 rounded-2xl p-4"
                   >
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full sm:w-28 h-32 object-cover rounded-xl bg-gray-50"
-                    />
+                    <div className="relative w-full sm:w-28 h-32">
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-cover rounded-xl bg-gray-50"
+                        sizes="(max-width: 640px) 100vw, 7rem"
+                        unoptimized
+                      />
+                    </div>
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-4">
                         <div>

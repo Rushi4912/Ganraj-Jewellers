@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Calendar, ArrowRight, BookOpen } from "lucide-react";
+import Image from "next/image";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ShoppingCartSidebar from "../components/cart/ShoppingCart";
@@ -65,7 +66,14 @@ export default function BlogPage() {
                 className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex flex-col"
               >
                 <div className="relative h-52">
-                  <img src={post.image} alt={post.title} className="w-full h-full object-cover" />
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    unoptimized
+                  />
                   <span className="absolute top-4 left-4 bg-white/90 text-amber-600 text-xs font-semibold px-3 py-1 rounded-full">
                     {post.tag}
                   </span>

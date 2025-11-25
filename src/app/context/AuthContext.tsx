@@ -20,6 +20,8 @@ interface Profile {
   phone?: string;
   avatarUrl?: string;
   email: string;
+  role?: "admin" | "customer";
+  metadata?: Record<string, unknown> | null;
 }
 
 export interface Address {
@@ -39,6 +41,111 @@ export interface Address {
 type AddressPayload = Omit<Address, "id" | "isDefault"> & {
   id?: string;
   isDefault?: boolean;
+};
+
+type ProfileRow = {
+  id: string;
+  name?: string | null;
+  full_name?: string | null;
+  phone?: string | null;
+  avatar_url?: string | null;
+  role?: string | null;
+  address?: Record<string, unknown> | null;
+};
+
+const extractMetadata = (
+  addressField: ProfileRow["address"]
+): Record<string, unknown> | null => {
+  if (addressField && typeof addressField === "object" && !Array.isArray(addressField)) {
+    return addressField;
+  }
+  return null;
+};
+
+const mapProfileRow = (
+  row: ProfileRow,
+  email?: string | null
+): Profile => {
+  const metadata = extractMetadata(row.address);
+  const phone =
+    typeof row.phone === "string"
+      ? row.phone
+      : typeof metadata?.phone === "string"
+      ? (metadata.phone as string)
+      : "";
+
+  const avatarUrl =
+    typeof row.avatar_url === "string"
+      ? row.avatar_url
+      : typeof metadata?.avatarUrl === "string"
+      ? (metadata.avatarUrl as string)
+      : "";
+
+  return {
+    id: row.id,
+    fullName: row.name || row.full_name || "",
+    phone,
+    avatarUrl,
+    email: email ?? "",
+    role: (row.role as "admin" | "customer") || "customer",
+    metadata,
+  };
+};
+
+const upsertProfileRow = async (
+  primaryPayload: Record<string, unknown>,
+  fallbackPayload?: Record<string, unknown>
+): Promise<ProfileRow> => {
+  const attempt = async (payload: Record<string, unknown>) =>
+    supabase.from("profiles").upsert(payload).select("*").single<ProfileRow>();
+
+  let response = await attempt(primaryPayload);
+
+  if (response.error && response.error.code === "42703" && fallbackPayload) {
+    response = await attempt(fallbackPayload);
+  }
+
+  if (response.error) {
+    throw response.error;
+  }
+
+  return (
+    response.data ??
+    (fallbackPayload as ProfileRow) ??
+    (primaryPayload as ProfileRow)
+  );
+};
+
+const ensureProfileViaApi = async (payload: {
+  id: string;
+  email?: string | null;
+  name?: string;
+}): Promise<ProfileRow | null> => {
+  try {
+    const response = await fetch("/api/profiles/ensure", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: payload.id,
+        email: payload.email,
+        name: payload.name,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => null);
+      console.error("Ensure profile API error:", errorBody ?? response.statusText);
+      return null;
+    }
+
+    const data = (await response.json()) as { profile: ProfileRow };
+    return data.profile;
+  } catch (error) {
+    console.error("Ensure profile API request failed:", error);
+    return null;
+  }
 };
 
 interface AuthContextType {
@@ -83,35 +190,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .from("profiles")
           .select("*")
           .eq("id", userId)
-          .single();
+          .maybeSingle<ProfileRow>();
 
         if (error && error.code !== "PGRST116") {
           throw error;
         }
 
-        const profileData = data ?? {
-          id: userId,
-          full_name: "",
-          phone: "",
-          avatar_url: "",
-        };
+        let profileRow = data ?? null;
 
-        if (!data) {
-          await supabase.from("profiles").insert({
+        if (!profileRow) {
+          profileRow = await ensureProfileViaApi({
             id: userId,
-            full_name: "",
-            phone: "",
-            avatar_url: "",
+            email,
+            name: email?.split("@")[0] ?? "",
           });
         }
 
-        setProfile({
-          id: userId,
-          fullName: profileData.full_name || "",
-          phone: profileData.phone || "",
-          avatarUrl: profileData.avatar_url || "",
-          email: email ?? "",
-        });
+        if (!profileRow) {
+          const basePayload = {
+            id: userId,
+            name: email?.split("@")[0] || "",
+            role: "customer",
+          };
+          const legacyPayload = {
+            id: userId,
+            full_name: "",
+            role: "customer",
+          };
+          profileRow = await upsertProfileRow(basePayload, legacyPayload);
+        }
+
+        if (!profileRow) {
+          throw new Error("Unable to create or load profile record");
+        }
+
+        setProfile(mapProfileRow(profileRow, email));
         profileErrorNotified.current = false;
       } catch (err) {
         console.error("Profile fetch error", err);
@@ -126,6 +239,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             phone: "",
             avatarUrl: "",
             email: email ?? "",
+            role: "customer",
+            metadata: null,
           }
         );
       } finally {
@@ -200,7 +315,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const currentUser = data.session?.user ?? null;
       setUser(currentUser);
       if (currentUser) {
-        await Promise.all([fetchProfile(currentUser.id), fetchAddresses(currentUser.id)]);
+        await Promise.all([
+          fetchProfile(currentUser.id, currentUser.email ?? undefined),
+          fetchAddresses(currentUser.id),
+        ]);
       } else {
         setProfile(null);
         setAddresses([]);
@@ -219,7 +337,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const currentUser = session?.user ?? null;
         setUser(currentUser);
         if (currentUser) {
-          fetchProfile(currentUser.id);
+          fetchProfile(currentUser.id, currentUser.email ?? undefined);
           fetchAddresses(currentUser.id);
         } else {
           setProfile(null);
@@ -243,24 +361,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setProfileLoading(true);
       try {
-        const payload = {
-          id: user.id,
-          full_name: updates.fullName ?? profile?.fullName ?? "",
-          phone: updates.phone ?? profile?.phone ?? "",
-          avatar_url: updates.avatarUrl ?? profile?.avatarUrl ?? "",
+        const phoneValue = updates.phone ?? profile?.phone ?? "";
+        const avatarValue = updates.avatarUrl ?? profile?.avatarUrl ?? "";
+        const metadata: Record<string, unknown> = {
+          ...(profile?.metadata ?? {}),
+          phone: phoneValue,
+          avatarUrl: avatarValue,
         };
 
-        const { error } = await supabase.from("profiles").upsert(payload);
-
-        if (error) throw error;
-
-        setProfile((prev) => ({
+        const basePayload = {
           id: user.id,
-          email: prev?.email || user.email || "",
-          fullName: payload.full_name,
-          phone: payload.phone,
-          avatarUrl: payload.avatar_url,
-        }));
+          name: updates.fullName ?? profile?.fullName ?? "",
+          role: updates.role ?? profile?.role ?? "customer",
+          address: metadata,
+        };
+
+        const legacyPayload = {
+          id: user.id,
+          full_name: updates.fullName ?? profile?.fullName ?? "",
+          phone: phoneValue,
+          avatar_url: avatarValue,
+          role: updates.role ?? profile?.role ?? "customer",
+        };
+
+        const savedRow = await upsertProfileRow(basePayload, legacyPayload);
+
+        setProfile(mapProfileRow(savedRow, user.email ?? profile?.email));
 
         toast.success("Profile updated");
       } catch (err) {

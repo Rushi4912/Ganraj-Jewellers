@@ -14,6 +14,7 @@ import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import VariantSelector from "./VariantSelector";
 import { SelectedVariants } from "../../types/product";
+import Image from "next/image";
 interface ProductDetailProps {
   product: Product | null;
   isOpen: boolean;
@@ -30,21 +31,16 @@ export default function ProductDetail({
   const [activeTab, setActiveTab] = useState<
     "description" | "reviews" | "details"
   >("description");
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>(
     {}
   ); // NEW
 
   useEffect(() => {
     if (product && isOpen) {
-      setIsLoading(true);
-      setSelectedVariants({}); // Reset variants
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-      return () => clearTimeout(timer);
+      setSelectedVariants({});
+      setSelectedImage(0);
     }
-  }, [product?.id, isOpen]);
+  }, [product, isOpen]);
 
   if (!isOpen || !product) return null;
 
@@ -144,10 +140,13 @@ export default function ProductDetail({
               <div>
                 {/* Main Image */}
                 <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100 mb-4">
-                  <img
+                  <Image
                     src={product.images[selectedImage] || product.image}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    unoptimized
                   />
 
                   {/* Badge */}
@@ -178,16 +177,19 @@ export default function ProductDetail({
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
-                        className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                           selectedImage === index
                             ? "border-amber-500 shadow-lg"
                             : "border-gray-200 hover:border-gray-300"
                         }`}
                       >
-                        <img
+                        <Image
                           src={img}
                           alt={`${product.name} ${index + 1}`}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="100px"
+                          unoptimized
                         />
                       </button>
                     ))}

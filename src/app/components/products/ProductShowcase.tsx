@@ -16,6 +16,7 @@ import {
 import { Product, SelectedVariants } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import VariantSelector from "./VariantSelector";
+import Image from "next/image";
 
 interface ProductShowcaseProps {
   product: Product;
@@ -120,11 +121,14 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Gallery */}
             <div className="space-y-6">
-              <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white">
-                <img
+              <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white h-[480px]">
+                <Image
                   src={galleryImages[selectedImage] || product.image}
                   alt={`${product.name} view ${selectedImage + 1}`}
-                  className="w-full h-[480px] object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  unoptimized
                 />
                 {product.badge && (
                   <div className="absolute top-6 left-6 px-4 py-2 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-500 shadow-lg">
@@ -145,16 +149,19 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                     <button
                       key={img + index}
                       onClick={() => setSelectedImage(index)}
-                      className={`rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
                         selectedImage === index
                           ? "border-amber-500 shadow-lg"
                           : "border-transparent hover:border-amber-200"
                       }`}
                     >
-                      <img
+                      <Image
                         src={img}
                         alt={`${product.name} thumbnail ${index + 1}`}
-                        className="w-full h-32 object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="150px"
+                        unoptimized
                       />
                     </button>
                   ))}

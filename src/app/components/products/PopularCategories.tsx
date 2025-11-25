@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 const categories = [
@@ -76,10 +77,13 @@ export default function PopularCategories() {
               className="group relative block h-[500px] overflow-hidden bg-stone-200"
             >
               {/* Image Background */}
-              <img
+              <Image
                 src={category.image}
                 alt={category.name}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 1024px) 100vw, 33vw"
+                unoptimized
                 loading="lazy"
               />
               

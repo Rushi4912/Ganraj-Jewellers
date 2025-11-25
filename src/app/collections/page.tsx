@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import PopularCategories from "../components/products/PopularCategories";
 import { ArrowRight, Star, ShieldCheck, Truck, Sparkles } from "lucide-react";
 
@@ -47,10 +48,14 @@ export default function CollectionsPage() {
       {/* Hero Section */}
       <section className="relative h-[90vh] overflow-hidden flex items-center justify-center">
         <div className="absolute inset-0">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?auto=format&fit=crop&w=2000&q=80"
             alt="Jewellery Background"
-            className="w-full h-full object-cover scale-105 animate-slow-zoom"
+            fill
+            className="object-cover scale-105 animate-slow-zoom"
+            sizes="100vw"
+            priority
+            unoptimized
           />
           <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
         </div>
@@ -116,10 +121,13 @@ export default function CollectionsPage() {
           {/* Large Featured Item */}
           <div className="lg:col-span-8 relative group overflow-hidden rounded-3xl h-[600px] lg:h-[700px]">
             <Link href={`/collections/${heroCollections[0].slug}`} className="block w-full h-full">
-              <img
+              <Image
                 src={heroCollections[0].image}
                 alt={heroCollections[0].name}
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                sizes="(max-width: 1024px) 100vw, 66vw"
+                unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
               
@@ -147,10 +155,13 @@ export default function CollectionsPage() {
           {/* Smaller Featured Item */}
           <div className="lg:col-span-4 relative group overflow-hidden rounded-3xl h-[500px] lg:h-[700px]">
             <Link href={`/collections/${heroCollections[1].slug}`} className="block w-full h-full">
-              <img
+              <Image
                 src={heroCollections[1].image}
                 alt={heroCollections[1].name}
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                sizes="(max-width: 1024px) 100vw, 33vw"
+                unoptimized
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
               

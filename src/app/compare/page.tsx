@@ -10,6 +10,7 @@ import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import { transformSupabaseProductList } from '../utils/transformSupabaseProduct';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ComparePage() {
   const { compareList, toggleCompare, addToCart } = useCart();
@@ -164,11 +165,14 @@ export default function ComparePage() {
                           </button>
 
                           {/* Product Image */}
-                          <div className="aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-lg overflow-hidden bg-gray-100">
-                            <img
+                          <div className="relative aspect-square w-full max-w-[200px] mx-auto mb-4 rounded-lg overflow-hidden bg-gray-100">
+                            <Image
                               src={product.image}
                               alt={product.name}
-                              className="w-full h-full object-cover"
+                              fill
+                              className="object-cover"
+                              sizes="200px"
+                              unoptimized
                             />
                           </div>
 
