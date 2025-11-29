@@ -8,69 +8,73 @@ import ShoppingCartSidebar from "../components/cart/ShoppingCart";
 
 const termSections = [
   {
-    title: "Orders & Pricing",
+    title: "Orders & Fulfilment",
     copy: [
-      "All prices include GST and are listed in INR. International checkout previews duties before payment.",
-      "Custom commissions require a 50% deposit; once production begins, this deposit is transferred to studio labor.",
-      "We may cancel orders that look fraudulent or misuse inventory, with a full refund.",
+      "Orders are typically processed within 24 hours; festival seasons may extend QC to 48 hours so purity checks are never rushed.",
+      "Every product is inspected for genuine 999 Fine Silver or S925 Sterling Silver before we package it.",
+      "If an item is unavailable, we contact you to choose an alternate design of equal value or receive a full refund.",
     ],
   },
   {
-    title: "Shipping & Risk",
+    title: "Shipping & Delivery",
     copy: [
-      "Shipments are insured until delivery and require OTP + recipient signature.",
-      "Delays from customs or force majeure are communicated promptly, and you receive alternative delivery dates.",
-      "Ownership transfers once delivery is confirmed; inspect jewellery immediately and flag concerns within 24 hours.",
+      "Domestic shipping across India carries a flat ₹50–₹100 fee; international rates are calculated at checkout.",
+      "Tracking IDs are issued via WhatsApp, SMS, and email once your parcel leaves our studio.",
+      "International customers are responsible for customs duties, VAT, or handling fees charged by local authorities.",
+      "Parcels returned due to incorrect addresses or delivery refusals incur additional re-shipping costs.",
     ],
   },
   {
-    title: "Returns & Repairs",
+    title: "Returns, Refunds & Exchanges",
     copy: [
-      "Initiate returns within 14 days via care@jwellery4u.com; items must be unworn with original tags.",
-      "Complimentary repairs cover manufacturing defects for 6 months; normal wear & tear is quoted separately.",
-      "We issue studio credits for custom pieces; restyling consultations accompany every return.",
+      "We offer a 15-day return window for unused, unworn items with all original tags, packaging, and certificates intact.",
+      "Earrings, studs, personalized pieces, silver coins, idols, utensils, and clearance items are final sale unless defective on arrival.",
+      "International orders are considered final sale and cannot be returned or refunded.",
+      "Report damaged or incorrect items within 24 hours with a clear, continuous 360° unboxing video; claims without video proof cannot be processed.",
+      "Refunds initiate within 48 hours of a successful quality check, and banks typically take 5–7 business days to credit the amount.",
     ],
   },
   {
-    title: "Content & Conduct",
+    title: "Use of Website & Eligibility",
     copy: [
-      "Editorial photography, CAD files, and copy remain Ganraj Jewellers intellectual property.",
-      "Usage of brand assets or scraping site content without permission is strictly prohibited.",
-      "Respectful conduct toward our studio staff is expected; we reserve the right to pause service for abuse.",
+      "www.ganrajjewellers.com is owned and operated by Ganraj Jewellers; all content, imagery, and software remain our intellectual property.",
+      "By using the site you agree to these Terms of Use and our Privacy Policy; discontinue use if you do not agree.",
+      "You must be able to form a legally binding contract under the Indian Contract Act, 1872 or other applicable laws; minors may shop only with a parent or guardian.",
+      "We reserve the right to deny service to fraudulent accounts, abusive behavior, or violations of these terms.",
     ],
   },
 ];
 
 const highlights = [
   {
-    title: "Certified Promise",
-    detail: "Every store visit and checkout flows through secure servers with continuous compliance monitoring.",
+    title: "Purity Guaranteed",
+    detail: "Only 999 Fine Silver and S925 Sterling Silver pieces, inspected and hallmarked before dispatch, leave our studio.",
     icon: ShieldCheck,
   },
   {
-    title: "Transparent Process",
-    detail: "We list shipping, returns, and repair windows clearly before you confirm payment.",
+    title: "Transparent Logistics",
+    detail: "Processing timelines, shipping fees, and customs responsibilities are clearly shared before you pay.",
     icon: Scale,
   },
   {
-    title: "Fine Print Minimalism",
-    detail: "No hidden fees—just curated premium service with direct concierge support.",
+    title: "Customer-First Policies",
+    detail: "15-day returns, clear exclusions, and proactive communication keep every purchase worry-free.",
     icon: Sparkles,
   },
 ];
 
 const pillars = [
   {
-    label: "Provision",
-    desc: "Detailed quotes, marriage of hand sketches and CAD, and clear delivery dates.",
+    label: "Purity",
+    desc: "We stand by the promised 999/S925 standards with QC and documentation for every order.",
   },
   {
-    label: "Protection",
-    desc: "Insurance, hallmarks, and lifetime engraving records.",
+    label: "Transparency",
+    desc: "Processing windows, shipping charges, and refund timelines are published and honored.",
   },
   {
-    label: "Partnership",
-    desc: "Direct stylist access, mindful returns, and privacy-first data handling.",
+    label: "Care",
+    desc: "Dedicated support via WhatsApp, email, and appointments ensures smooth exchanges and service.",
   },
 ];
 
@@ -89,10 +93,11 @@ export default function TermsPage() {
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
             <p className="text-sm font-semibold text-amber-600 uppercase tracking-[0.5em]">Terms of Service</p>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-              The fine print for fine jewellery, written simply.
+              The real policies behind every Ganraj order.
             </h1>
             <p className="text-lg text-gray-600">
-              Updated May 2025. These terms describe our commitments to you—from the atelier to the delivery chaperone.
+              These terms summarise our fulfilment, shipping, return, and website policies so you know exactly what to
+              expect before you check out.
             </p>
           </div>
         </section>

@@ -8,44 +8,44 @@ import ShoppingCartSidebar from "../components/cart/ShoppingCart";
 
 const storyHighlights = [
   {
-    title: "Legacy Craftsmanship",
+    title: "Purity You Can Live In",
     description:
-      "Our atelier blends time-honored Indian artistry with contemporary silhouettes, creating heirloom pieces meant to be worn every day.",
+      "We work only with certified 999 Fine Silver and S925 Sterling Silver so your everyday stack keeps its shine without worry.",
     icon: Sparkles,
   },
   {
-    title: "Conscious Luxury",
+    title: "Fair, Direct Pricing",
     description:
-      "We partner with fair-trade suppliers and recycle precious metals to ensure every creation feels as good as it looks.",
+      "By owning the making process we remove unnecessary markups and pass everyday-friendly pricing back to you.",
     icon: ShieldCheck,
   },
   {
-    title: "Human Touch",
+    title: "Founder-Led Craft",
     description:
-      "Each jewel passes through more than 20 artisan hands—from sketch to final polish—before it graces yours.",
+      "Rutvik Bedre still reviews every collection, keeping every piece tied to the memories that inspired Ganraj Jewellers.",
     icon: HeartHandshake,
   },
 ];
 
 const stats = [
-  { label: "Artisans Empowered", value: "120+" },
-  { label: "Bespoke Commissions", value: "3.5K" },
-  { label: "Countries Shipped", value: "27" },
-  { label: "Years of Legacy", value: "35" },
+  { label: "Purity Standards", value: "999 / S925" },
+  { label: "Quality Check Window", value: "24 hrs" },
+  { label: "Return Promise", value: "15 Days" },
+  { label: "Founded By", value: "Rutvik B." },
 ];
 
 const values = [
   {
-    title: "Slow Craft",
-    detail: "We obsess over finish, setting, and silhouette so the piece feels effortless.",
+    title: "Purity First",
+    detail: "Every design is crafted only in 999 Fine Silver or S925 Sterling Silver for lasting confidence.",
   },
   {
-    title: "Materials that Matter",
-    detail: "Only conflict-free stones and certified, hallmarked gold leave our studio.",
+    title: "Accessible Luxury",
+    detail: "We keep production in-house so quality pieces stay within reach of every budget.",
   },
   {
-    title: "Everyday Indulgence",
-    detail: "Luxurious pieces designed to move seamlessly from workday to soirée.",
+    title: "Daily-Wear Ready",
+    detail: "Our jewellery is built for commutes, celebrations, and everything between without hiding it away.",
   },
 ];
 
@@ -64,17 +64,18 @@ export default function AboutPage() {
           </div>
           <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 text-amber-600 text-sm font-semibold shadow-sm">
-              <Gem size={18} /> Crafted in small batches since 1990
+              <Gem size={18} /> Founded by Rutvik Bedre for everyday purity
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mt-6 leading-tight">
-              Jewellery that celebrates
+              Pure silver you can
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">
-                every luminous moment
+                wear every single day
               </span>
             </h1>
             <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-              We are a Mumbai-born collective of designers, goldsmiths, and storytellers reimagining fine jewellery
-              for the modern muse. Our pieces are intimate, intentional, and unapologetically luxurious.
+              Ganraj Jewellers began with a simple belief: the jewellery that holds your memories shouldn’t stay locked
+              away. We specialise in genuine 999 Fine Silver and S925 Sterling Silver pieces that pair purity with
+              accessible pricing.
             </p>
           </div>
         </section>
@@ -97,12 +98,12 @@ export default function AboutPage() {
           <div>
             <p className="text-sm font-semibold text-amber-600 uppercase tracking-[0.3em]">Our Story</p>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4">
-              Made by hand, inspired by heart
+              From personal memories to wearable purity
             </h2>
             <p className="mt-6 text-gray-600 leading-relaxed">
-              What started as a family-run studio in Zaveri Bazaar has blossomed into a global house of modern
-              heirlooms. Every decade, we evolve, yet our promise stays the same: to create jewellery that mirrors
-              your story with fine materials, intuitive design, and obsessive craftsmanship.
+              Rutvik watched heirloom pieces stay tucked away for fear of damage, so he set out to create silver jewellery
+              that could handle workdays, festivities, and quiet nights alike. Every piece still travels through our
+              founder&apos;s desk for purity checks, ensuring the emotions behind it stay protected.
             </p>
             <div className="mt-8 space-y-4">
               {values.map((value) => (
@@ -139,18 +140,18 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  title: "Design Lab",
-                  description: "Sketches to 3D models guided by moodboards, muses, and everyday rituals.",
+                  title: "Purity Lab",
+                  description: "Every batch is inspected within 24 hours so only certified 999 or S925 silver leaves our studio.",
                   icon: Feather,
                 },
                 {
-                  title: "Stone Library",
-                  description: "Rare emeralds, vivid tourmalines, and custom cuts curated with gemologists.",
+                  title: "Founder Desk",
+                  description: "Rutvik personally reviews new designs to keep them rooted in the memories that inspired Ganraj.",
                   icon: Gem,
                 },
                 {
-                  title: "Finishing Ritual",
-                  description: "Hand-burnished edges, mirror polishes, and hallmarked authenticity cards.",
+                  title: "Care & Confidence",
+                  description: "Secure packaging, 15-day returns, and aftercare tips ensure you can truly live in your pieces.",
                   icon: Award,
                 },
               ].map(({ title, description, icon: Icon }) => (

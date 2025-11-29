@@ -10,27 +10,27 @@ const policySections = [
   {
     title: "1. Information we collect",
     details: [
-      "Profile assumptions (name, email, phone, shipping) submitted during checkout.",
-      "Order history, wishlist picks, size preferences, and bespoke notes so we can personalize every look.",
-      "Payment confirmation from encrypted gateways—card details never touch our servers.",
-      "Usage patterns via cookies to smooth discovery and honor your aesthetic cues.",
+      "Details you provide while shopping: name, email, phone number, shipping address, and billing details.",
+      "Order history, return requests, and support conversations so we can quality-check every dispatch.",
+      "Gateway confirmations for payments—card numbers stay with the PCI-compliant provider.",
+      "Optional assets like unboxing videos you share for claims, stored only for the purpose of resolution.",
     ],
   },
   {
     title: "2. How we use your data",
     details: [
-      "Ship, repair, and concierge requests with a white-glove touch.",
-      "Send release alerts, care reminders, and curated gifting ideas you opt-into.",
-      "Forecast production so the pieces you love are always in stock.",
-      "Comply with BIS hallmarking, taxation, and anti-fraud checks.",
+      "Process, insure, and ship orders within the 24–48 hour fulfillment window mentioned in our policy.",
+      "Send tracking IDs via WhatsApp, SMS, and email, plus reminders about purity care or return deadlines.",
+      "Prevent fraud, honor BIS hallmark regulations, and comply with Indian taxation requirements.",
+      "Respond to queries, refunds, and exchanges so you never need to repeat information.",
     ],
   },
   {
     title: "3. Security & rights",
     details: [
-      "AES-256 encryption guards every record. Access is limited to award-winning artisans, stylists, and compliance.",
-      "We never sell your data. Trusted logistics, payments, and analytics partners receive only the essentials.",
-      "Request data deletion, exports, or preference updates anytime via privacy@jwellery4u.com.",
+      "We operate the website ourselves, retain ownership of all content, and never sell or rent your personal data.",
+      "Only vetted logistics and payment partners receive what they need to complete your order.",
+      "By using ganrajjewellers.com you consent to this policy, and you can email ganrajjewellers3@gmail.com anytime to update or delete your information.",
     ],
   },
 ];
@@ -38,33 +38,33 @@ const policySections = [
 const highlights = [
   {
     icon: ShieldCheck,
-    title: "Certified safety",
-    detail: "ISO-aligned controls keep production and payment details private.",
+    title: "Privacy promised",
+    detail: "Your information is stored exclusively for Ganraj Jewellers services and safeguarded end to end.",
   },
   {
     icon: Lock,
-    title: "Private by design",
-    detail: "Our site and mobile experience share no third-party ad pixels.",
+    title: "Indian law compliant",
+    detail: "We follow Indian Contract Act guidelines and maintain full ownership of site data and assets.",
   },
   {
     icon: Sparkles,
-    title: "Always transparent",
-    detail: "Every feature and cookie banner lists purpose, duration, and opt-outs.",
+    title: "Transparent communication",
+    detail: "Every policy, from returns to refunds, clearly states timelines before you confirm payment.",
   },
 ];
 
 const timelines = [
   {
-    title: "Submit an inquiry",
-    description: "Your preferences enter a protected vault and are only reviewed by our concierge team.",
+    title: "Place an order",
+    description: "Share only the essentials—we collect address and contact details to craft and dispatch your jewellery.",
   },
   {
-    title: "Craft & ship",
-    description: "We share tracking milestones without storing sensitive delivery photos.",
+    title: "Shipping & tracking",
+    description: "Within 24–48 hours your tracking ID hits email, SMS, and WhatsApp; data stays within that flow.",
   },
   {
-    title: "Aftercare",
-    description: "Care reminders go out, but you can pause them anytime in your profile.",
+    title: "Returns & aftercare",
+    description: "Return windows last 15 days, and every video or note you send for verification remains private.",
   },
 ];
 
@@ -83,11 +83,11 @@ export default function PrivacyPolicyPage() {
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
             <p className="text-sm font-semibold text-amber-600 uppercase tracking-[0.5em]">Privacy Policy</p>
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-              Your trust is the most precious gemstone.
+              We protect your data the way we protect our silver.
             </h1>
             <p className="text-lg text-gray-600">
-              Updated May 2025. This policy governs every interaction you have with Ganraj Jewellers online or in our
-              experience studio.
+              This notice explains how Ganraj Jewellers collects, stores, and uses the information you share with us on
+              ganrajjewellers.com or during concierge interactions.
             </p>
           </div>
         </section>
@@ -128,8 +128,8 @@ export default function PrivacyPolicyPage() {
                 <p className="text-sm uppercase tracking-[0.4em] text-amber-400">Lifecycle</p>
                 <h2 className="text-3xl font-bold mt-2">How your data journeys with us</h2>
                 <p className="mt-3 text-gray-200 max-w-3xl">
-                  From the moment you request a private preview to the day the case returns for cleaning, every detail
-                  is encrypted, logged, and optional.
+                  From the moment you place an order to the day a return reaches our warehouse, we use your information
+                  only to deliver purity, transparency, and the care you asked for.
                 </p>
               </div>
               <div className="space-y-4">
