@@ -12,6 +12,8 @@ import {
   Truck,
   BadgeCheck,
   RotateCcw,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { Product, SelectedVariants } from "../../types/product";
 import { useCart } from "../../context/CartContext";
@@ -22,14 +24,67 @@ interface ProductShowcaseProps {
   product: Product;
 }
 
+const AccordionItem = ({
+  title,
+  children,
+  isOpen,
+  onClick,
+}: {
+  title: string;
+  children: React.ReactNode;
+  isOpen: boolean;
+  onClick: () => void;
+}) => {
+  return (
+    <div className="border-b border-gray-200">
+      <button
+        className="w-full py-4 flex items-center justify-between text-left group"
+        onClick={onClick}
+      >
+        <span className="text-base font-medium text-gray-900 group-hover:text-amber-600 transition-colors">
+          {title}
+        </span>
+        {isOpen ? (
+          <Minus size={20} className="text-gray-900" />
+        ) : (
+          <Plus size={20} className="text-gray-900" />
+        )}
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "max-h-96 opacity-100 mb-4" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="text-sm text-gray-600 leading-relaxed">{children}</div>
+      </div>
+    </div>
+  );
+};
+
 export default function ProductShowcase({ product }: ProductShowcaseProps) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({});
+  const [openAccordion, setOpenAccordion] = useState<string | null>("Description");
 
   const isInWishlist = wishlist.includes(product.id);
 
-  const galleryImages = product.images.length > 0 ? product.images : [product.image];
+  // Ensure at least 3 images for the gallery layout as requested
+  const galleryImages = useMemo(() => {
+    const images =
+      product.images.length > 0 ? product.images : [product.image];
+    
+    // If we have fewer than 3 images, duplicate the first one to fill the slots
+    // to meet the "need 3 images" requirement for the layout
+    if (images.length < 3) {
+      const filledImages = [...images];
+      while (filledImages.length < 3) {
+        filledImages.push(images[0]);
+      }
+      return filledImages;
+    }
+    return images;
+  }, [product.images, product.image]);
 
   const finalPrice = useMemo(() => {
     if (!product.variants || product.variants.length === 0) {
@@ -39,7 +94,9 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
     product.variants.forEach((variant) => {
       const selectedValue = selectedVariants[variant.type];
       if (selectedValue) {
-        const variantOption = variant.options.find((option) => option.id === selectedValue);
+        const variantOption = variant.options.find(
+          (option) => option.id === selectedValue
+        );
         if (variantOption?.priceModifier) {
           price += variantOption.priceModifier;
         }
@@ -75,53 +132,18 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
     addToCart(product, selectedVariants);
   };
 
+  const toggleAccordion = (title: string) => {
+    setOpenAccordion(openAccordion === title ? null : title);
+  };
+
   return (
-    <div className="bg-gray-50">
-      <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 py-16">
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-y-0 w-64 bg-gradient-to-b from-amber-200 via-transparent to-transparent blur-3xl left-0"></div>
-          <div className="absolute inset-y-0 w-64 bg-gradient-to-b from-orange-200 via-transparent to-transparent blur-3xl right-0"></div>
-        </div>
-
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 mb-6 text-sm text-amber-800">
-            <div className="flex items-center gap-2">
-              <Link href="/shop" className="hover:text-amber-600 transition-colors">
-                Shop
-              </Link>
-              <span>/</span>
-              <span className="capitalize">{product.category}</span>
-              <span>/</span>
-              <span className="text-gray-900 font-semibold">{product.name}</span>
-            </div>
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <Star className="text-amber-500 fill-amber-500" size={18} />
-                <span className="font-semibold text-gray-900">{averageRating}</span>
-                <span className="text-gray-500">({product.reviews} reviews)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Sparkles size={18} className="text-amber-500" />
-                <span className="text-gray-700">Artisan finish</span>
-              </div>
-            </div>
-          </div>
-
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight max-w-4xl">
-            {product.name}
-          </h1>
-          <p className="text-lg text-gray-600 mt-4 max-w-3xl">
-            {product.description}
-          </p>
-        </div>
-      </section>
-
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Gallery */}
-            <div className="space-y-6">
-              <div className="relative rounded-3xl overflow-hidden shadow-xl bg-white h-[480px]">
+    <div className="bg-white">
+      <section className="relative py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+            {/* Gallery Section */}
+            <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+              <div className="relative aspect-square rounded-none overflow-hidden bg-gray-100">
                 <Image
                   src={galleryImages[selectedImage] || product.image}
                   alt={`${product.name} view ${selectedImage + 1}`}
@@ -129,18 +151,13 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   unoptimized
+                  priority
                 />
                 {product.badge && (
-                  <div className="absolute top-6 left-6 px-4 py-2 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-amber-500 to-orange-500 shadow-lg">
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-black text-white text-xs font-bold tracking-wider uppercase">
                     {product.badge}
                   </div>
                 )}
-                <div className="absolute bottom-6 left-6 flex items-center gap-4 bg-white/80 backdrop-blur rounded-full px-4 py-2 shadow-lg">
-                  <ShieldCheck className="text-emerald-500" size={18} />
-                  <span className="text-sm font-semibold text-gray-800">
-                    Certified authenticity
-                  </span>
-                </div>
               </div>
 
               {galleryImages.length > 1 && (
@@ -149,10 +166,10 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                     <button
                       key={img + index}
                       onClick={() => setSelectedImage(index)}
-                      className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                      className={`relative aspect-square overflow-hidden transition-all duration-200 ${
                         selectedImage === index
-                          ? "border-amber-500 shadow-lg"
-                          : "border-transparent hover:border-amber-200"
+                          ? "ring-1 ring-black opacity-100"
+                          : "opacity-70 hover:opacity-100"
                       }`}
                     >
                       <Image
@@ -167,75 +184,76 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                   ))}
                 </div>
               )}
-
-              <div className="grid sm:grid-cols-3 gap-4">
-                {[
-                  {
-                    icon: <Truck size={24} className="text-amber-600" />,
-                    title: "Express Shipping",
-                    subtitle: "2-5 days nationwide",
-                  },
-                  {
-                    icon: <ShieldCheck size={24} className="text-amber-600" />,
-                    title: "Lifetime Plating",
-                    subtitle: "Complimentary refresh",
-                  },
-                  {
-                    icon: <RotateCcw size={24} className="text-amber-600" />,
-                    title: "Easy Returns",
-                    subtitle: "30-day window",
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.title}
-                    className="p-4 rounded-2xl bg-white border border-amber-100 flex gap-3 items-start"
-                  >
-                    <div className="p-2 rounded-xl bg-amber-50">{item.icon}</div>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{item.title}</p>
-                      <p className="text-xs text-gray-500">{item.subtitle}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
 
-            {/* Details */}
-            <div className="bg-white rounded-3xl shadow-xl p-8 space-y-8">
-              <div>
-                <p className="uppercase text-xs tracking-[0.3em] text-gray-500 mb-2">
-                  {product.category}
-                </p>
-                <div className="flex flex-wrap items-center gap-4">
-                  <span className="text-4xl font-bold text-gray-900">
-                    ₹ {finalPrice.toFixed(2)}
-                  </span>
-                  {product.originalPrice && (
-                    <span className="text-xl text-gray-400 line-through">
-                      ₹ {product.originalPrice.toFixed(2)}
+            {/* Product Info Section */}
+            <div className="flex flex-col pt-6 lg:pt-0">
+              <div className="border-b border-gray-200 pb-6 mb-6">
+                <div className="flex flex-col gap-2 mb-4">
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Link
+                      href="/shop"
+                      className="hover:text-black transition-colors uppercase tracking-wider text-xs"
+                    >
+                      Home
+                    </Link>
+                    <span>/</span>
+                    <span className="uppercase tracking-wider text-xs">
+                      {product.category}
                     </span>
+                  </div>
+                  <h1 className="text-3xl md:text-4xl font-medium text-gray-900 tracking-tight">
+                    {product.name}
+                  </h1>
+                </div>
+
+                <div className="flex items-end gap-4 mb-4">
+                  <div className="text-2xl font-medium text-gray-900">
+                    ₹ {finalPrice.toFixed(2)}
+                  </div>
+                  {product.originalPrice && (
+                    <div className="text-lg text-gray-400 line-through mb-1">
+                      ₹ {product.originalPrice.toFixed(2)}
+                    </div>
                   )}
                   {product.originalPrice && (
-                    <span className="px-3 py-1 rounded-full bg-rose-50 text-rose-600 text-sm font-semibold">
+                    <span className="text-green-600 text-sm font-medium mb-1">
                       Save{" "}
                       {Math.round(
-                        ((product.originalPrice - product.price) / product.originalPrice) * 100
+                        ((product.originalPrice - product.price) /
+                          product.originalPrice) *
+                          100
                       )}
                       %
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  {product.inStock ? "In stock. Ships within 24h." : "Currently unavailable"}
-                </p>
+
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Star className="text-black fill-black" size={14} />
+                    <span className="font-medium">{averageRating}</span>
+                  </div>
+                  <span className="text-gray-300">|</span>
+                  <span className="text-gray-600">
+                    {product.reviews} Reviews
+                  </span>
+                  <span className="text-gray-300">|</span>
+                  <span
+                    className={`${
+                      product.inStock ? "text-green-600" : "text-red-600"
+                    } font-medium`}
+                  >
+                    {product.inStock ? "In Stock" : "Out of Stock"}
+                  </span>
+                </div>
               </div>
 
               {product.variants && product.variants.length > 0 && (
-                <div className="border border-gray-100 rounded-2xl p-6 bg-gray-50">
-                  <div className="flex items-center gap-2 mb-4">
-                    <BadgeCheck className="text-amber-500" size={18} />
-                    <p className="text-sm font-semibold text-gray-800">Customize your piece</p>
-                  </div>
+                <div className="mb-8">
+                  <p className="text-sm font-medium text-gray-900 mb-3 uppercase tracking-wide">
+                    Customize
+                  </p>
                   <VariantSelector
                     variants={product.variants}
                     selectedVariants={selectedVariants}
@@ -244,92 +262,132 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                 </div>
               )}
 
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Jewellery story</h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {product.description ||
-                    "Each piece is crafted by artisans with over two decades of experience, blending traditional workmanship with contemporary silhouettes."}
-                </p>
-                <ul className="grid sm:grid-cols-2 gap-3 text-sm text-gray-700">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                    Hypoallergenic finish
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                    Complimentary gift wrap
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                    Lifetime cleaning
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                    Ethical sourcing
-                  </li>
-                </ul>
-              </div>
-
-              <div className="space-y-3">
+              <div className="flex flex-col gap-4 mb-8">
                 <button
                   onClick={handleAddToCart}
                   disabled={!product.inStock || !canAddToCart}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-2xl text-lg font-semibold flex items-center justify-center gap-3 shadow-lg shadow-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="w-full bg-black text-white h-14 flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 >
-                  <ShoppingCart size={20} />
-                  {product.inStock ? (canAddToCart ? "Add to cart" : "Select options") : "Out of stock"}
+                  {product.inStock ? (
+                    canAddToCart ? (
+                      <>
+                        ADD TO BAG <span className="ml-2">→</span>
+                      </>
+                    ) : (
+                      "Select Options"
+                    )
+                  ) : (
+                    "Out of Stock"
+                  )}
                 </button>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => toggleWishlist(product.id)}
-                    className={`flex items-center justify-center gap-2 py-3 rounded-2xl border text-sm font-semibold transition-all ${
+                    className={`h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider border transition-colors ${
                       isInWishlist
-                        ? "border-red-500 bg-red-50 text-red-600"
-                        : "border-gray-200 hover:border-amber-500 hover:text-amber-600"
+                        ? "border-black bg-black text-white"
+                        : "border-gray-200 hover:border-black text-gray-900"
                     }`}
                   >
                     <Heart
-                      size={18}
-                      className={isInWishlist ? "fill-red-500 text-red-500" : "text-gray-700"}
+                      size={16}
+                      className={isInWishlist ? "fill-white" : ""}
                     />
-                    {isInWishlist ? "Wishlisted" : "Add to wishlist"}
+                    {isInWishlist ? "Saved" : "Wishlist"}
                   </button>
-
-                  <button className="flex items-center justify-center gap-2 py-3 rounded-2xl border border-gray-200 text-sm font-semibold hover:border-amber-500 hover:text-amber-600 transition-all">
-                    <Share2 size={18} />
+                  <button className="h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider border border-gray-200 hover:border-black text-gray-900 transition-colors">
+                    <Share2 size={16} />
                     Share
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="pb-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-3xl bg-gradient-to-br from-white to-amber-50 border border-amber-100 shadow-sm">
-              <Sparkles className="text-amber-500 mb-4" size={32} />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Craftsmanship</h3>
-              <p className="text-gray-600">
-                Hand-polished details with meticulous attention to every curve and setting.
-              </p>
-            </div>
-            <div className="p-8 rounded-3xl bg-gradient-to-br from-white to-rose-50 border border-rose-100 shadow-sm">
-              <Truck className="text-rose-500 mb-4" size={32} />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Premium delivery</h3>
-              <p className="text-gray-600">
-                Insured priority shipping with real-time tracking and unboxing-ready packaging.
-              </p>
-            </div>
-            <div className="p-8 rounded-3xl bg-gradient-to-br from-white to-emerald-50 border border-emerald-100 shadow-sm">
-              <ShieldCheck className="text-emerald-500 mb-4" size={32} />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Assurance</h3>
-              <p className="text-gray-600">
-                Lifetime warranty on plating, free annual spa service, and authenticity certificate.
-              </p>
+              {/* Accordion Section */}
+              <div className="border-t border-gray-200">
+                <AccordionItem
+                  title="Description"
+                  isOpen={openAccordion === "Description"}
+                  onClick={() => toggleAccordion("Description")}
+                >
+                  <p>
+                    {product.description ||
+                      "Each piece is crafted by artisans with over two decades of experience, blending traditional workmanship with contemporary silhouettes."}
+                  </p>
+                  <ul className="mt-4 space-y-2 list-disc pl-4">
+                    <li>Authentic 999 Fine Silver / S925 Sterling Silver</li>
+                    <li>Hypoallergenic & Nickel-Free</li>
+                    <li>Handcrafted with precision</li>
+                  </ul>
+                </AccordionItem>
+
+                <AccordionItem
+                  title="Specification"
+                  isOpen={openAccordion === "Specification"}
+                  onClick={() => toggleAccordion("Specification")}
+                >
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                    <span className="text-gray-500">Material</span>
+                    <span className="font-medium">Sterling Silver</span>
+                    <span className="text-gray-500">Purity</span>
+                    <span className="font-medium">925 / 999</span>
+                    <span className="text-gray-500">Finish</span>
+                    <span className="font-medium">High Polish / Matte</span>
+                    <span className="text-gray-500">Origin</span>
+                    <span className="font-medium">India</span>
+                  </div>
+                </AccordionItem>
+
+                <AccordionItem
+                  title="Supplier Information"
+                  isOpen={openAccordion === "Supplier Information"}
+                  onClick={() => toggleAccordion("Supplier Information")}
+                >
+                  <p>
+                    Sourced directly from our trusted artisan network in Mumbai and Jaipur. We ensure fair trade practices and sustainable sourcing for all our materials.
+                  </p>
+                </AccordionItem>
+
+                <AccordionItem
+                  title="Returns"
+                  isOpen={openAccordion === "Returns"}
+                  onClick={() => toggleAccordion("Returns")}
+                >
+                  <p>
+                    We offer a 15-day return policy for unused and unworn items. 
+                    Returns must include original packaging and purity certificates.
+                    Personalized items are non-returnable.
+                  </p>
+                </AccordionItem>
+              </div>
+
+              {/* Trust Badges */}
+              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-200">
+                <div className="text-center space-y-2">
+                  <div className="mx-auto w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                    <Truck size={20} className="text-gray-900" />
+                  </div>
+                  <p className="text-xs font-medium uppercase tracking-wide">
+                    Fast Shipping
+                  </p>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className="mx-auto w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                    <ShieldCheck size={20} className="text-gray-900" />
+                  </div>
+                  <p className="text-xs font-medium uppercase tracking-wide">
+                    Lifetime Warranty
+                  </p>
+                </div>
+                <div className="text-center space-y-2">
+                  <div className="mx-auto w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                    <RotateCcw size={20} className="text-gray-900" />
+                  </div>
+                  <p className="text-xs font-medium uppercase tracking-wide">
+                    Easy Returns
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -337,4 +395,3 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
     </div>
   );
 }
-

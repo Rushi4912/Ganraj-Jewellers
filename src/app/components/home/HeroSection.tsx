@@ -94,7 +94,7 @@ export default function HeroSection() {
             </div>
 
             <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-[1.1] tracking-tight">
-              Crafted in Pune,
+              Crafted in Nagar,
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600">
                 worn across the world
               </span>
