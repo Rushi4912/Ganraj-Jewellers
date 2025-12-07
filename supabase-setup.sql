@@ -320,6 +320,13 @@ create policy "Users can delete own reviews"
 on reviews for delete
 using (auth.uid() = user_id);
 
+-- 11b. Ensure new product detail columns exist (idempotent)
+alter table products add column if not exists specification text;
+alter table products add column if not exists supplier_info text;
+alter table products add column if not exists ring_sizes text[];
+alter table products add column if not exists bracelet_sizes text[];
+alter table products add column if not exists payal_sizes text[];
+
 -- 12. Verify the setup
 select 'Setup complete! Profiles count: ' || count(*)::text from profiles;
 

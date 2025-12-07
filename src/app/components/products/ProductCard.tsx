@@ -107,9 +107,6 @@ export default function ProductCard({
 
       {/* Product Info */}
       <div className="text-center">
-        <p className="text-xs text-gray-500 mb-1 uppercase tracking-wide">
-          Gold Jewellery
-        </p>
 
         <Link
           href={`/shop/${productPath}`}

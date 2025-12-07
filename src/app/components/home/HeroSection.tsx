@@ -84,7 +84,6 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
-          {/* Left Content - Text */}
           <div className="space-y-8">
             <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm shadow-sm border border-amber-200/80 px-5 py-2.5 rounded-full">
               <Sparkles size={16} className="text-amber-600" />
@@ -172,8 +171,6 @@ export default function HeroSection() {
                         unoptimized
                       />
                     </div>
-                    
-                    {/* Cinematic Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30" />
                     

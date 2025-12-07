@@ -285,7 +285,6 @@ export default function TrendingProducts() {
                 </div>
 
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 mb-1">Gold Jewellery</p>
                   <h3 
                     onClick={() => handleProductClick(product)}
                     className="text-sm font-semibold text-gray-900 mb-2 hover:text-amber-600 transition-colors cursor-pointer">

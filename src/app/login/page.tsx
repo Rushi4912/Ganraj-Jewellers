@@ -40,8 +40,9 @@ export default function LoginPage() {
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white">
-      <div className="max-w-6xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8">
+      <div className="max-w-6xl mx-auto px-6 py-12 lg:py-16 grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+        {/* Hero copy hidden on mobile to reduce scroll */}
+        <div className="space-y-8 hidden lg:block">
           <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full uppercase tracking-[0.4em] text-xs">
             <Sparkles size={16} />
             Atelier access
@@ -73,8 +74,14 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="bg-white/95 text-gray-900 rounded-[32px] shadow-2xl p-8 lg:p-10">
-          <div className="text-center space-y-2 mb-8">
+        <div className="bg-white/95 text-gray-900 rounded-[28px] lg:rounded-[32px] shadow-2xl p-6 sm:p-8 lg:p-10">
+          {/* Compact mobile header */}
+          <div className="lg:hidden text-center space-y-1 mb-6">
+            <p className="text-xs uppercase tracking-[0.3em] text-gray-400">Sign in</p>
+            <h2 className="text-2xl font-bold text-gray-900">Enter your account</h2>
+          </div>
+
+          <div className="text-center space-y-2 mb-8 hidden lg:block">
             <p className="text-sm uppercase tracking-[0.4em] text-gray-400">
               Sign in
             </p>

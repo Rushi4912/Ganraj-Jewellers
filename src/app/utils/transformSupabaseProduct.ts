@@ -52,6 +52,11 @@ export type SupabaseProductRecord = {
   stock?: number | null;
   user_reviews?: UserReview[] | null;
   variants?: Product['variants'];
+  specification?: string | null;
+  supplier_info?: string | null;
+  ring_sizes?: string[] | null;
+  bracelet_sizes?: string[] | null;
+  payal_sizes?: string[] | null;
 };
 
 export const transformSupabaseProduct = (
@@ -91,6 +96,11 @@ export const transformSupabaseProduct = (
     images,
     badge: item.discount_price != null ? 'SALE' : item.is_featured ? 'NEW' : null,
     description: item.description ?? 'Beautiful handcrafted jewellery piece.',
+    specification: item.specification ?? null,
+    supplierInfo: item.supplier_info ?? null,
+    ringSizes: Array.isArray(item.ring_sizes) ? item.ring_sizes.filter(Boolean) : undefined,
+    braceletSizes: Array.isArray(item.bracelet_sizes) ? item.bracelet_sizes.filter(Boolean) : undefined,
+    payalSizes: Array.isArray(item.payal_sizes) ? item.payal_sizes.filter(Boolean) : undefined,
     inStock: item.stock == null ? true : item.stock > 0,
     userReviews: normalizeReviews(item.user_reviews),
     variants: item.variants ?? undefined,

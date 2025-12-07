@@ -42,6 +42,11 @@ type ProductRecord = {
   name: string;
   slug: string;
   description: string | null;
+  specification?: string | null;
+  supplier_info?: string | null;
+  ring_sizes?: string[] | null;
+  bracelet_sizes?: string[] | null;
+  payal_sizes?: string[] | null;
   price: string | number;
   discount_price: string | number | null;
   images: string[];
@@ -96,6 +101,11 @@ type ProductFormState = {
   name: string;
   slug: string;
   description: string;
+  specification: string;
+  supplierInfo: string;
+  ringSizes: string;
+  braceletSizes: string;
+  payalSizes: string;
   price: string;
   discountPrice: string;
   imageUrls: string[];
@@ -129,6 +139,11 @@ const defaultProductForm: ProductFormState = {
   name: "",
   slug: "",
   description: "",
+  specification: "",
+  supplierInfo: "",
+  ringSizes: "",
+  braceletSizes: "",
+  payalSizes: "",
   price: "",
   discountPrice: "",
   imageUrls: [],
@@ -655,10 +670,28 @@ export default function AdminPage() {
       return;
     }
 
+    const parsedRingSizes = productForm.ringSizes
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const parsedBraceletSizes = productForm.braceletSizes
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const parsedPayalSizes = productForm.payalSizes
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
     const payload = {
       name: productForm.name.trim(),
       slug: productForm.slug.trim(),
       description: productForm.description.trim() || null,
+      specification: productForm.specification.trim() || null,
+      supplier_info: productForm.supplierInfo.trim() || null,
+      ring_sizes: parsedRingSizes.length ? parsedRingSizes : null,
+      bracelet_sizes: parsedBraceletSizes.length ? parsedBraceletSizes : null,
+      payal_sizes: parsedPayalSizes.length ? parsedPayalSizes : null,
       price: Number(productForm.price),
       discount_price: productForm.discountPrice ? Number(productForm.discountPrice) : null,
       images: productForm.imageUrls,
@@ -697,6 +730,11 @@ export default function AdminPage() {
       name: product.name ?? "",
       slug: product.slug ?? "",
       description: product.description ?? "",
+      specification: product.specification ?? "",
+      supplierInfo: product.supplier_info ?? "",
+      ringSizes: product.ring_sizes?.join(", ") ?? "",
+      braceletSizes: product.bracelet_sizes?.join(", ") ?? "",
+      payalSizes: product.payal_sizes?.join(", ") ?? "",
       price: String(product.price ?? ""),
       discountPrice: product.discount_price ? String(product.discount_price) : "",
       imageUrls: product.images ?? [],
@@ -1144,6 +1182,68 @@ export default function AdminPage() {
                   value={productForm.description}
                   onChange={(e) => setProductForm((prev) => ({ ...prev, description: e.target.value }))}
                   placeholder="Beautiful handcrafted jewelry..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Specifications</label>
+                  <textarea
+                    rows={3}
+                    className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    value={productForm.specification}
+                    onChange={(e) =>
+                      setProductForm((prev) => ({ ...prev, specification: e.target.value }))
+                    }
+                    placeholder="Metal, purity, finish, hallmark, care..."
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Supplier Information</label>
+                  <textarea
+                    rows={3}
+                    className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    value={productForm.supplierInfo}
+                    onChange={(e) =>
+                      setProductForm((prev) => ({ ...prev, supplierInfo: e.target.value }))
+                    }
+                    placeholder="Workshop location, sourcing, authenticity notes..."
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Ring sizes (comma separated)</label>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    value={productForm.ringSizes}
+                    onChange={(e) => setProductForm((prev) => ({ ...prev, ringSizes: e.target.value }))}
+                    placeholder="6, 7, 8, 9"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    Bracelet sizes (comma separated)
+                  </label>
+                  <input
+                    className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                    value={productForm.braceletSizes}
+                    onChange={(e) =>
+                      setProductForm((prev) => ({ ...prev, braceletSizes: e.target.value }))
+                    }
+                    placeholder='6.5", 7", 7.5"'
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700">Payal sizes (comma separated)</label>
+                <input
+                  className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  value={productForm.payalSizes}
+                  onChange={(e) => setProductForm((prev) => ({ ...prev, payalSizes: e.target.value }))}
+                  placeholder='8", 9", 10"'
                 />
               </div>
 

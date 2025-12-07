@@ -84,6 +84,11 @@
     images: string[];
     badge?: 'SALE' | 'NEW' | null;
     description: string;
+  specification?: string | null;
+  supplierInfo?: string | null;
+  ringSizes?: string[];
+  braceletSizes?: string[];
+  payalSizes?: string[];
     inStock: boolean;
     userReviews: UserReview[];
     variants?: ProductVariantOption[]; // NEW: Add variants

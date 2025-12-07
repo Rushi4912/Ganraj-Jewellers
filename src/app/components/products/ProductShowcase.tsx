@@ -38,6 +38,7 @@ const AccordionItem = ({
   return (
     <div className="border-b border-gray-200">
       <button
+        type="button"
         className="w-full py-4 flex items-center justify-between text-left group"
         onClick={onClick}
       >
@@ -65,7 +66,7 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({});
-  const [openAccordion, setOpenAccordion] = useState<string | null>("Description");
+  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
 
   const isInWishlist = wishlist.includes(product.id);
 
@@ -120,6 +121,10 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
         ).toFixed(1)
       : product.rating.toFixed(1);
 
+  const ringSizes = product.ringSizes?.length ? product.ringSizes : ["6", "7", "8", "9"];
+  const braceletSizes = product.braceletSizes?.length ? product.braceletSizes : ["6.5\"", "7\"", "7.5\""];
+  const payalSizes = product.payalSizes?.length ? product.payalSizes : ["8\"", "9\"", "10\""];
+
   const handleVariantChange = (type: string, value: string) => {
     setSelectedVariants((prev) => ({
       ...prev,
@@ -133,7 +138,10 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
   };
 
   const toggleAccordion = (title: string) => {
-    setOpenAccordion(openAccordion === title ? null : title);
+    // Keep interactions lightweight; avoid scroll jumps
+    requestAnimationFrame(() => {
+      setOpenAccordion((prev) => (prev === title ? null : title));
+    });
   };
 
   return (
@@ -326,16 +334,20 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                   isOpen={openAccordion === "Specification"}
                   onClick={() => toggleAccordion("Specification")}
                 >
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                    <span className="text-gray-500">Material</span>
-                    <span className="font-medium">Sterling Silver</span>
-                    <span className="text-gray-500">Purity</span>
-                    <span className="font-medium">925 / 999</span>
-                    <span className="text-gray-500">Finish</span>
-                    <span className="font-medium">High Polish / Matte</span>
-                    <span className="text-gray-500">Origin</span>
-                    <span className="font-medium">India</span>
-                  </div>
+                  {product.specification ? (
+                    <p className="text-sm text-gray-700 leading-relaxed">{product.specification}</p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                      <span className="text-gray-500">Material</span>
+                      <span className="font-medium">Sterling Silver</span>
+                      <span className="text-gray-500">Purity</span>
+                      <span className="font-medium">925 / 999</span>
+                      <span className="text-gray-500">Finish</span>
+                      <span className="font-medium">High Polish / Matte</span>
+                      <span className="text-gray-500">Origin</span>
+                      <span className="font-medium">India</span>
+                    </div>
+                  )}
                 </AccordionItem>
 
                 <AccordionItem
@@ -344,8 +356,57 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                   onClick={() => toggleAccordion("Supplier Information")}
                 >
                   <p>
-                    Sourced directly from our trusted artisan network in Mumbai and Jaipur. We ensure fair trade practices and sustainable sourcing for all our materials.
+                    {product.supplierInfo ||
+                      "Sourced directly from our trusted artisan network in Mumbai and Jaipur. We ensure fair trade practices and sustainable sourcing for all our materials."}
                   </p>
+                </AccordionItem>
+
+                <AccordionItem
+                  title="Size Guide"
+                  isOpen={openAccordion === "Size Guide"}
+                  onClick={() => toggleAccordion("Size Guide")}
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Ring sizes</p>
+                      <div className="flex flex-wrap gap-2">
+                        {ringSizes.map((size) => (
+                          <span
+                            key={size}
+                            className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-800"
+                          >
+                            {size}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Bracelet sizes</p>
+                      <div className="flex flex-wrap gap-2">
+                        {braceletSizes.map((size) => (
+                          <span
+                            key={size}
+                            className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-800"
+                          >
+                            {size}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Payal sizes</p>
+                      <div className="flex flex-wrap gap-2">
+                        {payalSizes.map((size) => (
+                          <span
+                            key={size}
+                            className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-800"
+                          >
+                            {size}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </AccordionItem>
 
                 <AccordionItem

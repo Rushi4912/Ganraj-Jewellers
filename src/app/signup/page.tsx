@@ -55,8 +55,9 @@ export default function SignupPage() {
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-amber-50">
-      <div className="max-w-6xl mx-auto px-6 py-16 grid lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-6">
+      <div className="max-w-6xl mx-auto px-6 py-12 lg:py-16 grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+        {/* Hide the full hero on mobile to shorten scroll */}
+        <div className="space-y-6 hidden lg:block">
           <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full uppercase tracking-[0.4em] text-xs">
             <Crown size={16} />
             Private membership
@@ -84,13 +85,13 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-[32px] shadow-2xl p-8 lg:p-10 border border-amber-100">
-          <div className="text-center space-y-2 mb-8">
-            <Gem className="mx-auto text-amber-500" size={36} />
-            <p className="text-sm uppercase tracking-[0.4em] text-gray-400">
+        <div className="bg-white rounded-[28px] lg:rounded-[32px] shadow-2xl p-6 sm:p-8 lg:p-10 border border-amber-100">
+          <div className="text-center space-y-2 mb-6 lg:mb-8">
+            <Gem className="mx-auto text-amber-500" size={32} />
+            <p className="text-sm uppercase tracking-[0.35em] text-gray-400">
               Join the atelier
             </p>
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
               Create your account
             </h2>
             <p className="text-gray-500">
