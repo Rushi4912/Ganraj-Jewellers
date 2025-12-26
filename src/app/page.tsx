@@ -20,7 +20,7 @@ export default function HomePage(){
     <Navbar onCartOpen={() => setShowCart(true)} />
     <HeroSection/>
     
-    <Features/>
+    {/* <Features/> */}
     <VideoSection/>
     <TrendingProducts/>
     <PopularCategories/>
