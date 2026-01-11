@@ -16,6 +16,7 @@ export async function GET() {
   }
 
   return NextResponse.json({ orders: data });
+  
 }
 
 export async function PUT(request: Request) {

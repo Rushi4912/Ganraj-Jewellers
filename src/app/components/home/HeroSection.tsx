@@ -22,10 +22,7 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-black/5 md:bg-transparent pointer-events-none" />
         </div>
 
-        {/* 2. Content Overlay - Positioned on top */}
       
-
-        {/* Global Style for Serif Font */}
         <style jsx global>{`
           .font-serif {
             font-family: 'Playfair Display', serif;
