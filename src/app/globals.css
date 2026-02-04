@@ -1,29 +1,210 @@
 @import "tailwindcss";
-@keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-  
-  .animate-slideIn {
-    animation: slideIn 0.3s ease-out;
+
+/* ===================== */
+/* Hero Section Styles   */
+/* ===================== */
+
+:root {
+  --color-cream: #FAF8F5;
+  --color-champagne: #F5F0E8;
+  --color-gold: #C9A962;
+  --color-gold-dark: #B8923A;
+  --color-charcoal: #2D2D2D;
+  --color-warm-gray: #6B6B6B;
+}
+
+/* Typography Classes */
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.font-elegant {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+}
+
+/* Hero Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
 
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes floatSubtle {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+}
+
+@keyframes floatSubtle2 {
+
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes scrollBounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translateY(8px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-gold {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 169, 98, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 12px rgba(201, 169, 98, 0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fadeInUp-delay-1 {
+  animation: fadeInUp 0.8s ease-out 0.15s forwards;
+  opacity: 0;
+}
+
+.animate-fadeInUp-delay-2 {
+  animation: fadeInUp 0.8s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+.animate-fadeInUp-delay-3 {
+  animation: fadeInUp 0.8s ease-out 0.45s forwards;
+  opacity: 0;
+}
+
+.animate-fadeInRight {
+  animation: fadeInRight 1s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fadeInRight-delay-1 {
+  animation: fadeInRight 1s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+.animate-floatSubtle {
+  animation: floatSubtle 6s ease-in-out infinite;
+}
+
+.animate-floatSubtle2 {
+  animation: floatSubtle2 5s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--color-gold) 0%, #E8D5A3 50%, var(--color-gold) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-scrollBounce {
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+/* ===================== */
+/* Original Animations   */
+/* ===================== */
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes progress {
-  0% { width: 0%; }
-  50% { width: 60%; }
-  100% { width: 100%; }
+  0% {
+    width: 0%;
+  }
+
+  50% {
+    width: 60%;
+  }
+
+  100% {
+    width: 100%;
+  }
 }
 
 .animate-float {
@@ -39,6 +220,7 @@
   0% {
     transform: scale(1) translate(0, 0);
   }
+
   100% {
     transform: scale(1.1) translate(-2%, -2%);
   }
@@ -50,10 +232,13 @@
 
 /* Subtle pulse for badge */
 @keyframes pulse-subtle {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.95;
     transform: scale(1.02);
