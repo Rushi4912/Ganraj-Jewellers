@@ -1,13 +1,13 @@
 'use client';
 
-import { Star, Heart, ShoppingCart, Eye, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/app/lib/supabase';
 import { useCart } from '@/app/context/CartContext';
 import { Product as ShopProduct } from '@/app/types/product';
 import QuickView from './QuickView';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
+import ProductCard from './ProductCard';
 
 interface Product {
   id: string;
@@ -203,91 +203,14 @@ export default function TrendingProducts() {
                 }`}
             >
               {products.map((product, index) => {
-                const currentImage = getCurrentImage(product);
                 const shopProduct = transformToShopProduct(product, index);
-                const isInWishlist = wishlist.includes(shopProduct.id);
 
                 return (
-                  <div key={product.id} className="group flex flex-col">
-
-                    {/* Image Container */}
-                    <div
-                      className="relative overflow-hidden rounded-[20px] bg-white shadow-sm mb-5 aspect-[4/5] cursor-pointer group-hover:shadow-[0_15px_30px_-5px_rgba(45,42,38,0.1)] transition-all duration-500"
-                      onClick={() => handleProductClick(product)}
-                    >
-                      {currentImage && (
-                        <Image
-                          src={currentImage}
-                          alt={product.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          onError={() => handleImageError(product.id)}
-                          unoptimized
-                        />
-                      )}
-
-                      {/* Badge */}
-                      {(product.discount_price || product.is_featured) && (
-                        <div className="absolute top-3 left-3">
-                          <span
-                            className={`px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-white rounded-full ${product.discount_price ? 'bg-[#B8923A]' : 'bg-[#2D2A26]'
-                              }`}
-                          >
-                            {product.discount_price ? 'Sale' : 'New'}
-                          </span>
-                        </div>
-                      )}
-
-                      {/* Quick Actions Overlay (Bottom) */}
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-20">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleQuickView(product, index); }}
-                          className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
-                          title="Quick View"
-                        >
-                          <Eye size={16} />
-                        </button>
-
-                        <button
-                          onClick={(e) => { e.stopPropagation(); toggleWishlist(shopProduct.id); }}
-                          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${isInWishlist ? 'bg-[#8B7355] text-white' : 'bg-white text-[#5A4D41] hover:bg-[#8B7355] hover:text-white'
-                            }`}
-                        >
-                          <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />
-                        </button>
-
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleAddToCart(product, index); }}
-                          className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
-                          title="Add to Cart"
-                        >
-                          <ShoppingCart size={16} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Product Details */}
-                    <div className="text-center space-y-1 px-2">
-                      <h3
-                        onClick={() => handleProductClick(product)}
-                        className="text-base font-serif text-[#2D2A26] cursor-pointer hover:text-[#8B7355] transition-colors line-clamp-1"
-                      >
-                        {product.name}
-                      </h3>
-
-                      <div className="flex items-center justify-center gap-3 text-sm">
-                        <span className="font-semibold text-[#5A4D41]">
-                          ₹{product.discount_price ? Number(product.discount_price).toLocaleString('en-IN') : Number(product.price).toLocaleString('en-IN')}
-                        </span>
-                        {product.discount_price && (
-                          <span className="text-[#C5B4A5] line-through text-xs">
-                            ₹{Number(product.price).toLocaleString('en-IN')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard
+                    key={product.id}
+                    product={shopProduct}
+                    onQuickView={() => handleQuickView(product, index)}
+                  />
                 );
               })}
             </div>

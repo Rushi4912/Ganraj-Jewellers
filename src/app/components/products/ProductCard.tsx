@@ -1,146 +1,127 @@
 "use client";
-import React from "react";
-import Link from "next/link";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Star, Heart, ShoppingCart, Eye, GitCompare } from "lucide-react";
-import { Product } from "../../types/product";
+import { useRouter } from "next/navigation";
+import { Heart, ShoppingCart, Eye } from "lucide-react";
+import { Product as ShopProduct } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 
 interface ProductCardProps {
-  product: Product;
-  onQuickView?: (product: Product) => void;
+  product: ShopProduct;
+  onQuickView?: (product: ShopProduct) => void;
+  className?: string;
 }
 
 export default function ProductCard({
   product,
   onQuickView,
+  className = "",
 }: ProductCardProps) {
-  const { addToCart, wishlist, compareList, toggleWishlist, toggleCompare } = useCart();
+  const router = useRouter();
+  const { addToCart, wishlist, toggleWishlist } = useCart();
+  const [imageError, setImageError] = useState(false);
 
   const isInWishlist = wishlist.includes(product.id);
-  const productPath = product.slug ?? product.remoteId ?? product.id;
+  const currentImage =
+    !imageError && product.image
+      ? product.image
+      : product.images && product.images.length > 0
+        ? product.images[0]
+        : "https://images.pexels.com/photos/1454171/pexels-photo-1454171.jpeg?auto=compress&cs=tinysrgb&w=400";
+
+  const handleProductClick = () => {
+    const destination = product.slug ?? product.remoteId ?? product.id.toString();
+    router.push(`/shop/${destination}`);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart(product);
+  };
+
+  const handleQuickViewClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onQuickView?.(product);
+  };
+
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleWishlist(product.id);
+  };
 
   return (
-    <div className="group relative">
-      {/* Product Image Container */}
-      <div className="relative overflow-hidden rounded-xl mb-4 bg-gray-50 aspect-square">
-        <Link
-          href={`/shop/${productPath}`}
-          className="block h-full"
-          aria-label={`View ${product.name}`}
-        >
-          <Image
-            src={product.image}
-            alt={product.name}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            unoptimized
-          />
-        </Link>
+    <div className={`group flex flex-col ${className}`}>
+      {/* Image Container */}
+      <div
+        className="relative overflow-hidden rounded-[20px] bg-white shadow-sm mb-5 aspect-[4/5] cursor-pointer group-hover:shadow-[0_15px_30px_-5px_rgba(45,42,38,0.1)] transition-all duration-500"
+        onClick={handleProductClick}
+      >
+        <Image
+          src={currentImage}
+          alt={product.name}
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          onError={() => setImageError(true)}
+          unoptimized
+        />
 
         {/* Badge */}
         {product.badge && (
-          <span
-            className={`absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-semibold text-white ${
-              product.badge === "SALE" ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {product.badge}
-          </span>
-        )}
-
-        {/* Hover Actions */}
-        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity space-y-2">
-          {/* Wishlist Button */}
-          <button
-            onClick={() => toggleWishlist(product.id)}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-lg ${
-              isInWishlist
-                ? "bg-red-500 text-white"
-                : "bg-white hover:bg-amber-500 hover:text-white"
-            }`}
-            title={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
-          >
-            <Heart size={18} className={isInWishlist ? "fill-white" : ""} />
-          </button>
-
-          {/* Quick View Button */}
-          <button
-            onClick={() => onQuickView?.(product)}
-            className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-white transition-colors shadow-lg"
-            title="Quick view"
-          >
-            <Eye size={18} />
-          </button>
-          <button
-            onClick={() => toggleCompare(product.id)}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-lg ${
-              compareList.includes(product.id)
-                ? "bg-blue-500 text-white"
-                : "bg-white hover:bg-amber-500 hover:text-white"
-            }`}
-            title="Add to compare"
-          >
-            <GitCompare size={18} />
-          </button>
-
-          {/* Add to Cart Button */}
-          <button
-            onClick={() => addToCart(product)}
-            className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-amber-500 hover:text-white transition-colors shadow-lg"
-            title="Add to cart"
-          >
-            <ShoppingCart size={18} />
-          </button>
-        </div>
-
-        {/* Out of Stock Overlay */}
-        {!product.inStock && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="text-white font-semibold text-lg">
-              Out of Stock
+          <div className="absolute top-3 left-3">
+            <span
+              className={`px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-white rounded-full ${product.badge === 'SALE' ? 'bg-[#B8923A]' : 'bg-[#2D2A26]'
+                }`}
+            >
+              {product.badge}
             </span>
           </div>
         )}
+
+        {/* Quick Actions Overlay */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-20">
+          <button
+            onClick={handleQuickViewClick}
+            className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
+            title="Quick View"
+          >
+            <Eye size={16} />
+          </button>
+
+          <button
+            onClick={handleWishlistClick}
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${isInWishlist ? 'bg-[#8B7355] text-white' : 'bg-white text-[#5A4D41] hover:bg-[#8B7355] hover:text-white'
+              }`}
+          >
+            <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />
+          </button>
+
+          <button
+            onClick={handleAddToCart}
+            className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
+            title="Add to Cart"
+          >
+            <ShoppingCart size={16} />
+          </button>
+        </div>
       </div>
 
-      {/* Product Info */}
-      <div className="text-center">
-
-        <Link
-          href={`/shop/${productPath}`}
-          className="text-sm font-semibold text-gray-900 mb-2 hover:text-amber-600 transition-colors cursor-pointer block"
+      {/* Product Details */}
+      <div className="text-center space-y-1 px-2">
+        <h3
+          onClick={handleProductClick}
+          className="text-base font-serif text-[#2D2A26] cursor-pointer hover:text-[#8B7355] transition-colors line-clamp-1"
         >
           {product.name}
-        </Link>
+        </h3>
 
-        {/* Rating */}
-        <div className="flex items-center justify-center gap-1 mb-2">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              size={14}
-              className={
-                i < Math.floor(product.rating)
-                  ? "text-amber-400 fill-amber-400"
-                  : "text-gray-300"
-              }
-            />
-          ))}
-          <span className="text-xs text-gray-500 ml-1">
-            ({product.reviews})
-          </span>
-        </div>
-
-        {/* Price */}
-        <div className="flex items-center justify-center gap-2">
-          <span className="text-lg font-bold text-gray-900">
-            ₹ {product.price.toFixed(2)}
+        <div className="flex items-center justify-center gap-3 text-sm">
+          <span className="font-semibold text-[#5A4D41]">
+            ₹{product.price.toLocaleString('en-IN')}
           </span>
           {product.originalPrice && (
-            <span className="text-sm text-gray-400 line-through">
-              ₹ {product.originalPrice.toFixed(2)}
+            <span className="text-[#C5B4A5] line-through text-xs">
+              ₹{product.originalPrice.toLocaleString('en-IN')}
             </span>
           )}
         </div>
