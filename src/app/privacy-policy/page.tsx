@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Sparkles, Lock } from "lucide-react";
+import { ShieldCheck, Sparkles, Lock, ArrowRight, FileText } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ShoppingCartSidebar from "../components/cart/ShoppingCart";
 
 const policySections = [
   {
-    title: "1. Information we collect",
+    title: "Information Collection",
+    id: "01",
     details: [
       "Details you provide while shopping: name, email, phone number, shipping address, and billing details.",
       "Order history, return requests, and support conversations so we can quality-check every dispatch.",
@@ -17,7 +18,8 @@ const policySections = [
     ],
   },
   {
-    title: "2. How we use your data",
+    title: "Data Usage",
+    id: "02",
     details: [
       "Process, insure, and ship orders within the 24–48 hour fulfillment window mentioned in our policy.",
       "Send tracking IDs via WhatsApp, SMS, and email, plus reminders about purity care or return deadlines.",
@@ -26,45 +28,13 @@ const policySections = [
     ],
   },
   {
-    title: "3. Security & rights",
+    title: "Security & Rights",
+    id: "03",
     details: [
       "We operate the website ourselves, retain ownership of all content, and never sell or rent your personal data.",
       "Only vetted logistics and payment partners receive what they need to complete your order.",
       "By using ganrajjewellers.com you consent to this policy, and you can email ganrajjewellers3@gmail.com anytime to update or delete your information.",
     ],
-  },
-];
-
-const highlights = [
-  {
-    icon: ShieldCheck,
-    title: "Privacy promised",
-    detail: "Your information is stored exclusively for Ganraj Jewellers services and safeguarded end to end.",
-  },
-  {
-    icon: Lock,
-    title: "Indian law compliant",
-    detail: "We follow Indian Contract Act guidelines and maintain full ownership of site data and assets.",
-  },
-  {
-    icon: Sparkles,
-    title: "Transparent communication",
-    detail: "Every policy, from returns to refunds, clearly states timelines before you confirm payment.",
-  },
-];
-
-const timelines = [
-  {
-    title: "Place an order",
-    description: "Share only the essentials—we collect address and contact details to craft and dispatch your jewellery.",
-  },
-  {
-    title: "Shipping & tracking",
-    description: "Within 24–48 hours your tracking ID hits email, SMS, and WhatsApp; data stays within that flow.",
-  },
-  {
-    title: "Returns & aftercare",
-    description: "Return windows last 15 days, and every video or note you send for verification remains private.",
   },
 ];
 
@@ -74,79 +44,76 @@ export default function PrivacyPolicyPage() {
   return (
     <>
       <Navbar onCartOpen={() => setShowCart(true)} />
-      <main className="bg-gray-50">
-        <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 py-20">
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-10 left-10 h-64 w-64 bg-amber-200 blur-3xl" />
-            <div className="absolute bottom-0 right-0 h-64 w-64 bg-rose-200 blur-3xl" />
-          </div>
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-            <p className="text-sm font-semibold text-amber-600 uppercase tracking-[0.5em]">Privacy Policy</p>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
-              We protect your data the way we protect our silver.
+
+      <main className="bg-[#F2F0EB] min-h-screen">
+
+        {/* ================= HEADER ================= */}
+        <section className="relative pt-32 pb-24 px-6 text-center">
+          <div className="max-w-4xl mx-auto z-10 relative">
+            <div className="inline-flex items-center gap-2 text-[#8B7355] text-xs font-bold tracking-[0.3em] uppercase mb-6 animate-fadeInUp">
+              <ShieldCheck size={14} />
+              <span>Legal & Privacy</span>
+            </div>
+            <h1 className="font-display text-5xl md:text-7xl text-[#2D2A26] mb-8 animate-fadeInUp-delay-1 leading-[1.1]">
+              We protect your data <br />
+              <span className="italic text-[#8B7355]">like our silver.</span>
             </h1>
-            <p className="text-lg text-gray-600">
-              This notice explains how Ganraj Jewellers collects, stores, and uses the information you share with us on
-              ganrajjewellers.com or during concierge interactions.
+            <p className="text-[#6B5D52] text-lg max-w-2xl mx-auto leading-relaxed animate-fadeInUp-delay-2">
+              Trust is the foundation of our atelier. This notice explains how Ganraj Jewellers collects, stores, and uses the information you share with us.
             </p>
+          </div>
+
+          {/* Abstract BG */}
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#8B7355] rounded-full blur-[120px]"></div>
           </div>
         </section>
 
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            {highlights.map((item) => (
-              <div
-                key={item.title}
-                className="rounded-3xl bg-white shadow-2xl border border-gray-100 p-6 text-center flex flex-col items-center gap-3"
-              >
-                <item.icon className="text-amber-500" size={28} />
-                <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
-                <p className="text-sm text-gray-600">{item.detail}</p>
+        {/* ================= CONTENT ================= */}
+        <section className="px-6 lg:px-12 pb-32 max-w-5xl mx-auto">
+          <div className="grid gap-16">
+            {policySections.map((section, idx) => (
+              <div key={idx} className="group relative bg-white p-10 md:p-14 rounded-[2rem] shadow-xl border border-[#C5B4A5]/20 hover:border-[#8B7355]/40 transition-colors duration-500">
+                <div className="absolute top-10 right-10 text-[#E5E0D8] font-display text-8xl opacity-50 group-hover:text-[#F2F0EB] group-hover:scale-110 transition-all duration-500 select-none">
+                  {section.id}
+                </div>
+
+                <div className="relative z-10">
+                  <h2 className="font-display text-3xl text-[#2D2A26] mb-8 flex items-center gap-4">
+                    {section.title}
+                    <div className="h-[1px] flex-grow bg-[#C5B4A5]/30"></div>
+                  </h2>
+                  <ul className="space-y-4">
+                    {section.details.map((detail, i) => (
+                      <li key={i} className="flex gap-4 text-[#6B5D52] leading-relaxed text-lg">
+                        <span className="text-[#8B7355] mt-2 text-xs">◆</span>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6">
-            {policySections.map((section) => (
-              <article
-                key={section.title}
-                className="bg-white rounded-[32px] border border-gray-100 shadow-xl p-8 space-y-5"
-              >
-                <p className="text-xs uppercase tracking-[0.4em] text-amber-500">{section.title}</p>
-                <ul className="space-y-3 text-gray-600 list-disc pl-5">
-                  {section.details.map((detail) => (
-                    <li key={detail}>{detail}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-12 rounded-[40px] bg-gradient-to-br from-gray-900 to-gray-800 text-white p-10 shadow-2xl border border-white/10">
-            <div className="flex flex-col md:flex-row justify-between gap-6">
-              <div>
-                <p className="text-sm uppercase tracking-[0.4em] text-amber-400">Lifecycle</p>
-                <h2 className="text-3xl font-bold mt-2">How your data journeys with us</h2>
-                <p className="mt-3 text-gray-200 max-w-3xl">
-                  From the moment you place an order to the day a return reaches our warehouse, we use your information
-                  only to deliver purity, transparency, and the care you asked for.
-                </p>
-              </div>
-              <div className="space-y-4">
-                {timelines.map((item) => (
-                  <div key={item.title} className="bg-white/10 rounded-2xl border border-white/20 p-4">
-                    <p className="text-sm uppercase tracking-[0.4em] text-gray-300">{item.title}</p>
-                    <p className="mt-2 text-sm text-gray-200">{item.description}</p>
-                  </div>
-                ))}
-              </div>
+          {/* Bottom Card */}
+          <div className="mt-16 bg-[#2D2A26] text-[#F2F0EB] rounded-[3rem] p-10 md:p-16 text-center relative overflow-hidden">
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <Lock className="w-10 h-10 text-[#8B7355] mx-auto mb-6" />
+              <h3 className="font-display text-3xl md:text-4xl mb-6">Your Rights & Control</h3>
+              <p className="text-[#F2F0EB]/70 text-lg mb-8">
+                You retain full ownership of your data. If you wish to update, carry over, or delete your information, our concierge team is one email away.
+              </p>
+              <a href="mailto:ganrajjewellers3@gmail.com" className="inline-flex items-center gap-2 text-[#8B7355] font-medium border-b border-[#8B7355] pb-1 hover:text-white hover:border-white transition-all">
+                Contact Data Officer <ArrowRight size={16} />
+              </a>
             </div>
           </div>
         </section>
+
       </main>
       <ShoppingCartSidebar isOpen={showCart} onClose={() => setShowCart(false)} />
       <Footer />
     </>
   );
 }
-

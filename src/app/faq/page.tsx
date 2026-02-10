@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Package, Leaf, Shield, Sparkles, CheckCircle, Circle } from "lucide-react";
+import { Package, Leaf, Shield, Sparkles, Plus, Minus, CheckCircle, ArrowRight } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import ShoppingCartSidebar from "../components/cart/ShoppingCart";
@@ -16,7 +16,7 @@ const faqSections = [
       {
         question: "Do you ship internationally?",
         answer:
-          "Yes. Every parcel is insured and delivered via VIP couriers with customs-cleared documentation pre-filled.",
+          "Yes. Every parcel is insured and delivered via VIP couriers with customs-cleared documentation pre-filled. We handle the logistics so you can focus on the unboxing.",
       },
       {
         question: "How long does delivery take?",
@@ -39,7 +39,7 @@ const faqSections = [
       {
         question: "Do you offer repairs?",
         answer:
-          "Yes. We provide complimentary replating, polishing, and stone tightening for manufacturing defects within one year.",
+          "Yes. We provide complimentary replating, polishing, and stone tightening for manufacturing defects within one year. After that, we offer care services at nominal atelier rates.",
       },
     ],
   },
@@ -52,130 +52,134 @@ const faqSections = [
       {
         question: "How do I care for my jewellery?",
         answer:
-          "Store in the embroidered pouches, avoid perfume contact, and wipe with a microfiber cloth. Schedule a seasonal spa refresh anytime—details are on your certificate.",
+          "Store in the embroidered pouches provided, avoid perfume contact, and wipe with the included microfiber cloth. Schedule a seasonal spa refresh anytime.",
       },
       {
         question: "Is my gold plated or solid?",
         answer:
-          "Each piece is 18k certified gold with BIS hallmarks. Plated pieces are clearly marked and include complimentary replating services.",
+          "Each piece is 18k certified gold with BIS hallmarks. Plated pieces are clearly marked and include complimentary replating services for the first year.",
       },
     ],
   },
 ];
 
-const timeline = [
-  "Select your dream jewel & request a virtual fitting.",
-  "Receive bespoke recommendations, renderings, and a textured mood board.",
-  "Approve the design, select metals/stones, and confirm delivery windows.",
-  "Track the creation in real time; final polish ships inside a velvet chest.",
-];
-
 export default function FAQPage() {
   const [showCart, setShowCart] = useState(false);
+  const [openItem, setOpenItem] = useState<string | null>(null);
+
+  const toggleItem = (id: string) => {
+    setOpenItem(openItem === id ? null : id);
+  };
 
   return (
     <>
       <Navbar onCartOpen={() => setShowCart(true)} />
-      <main className="bg-white text-gray-900">
-        <section className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 py-20">
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute w-64 h-64 bg-amber-100 blur-3xl top-16 left-10" />
-            <div className="absolute w-72 h-72 bg-rose-100 blur-3xl bottom-4 right-8" />
-          </div>
-          <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 text-amber-600 font-semibold">
-              <Sparkles size={18} />
-              Concierge FAQ
-            </p>
-            <h1 className="mt-6 text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-              Answers tailored to luxury service
-            </h1>
-            <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-              Whether you’re styling a wedding, gifting an heirloom, or customizing for travel, we have a dedicated
-              team ready to make every detail effortless.
-            </p>
-            <div className="mt-8 grid md:grid-cols-3 gap-4 text-left">
-              {["Certified stones", "Hallmarked metals", "Lifetime care"].map((line) => (
-                <div
-                  key={line}
-                  className="rounded-2xl bg-white/70 border border-gray-100 px-6 py-4 shadow-lg shadow-amber-100/50 backdrop-blur"
-                >
-                  <p className="text-sm uppercase tracking-[0.3em] text-amber-500">Promise</p>
-                  <p className="text-base font-semibold text-gray-900">{line}</p>
-                </div>
-              ))}
+
+      <main className="bg-[#F2F0EB] min-h-screen">
+
+        {/* ================= HERO ================= */}
+        <section className="relative pt-32 pb-24 px-6">
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 text-[#8B7355] text-xs font-bold tracking-[0.3em] uppercase mb-6 animate-fadeInUp">
+                <Sparkles size={14} />
+                <span>Concierge FAQ</span>
+              </div>
+              <h1 className="font-display text-5xl md:text-7xl text-[#2D2A26] mb-8 animate-fadeInUp-delay-1 leading-[1.1]">
+                Answers tailored to <br />
+                <span className="italic text-[#8B7355]">luxury service.</span>
+              </h1>
+              <p className="text-[#6B5D52] text-lg max-w-xl leading-relaxed animate-fadeInUp-delay-2 mb-10">
+                Whether you’re styling a wedding, gifting an heirloom, or customizing for travel, we have a dedicated team ready to make every detail effortless.
+              </p>
+
+              <div className="flex gap-4 animate-fadeInUp-delay-3">
+                {["Certified stones", "Hallmarked metals", "Lifetime care"].map((tag, i) => (
+                  <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#C5B4A5] text-[#6B5D52] text-sm">
+                    <CheckCircle size={14} className="text-[#8B7355]" />
+                    {tag}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Decorative Right Side */}
+            <div className="relative h-[400px] hidden lg:block animate-fadeInRight">
+              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#E5E0D8] rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse-slow"></div>
+              <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-[#F5E6D3] rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-float"></div>
             </div>
           </div>
         </section>
 
-        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {faqSections.map(({ id, title, summary, icon: Icon, items }) => (
-              <div
-                key={id}
-                className="bg-white rounded-[32px] shadow-2xl border border-gray-100 overflow-hidden flex flex-col"
-              >
-                <div className="px-8 py-6 bg-gradient-to-b from-white to-amber-50">
-                  <div className="inline-flex items-center gap-3 text-amber-600">
-                    <Icon size={22} />
-                    <span className="text-lg font-semibold text-gray-900">{title}</span>
+        {/* ================= FAQ ACCORDION ================= */}
+        <section className="px-6 lg:px-12 pb-32 max-w-4xl mx-auto">
+          <div className="space-y-16">
+            {faqSections.map((section) => (
+              <div key={section.id} className="scroll-mt-32">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-[#8B7355] shadow-sm">
+                    <section.icon size={20} />
                   </div>
-                  <p className="mt-3 text-sm text-gray-600">{summary}</p>
+                  <div>
+                    <h2 className="font-display text-2xl text-[#2D2A26]">{section.title}</h2>
+                    <p className="text-[#6B5D52] text-sm">{section.summary}</p>
+                  </div>
                 </div>
-                <div className="p-8 space-y-6">
-                  {items.map((faq) => (
-                    <details
-                      key={faq.question}
-                      className="group border border-gray-100 rounded-2xl p-4 bg-gray-50 transition-shadow hover:shadow-lg"
-                    >
-                      <summary className="flex items-center justify-between cursor-pointer text-lg font-semibold text-gray-900">
-                        {faq.question}
-                        <Circle className="text-amber-400 transition-transform group-open:-rotate-45" size={16} />
-                      </summary>
-                      <p className="mt-3 text-gray-600 leading-relaxed">{faq.answer}</p>
-                    </details>
-                  ))}
+
+                <div className="space-y-4">
+                  {section.items.map((item, idx) => {
+                    const itemId = `${section.id}-${idx}`;
+                    const isOpen = openItem === itemId;
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`group bg-white rounded-2xl border transition-all duration-300 overflow-hidden ${isOpen ? 'border-[#8B7355] shadow-lg' : 'border-[#C5B4A5]/30 hover:border-[#8B7355]/50'}`}
+                      >
+                        <button
+                          onClick={() => toggleItem(itemId)}
+                          className="w-full flex items-center justify-between p-6 text-left"
+                        >
+                          <span className={`font-medium text-lg transition-colors ${isOpen ? 'text-[#8B7355]' : 'text-[#2D2A26]'}`}>
+                            {item.question}
+                          </span>
+                          <span className={`flex-shrink-0 ml-4 w-8 h-8 rounded-full flex items-center justify-center transition-all ${isOpen ? 'bg-[#8B7355] text-white rotate-180' : 'bg-[#F2F0EB] text-[#6B5D52]'}`}>
+                            {isOpen ? <Minus size={16} /> : <Plus size={16} />}
+                          </span>
+                        </button>
+
+                        <div
+                          className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100 pb-6 px-6' : 'grid-rows-[0fr] opacity-0'}`}
+                        >
+                          <div className="overflow-hidden">
+                            <p className="text-[#6B5D52] leading-relaxed">
+                              {item.answer}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-[40px] p-10 shadow-2xl">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div>
-                <p className="text-sm uppercase tracking-[0.5em] text-amber-300">Our Process</p>
-                <h2 className="mt-3 text-3xl font-bold">Journey from idea to treasure</h2>
-                <p className="mt-3 text-gray-300 max-w-2xl">
-                  Every concierge order is shepherded with appointment-only previews, artisanal craftsmanship, and
-                  VIP delivery.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-amber-200 bg-white/10 px-5 py-2 rounded-full">
-                <CheckCircle size={20} />
-                <span className="text-sm font-semibold">White-glove concierge</span>
-              </div>
+          {/* Contact CTO */}
+          <div className="mt-20 p-8 rounded-[2rem] bg-gradient-to-r from-[#2D2A26] to-[#1a1918] text-[#F2F0EB] flex flex-col md:flex-row items-center justify-between gap-8">
+            <div>
+              <h3 className="font-display text-2xl mb-2">Still have questions?</h3>
+              <p className="text-white/60">Our concierge team is available 10 AM – 8 PM IST.</p>
             </div>
-            <div className="mt-8 grid md:grid-cols-4 gap-6">
-              {timeline.map((step, index) => (
-                <div key={step} className="rounded-3xl bg-white/10 border border-white/20 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-amber-100/50 flex items-center justify-center text-amber-600 font-bold">
-                      {index + 1}
-                    </div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-gray-300">
-                      Step {index + 1}
-                    </p>
-                  </div>
-                  <p className="mt-3 text-sm text-gray-200 leading-relaxed">{step}</p>
-                </div>
-              ))}
-            </div>
+            <button className="px-8 py-3 bg-[#F2F0EB] text-[#2D2A26] rounded-full font-medium hover:bg-[#8B7355] hover:text-white transition-all duration-300 whitespace-nowrap">
+              Contact Concierge
+            </button>
           </div>
         </section>
+
       </main>
       <ShoppingCartSidebar isOpen={showCart} onClose={() => setShowCart(false)} />
       <Footer />
     </>
   );
 }
-

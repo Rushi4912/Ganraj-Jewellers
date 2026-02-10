@@ -15,7 +15,14 @@ import {
   Plus,
   CheckCircle2,
   Shield,
+  Package,
+  Settings,
+  ChevronRight,
+  Edit2,
+  Trash2
 } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 const emptyAddress: Partial<Address> & { id: string | undefined } = {
   id: undefined,
@@ -47,6 +54,7 @@ export default function AccountPage() {
   } = useAuth();
   const toast = useToast();
 
+  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'addresses' | 'settings'>('overview');
   const [editingProfile, setEditingProfile] = useState({
     fullName: profile?.fullName || "",
     phone: profile?.phone || "",
@@ -57,6 +65,7 @@ export default function AccountPage() {
   const handleProfileSave = async (e: React.FormEvent) => {
     e.preventDefault();
     await saveProfile(editingProfile);
+    toast.success("Profile updated successfully");
   };
 
   const startNewAddress = () => {
@@ -81,6 +90,7 @@ export default function AccountPage() {
     await saveAddress(addressDraft as any);
     setAddressFormOpen(false);
     setAddressDraft(emptyAddress);
+    toast.success("Address saved successfully");
   };
 
   const stats = useMemo(
@@ -88,27 +98,19 @@ export default function AccountPage() {
       {
         label: "Member since",
         value: user?.created_at
-          ? new Date(user.created_at).toLocaleDateString()
+          ? new Date(user.created_at).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
           : "—",
       },
       { label: "Saved addresses", value: addresses.length },
-      {
-        label: "Preferred shipping",
-        value:
-          addresses.find((a) => a.isDefault)?.city
-            ? `${addresses.find((a) => a.isDefault)?.city}, ${
-                addresses.find((a) => a.isDefault)?.country
-              }`
-            : "Not set",
-      },
+      { label: "Total Orders", value: "0" }, // Placeholder for order count
     ],
     [addresses, user?.created_at]
   );
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="animate-spin text-amber-500" size={32} />
+      <div className="min-h-screen flex items-center justify-center bg-[#F2F0EB]">
+        <Loader2 className="animate-spin text-[#8B7355]" size={32} />
       </div>
     );
   }
@@ -117,29 +119,30 @@ export default function AccountPage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-          <div className="max-w-lg w-full bg-white rounded-3xl shadow-xl p-10 text-center space-y-6">
-            <Shield size={56} className="mx-auto text-amber-500" />
-            <h1 className="text-3xl font-bold text-gray-900">
-              Sign in to manage your atelier profile
+        <div className="min-h-screen bg-[#F2F0EB] flex items-center justify-center px-6 py-20 animate-fadeIn">
+          <div className="max-w-lg w-full bg-white rounded-[32px] shadow-sm p-12 text-center border border-[#E5E0D8]">
+            <div className="w-20 h-20 bg-[#F2F0EB] rounded-full flex items-center justify-center mx-auto mb-8 text-[#8B7355]">
+              <User size={32} />
+            </div>
+            <h1 className="font-display text-3xl text-[#2D2A26] mb-4">
+              Sign in to your Atelier
             </h1>
-            <p className="text-gray-600">
-              Access saved addresses, profile preferences, and track every
-              purchase.
+            <p className="text-[#6B5D52] mb-10 leading-relaxed">
+              Access your saved addresses, track your exquisite orders, and manage your personal collection.
             </p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <a
+            <div className="flex flex-col gap-4">
+              <Link
                 href="/login"
-                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/30"
+                className="w-full py-4 bg-[#2D2A26] text-white rounded-full font-bold uppercase tracking-wider hover:bg-[#8B7355] transition-all duration-300"
               >
-                Login
-              </a>
-              <a
+                Sign In
+              </Link>
+              <Link
                 href="/signup"
-                className="px-6 py-3 rounded-2xl border border-gray-200 font-semibold text-gray-800 hover:border-gray-300 transition-all"
+                className="w-full py-4 bg-transparent border border-[#C5B4A5] text-[#2D2A26] rounded-full font-bold uppercase tracking-wider hover:bg-[#F2F0EB] transition-colors"
               >
-                Create account
-              </a>
+                Create Account
+              </Link>
             </div>
           </div>
         </div>
@@ -151,392 +154,283 @@ export default function AccountPage() {
   return (
     <>
       <Navbar />
-      <main className="bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <section className="bg-white rounded-3xl shadow-xl p-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center text-2xl font-semibold">
-                {profile?.fullName
-                  ? profile.fullName.charAt(0).toUpperCase()
-                  : user.email?.charAt(0).toUpperCase()}
+      <main className="bg-[#F2F0EB] min-h-screen py-24">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+
+          {/* Header */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 mb-12 animate-fadeInUp">
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-full bg-[#E5E0D8] text-[#8B7355] flex items-center justify-center text-3xl font-display">
+                {profile?.fullName ? profile.fullName.charAt(0).toUpperCase() : user.email?.charAt(0).toUpperCase()}
               </div>
               <div>
-                <p className="uppercase text-xs tracking-[0.4em] text-gray-500">
-                  Atelier member
-                </p>
-                <h1 className="text-3xl font-bold text-gray-900 mt-2">
-                  {profile?.fullName || "Complete your profile"}
+                <h1 className="font-display text-3xl text-[#2D2A26] mb-1">
+                  Hello, {profile?.fullName?.split(' ')[0] || 'Member'}
                 </h1>
-                <p className="text-gray-600">{user.email}</p>
+                <p className="text-[#6B5D52] text-sm">{user.email}</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => {
-                  signOut();
-                  toast.info("Signed out");
-                }}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-gray-200 font-semibold text-gray-800 hover:border-gray-300 transition-all bg-white"
-              >
-                <LogOut size={18} />
-                Sign out
-              </button>
-              <a
-                href="/orders"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/40"
-              >
-                View orders
-              </a>
-            </div>
-          </section>
+            <button
+              onClick={() => {
+                signOut();
+                toast.info("Signed out");
+              }}
+              className="px-6 py-3 rounded-full border border-[#C5B4A5]/30 bg-white text-[#6B5D52] font-medium hover:bg-[#2D2A26] hover:text-white transition-all flex items-center gap-2"
+            >
+              <LogOut size={16} /> Sign Out
+            </button>
+          </div>
 
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-white rounded-2xl p-6 shadow-sm space-y-2"
-              >
-                <p className="text-xs text-gray-500 uppercase tracking-wide">
-                  {stat.label}
-                </p>
-                <p className="text-xl font-semibold text-gray-900">
-                  {stat.value}
-                </p>
-              </div>
-            ))}
-          </section>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-white rounded-3xl shadow-sm p-8 space-y-6">
-              <div className="flex items-center gap-3">
-                <User className="text-amber-600" />
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Profile details
-                </h2>
-              </div>
-
-              <form className="space-y-5" onSubmit={handleProfileSave}>
-                <div>
-                  <label className="text-sm font-semibold text-gray-700">
-                    Full name
-                  </label>
-                  <input
-                    type="text"
-                    value={editingProfile.fullName}
-                    onChange={(e) =>
-                      setEditingProfile((prev) => ({
-                        ...prev,
-                        fullName: e.target.value,
-                      }))
-                    }
-                    className="mt-2 w-full rounded-2xl border border-gray-200 px-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                    placeholder="Add your full name"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-semibold text-gray-700">
-                    Phone number
-                  </label>
-                  <div className="relative mt-2">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="tel"
-                      value={editingProfile.phone}
-                      onChange={(e) =>
-                        setEditingProfile((prev) => ({
-                          ...prev,
-                          phone: e.target.value,
-                        }))
-                      }
-                      className="w-full rounded-2xl border border-gray-200 pl-12 pr-4 py-3 focus:ring-2 focus:ring-amber-500 focus:border-transparent"
-                      placeholder="+1 555 000 0000"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-sm font-semibold text-gray-700">
-                    Email
-                  </label>
-                  <div className="relative mt-2">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="email"
-                      value={user.email ?? ""}
-                      disabled
-                      className="w-full rounded-2xl border border-gray-200 pl-12 pr-4 py-3 bg-gray-50 text-gray-500"
-                    />
-                  </div>
-                </div>
-
+            {/* Sidebar Navigation */}
+            <div className="lg:col-span-1 space-y-2 animate-fadeInUp" style={{ animationDelay: '100ms' }}>
+              {[
+                { id: 'overview', label: 'Overview', icon: User },
+                { id: 'orders', label: 'My Orders', icon: Package },
+                { id: 'addresses', label: 'Addresses', icon: MapPin },
+                { id: 'settings', label: 'Settings', icon: Settings },
+              ].map((item) => (
                 <button
-                  type="submit"
-                  disabled={profileLoading}
-                  className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold py-3 shadow-lg shadow-amber-500/30 disabled:opacity-50"
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-all ${activeTab === item.id
+                      ? 'bg-[#2D2A26] text-white shadow-lg'
+                      : 'bg-white text-[#6B5D52] hover:bg-[#E5E0D8]'
+                    }`}
                 >
-                  {profileLoading && (
-                    <Loader2 className="animate-spin" size={18} />
-                  )}
-                  Save profile
+                  <div className="flex items-center gap-3">
+                    <item.icon size={18} />
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                  {activeTab === item.id && <ChevronRight size={16} />}
                 </button>
-              </form>
+              ))}
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm p-8 space-y-6">
-              <div className="flex items-center gap-3">
-                <MapPin className="text-amber-600" />
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Address book
-                </h2>
-              </div>
+            {/* Main Content Area */}
+            <div className="lg:col-span-3 space-y-8 animate-fadeInUp" style={{ animationDelay: '200ms' }}>
 
-              <div className="space-y-4">
-                {addresses.length === 0 && (
-                  <div className="rounded-2xl border border-dashed border-gray-200 p-6 text-center text-gray-500">
-                    No addresses saved yet.
-                  </div>
-                )}
-                {addresses.map((address) => (
-                  <div
-                    key={address.id}
-                    className="rounded-2xl border border-gray-100 p-5 space-y-3"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <p className="font-semibold text-gray-900">
-                          {address.label}
-                        </p>
-                        {address.isDefault && (
-                          <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700">
-                            <CheckCircle2 size={12} />
-                            Default
-                          </span>
-                        )}
+              {activeTab === 'overview' && (
+                <div className="space-y-8">
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {stats.map((stat) => (
+                      <div key={stat.label} className="bg-white p-6 rounded-2xl shadow-sm border border-[#E5E0D8]">
+                        <p className="text-xs uppercase tracking-wider text-[#8B7355] mb-2">{stat.label}</p>
+                        <p className="font-display text-2xl text-[#2D2A26]">{stat.value}</p>
                       </div>
-                      <div className="flex gap-2 text-sm">
+                    ))}
+                  </div>
+
+                  {/* Recent Activity / Simplified Dashboard */}
+                  <div className="bg-white p-8 rounded-[24px] shadow-sm border border-[#E5E0D8]">
+                    <h2 className="font-display text-2xl text-[#2D2A26] mb-6">Welcome Back</h2>
+                    <p className="text-[#6B5D52] leading-relaxed">
+                      From your account dashboard you can view your <span className="text-[#2D2A26] font-medium cursor-pointer hover:underline" onClick={() => setActiveTab('orders')}>recent orders</span>,
+                      manage your <span className="text-[#2D2A26] font-medium cursor-pointer hover:underline" onClick={() => setActiveTab('addresses')}>shipping and billing addresses</span>,
+                      and <span className="text-[#2D2A26] font-medium cursor-pointer hover:underline" onClick={() => setActiveTab('settings')}>edit your password and account details</span>.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'orders' && (
+                <div className="bg-white p-8 rounded-[24px] shadow-sm border border-[#E5E0D8] min-h-[400px] flex flex-col items-center justify-center text-center">
+                  <div className="w-16 h-16 bg-[#F2F0EB] rounded-full flex items-center justify-center mb-4 text-[#C5B4A5]">
+                    <Package size={24} />
+                  </div>
+                  <h3 className="font-display text-xl text-[#2D2A26] mb-2">No Orders Yet</h3>
+                  <p className="text-[#6B5D52] max-w-xs mx-auto mb-6">
+                    You haven't placed any orders yet. Discover our collection and start your journey.
+                  </p>
+                  <Link href="/shop" className="px-8 py-3 bg-[#2D2A26] text-white rounded-full font-bold uppercase tracking-wider text-xs hover:bg-[#8B7355] transition-colors">
+                    Start Shopping
+                  </Link>
+                </div>
+              )}
+
+              {activeTab === 'addresses' && (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {addresses.map((address) => (
+                      <div key={address.id} className="bg-white p-6 rounded-2xl border border-[#E5E0D8] hover:border-[#8B7355] transition-colors group relative">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-bold text-[#2D2A26]">{address.label}</h3>
+                              {address.isDefault && (
+                                <span className="bg-[#F2F0EB] text-[#8B7355] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Default</span>
+                              )}
+                            </div>
+                            <p className="text-sm text-[#6B5D52]">{address.recipientName}</p>
+                          </div>
+                          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => startEditAddress(address.id)} className="p-2 hover:bg-[#F2F0EB] rounded-full text-[#6B5D52]">
+                              <Edit2 size={14} />
+                            </button>
+                            <button onClick={() => deleteAddress(address.id)} className="p-2 hover:bg-red-50 rounded-full text-red-500">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="text-sm text-[#6B5D52] space-y-1">
+                          <p>{address.line1}</p>
+                          {address.line2 && <p>{address.line2}</p>}
+                          <p>{address.city}, {address.state} {address.postalCode}</p>
+                          <p>{address.country}</p>
+                          <p className="pt-2 text-xs">{address.phone}</p>
+                        </div>
                         {!address.isDefault && (
                           <button
                             onClick={() => setDefaultAddress(address.id)}
-                            className="text-amber-600 hover:underline"
+                            className="mt-4 text-xs font-bold text-[#8B7355] uppercase tracking-wider hover:underline"
                           >
-                            Make default
+                            Set as Default
                           </button>
                         )}
-                        <button
-                          onClick={() => startEditAddress(address.id)}
-                          className="text-gray-600 hover:underline"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteAddress(address.id)}
-                          className="text-red-500 hover:underline"
-                        >
-                          Remove
-                        </button>
+                      </div>
+                    ))}
+
+                    <button
+                      onClick={startNewAddress}
+                      className="border-2 border-dashed border-[#E5E0D8] rounded-2xl p-6 flex flex-col items-center justify-center gap-4 text-[#C5B4A5] hover:border-[#8B7355] hover:text-[#8B7355] transition-all min-h-[200px]"
+                    >
+                      <Plus size={32} />
+                      <span className="font-bold uppercase tracking-wider text-xs">Add New Address</span>
+                    </button>
+                  </div>
+
+                  {addressFormOpen && (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                      <div className="bg-white rounded-[24px] max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
+                        <h3 className="font-display text-2xl text-[#2D2A26] mb-6">
+                          {addressDraft.id ? "Edit Address" : "Add New Address"}
+                        </h3>
+                        <form onSubmit={handleAddressSubmit} className="space-y-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">Label</label>
+                              <input
+                                className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl px-4 py-3 outline-none focus:border-[#8B7355] transition-colors"
+                                placeholder="Home, Office..."
+                                value={addressDraft.label}
+                                onChange={(e) => setAddressDraft({ ...addressDraft, label: e.target.value })}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">Recipient Name</label>
+                              <input
+                                className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl px-4 py-3 outline-none focus:border-[#8B7355] transition-colors"
+                                value={addressDraft.recipientName}
+                                onChange={(e) => setAddressDraft({ ...addressDraft, recipientName: e.target.value })}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">Address Line 1</label>
+                            <input
+                              className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl px-4 py-3 outline-none focus:border-[#8B7355] transition-colors"
+                              value={addressDraft.line1}
+                              onChange={(e) => setAddressDraft({ ...addressDraft, line1: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">City</label>
+                              <input
+                                className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl px-4 py-3 outline-none focus:border-[#8B7355] transition-colors"
+                                value={addressDraft.city}
+                                onChange={(e) => setAddressDraft({ ...addressDraft, city: e.target.value })}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">State</label>
+                              <input
+                                className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl px-4 py-3 outline-none focus:border-[#8B7355] transition-colors"
+                                value={addressDraft.state}
+                                onChange={(e) => setAddressDraft({ ...addressDraft, state: e.target.value })}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex gap-4 pt-4 border-t border-[#E5E0D8]">
+                            <button
+                              type="button"
+                              onClick={() => setAddressFormOpen(false)}
+                              className="px-8 py-3 border border-[#C5B4A5] text-[#6B5D52] rounded-xl font-bold uppercase tracking-wider hover:bg-[#FAFAFA]"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="submit"
+                              className="flex-1 bg-[#2D2A26] text-white rounded-xl font-bold uppercase tracking-wider hover:bg-[#8B7355] transition-colors"
+                            >
+                              {addressDraft.id ? "Update Address" : "Save Address"}
+                            </button>
+                          </div>
+                        </form>
                       </div>
                     </div>
-                    <div className="text-sm text-gray-600">
-                      <p className="font-semibold">{address.recipientName}</p>
-                      <p>{address.line1}</p>
-                      {address.line2 && <p>{address.line2}</p>}
-                      <p>
-                        {address.city}, {address.state} {address.postalCode}
-                      </p>
-                      <p>{address.country}</p>
-                      <p className="pt-2">{address.phone}</p>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'settings' && (
+                <div className="bg-white p-8 rounded-[24px] shadow-sm border border-[#E5E0D8]">
+                  <h3 className="font-display text-2xl text-[#2D2A26] mb-8">Account Details</h3>
+                  <form onSubmit={handleProfileSave} className="space-y-6 max-w-lg">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">Full Name</label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C5B4A5]" size={18} />
+                        <input
+                          className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl pl-12 pr-4 py-3 outline-none focus:border-[#8B7355] transition-colors"
+                          value={editingProfile.fullName}
+                          onChange={(e) => setEditingProfile(prev => ({ ...prev, fullName: e.target.value }))}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={startNewAddress}
-                className="w-full flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-amber-200 py-3 text-amber-600 font-semibold"
-              >
-                <Plus size={18} />
-                Add new address
-              </button>
-
-              {addressFormOpen && (
-                <form
-                  onSubmit={handleAddressSubmit}
-                  className="space-y-4 rounded-2xl border border-gray-100 p-5"
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-gray-600">Label</label>
-                      <input
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                        value={addressDraft.label}
-                        onChange={(e) =>
-                          setAddressDraft((prev) => ({
-                            ...prev,
-                            label: e.target.value,
-                          }))
-                        }
-                        placeholder="Home / Studio"
-                      />
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">Email Address</label>
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C5B4A5]" size={18} />
+                        <input
+                          className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl pl-12 pr-4 py-3 outline-none text-[#C5B4A5] cursor-not-allowed"
+                          value={user.email || ''}
+                          disabled
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="text-sm text-gray-600">
-                        Recipient name
-                      </label>
-                      <input
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                        value={addressDraft.recipientName}
-                        onChange={(e) =>
-                          setAddressDraft((prev) => ({
-                            ...prev,
-                            recipientName: e.target.value,
-                          }))
-                        }
-                      />
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-[#6B5D52] uppercase tracking-wider">Phone</label>
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C5B4A5]" size={18} />
+                        <input
+                          className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl pl-12 pr-4 py-3 outline-none focus:border-[#8B7355] transition-colors"
+                          value={editingProfile.phone}
+                          onChange={(e) => setEditingProfile(prev => ({ ...prev, phone: e.target.value }))}
+                          placeholder="+1 234 567 890"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="text-sm text-gray-600">Phone</label>
-                    <input
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                      value={addressDraft.phone}
-                      onChange={(e) =>
-                        setAddressDraft((prev) => ({
-                          ...prev,
-                          phone: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-600">Address line</label>
-                    <input
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                      value={addressDraft.line1}
-                      onChange={(e) =>
-                        setAddressDraft((prev) => ({
-                          ...prev,
-                          line1: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm text-gray-600">
-                      Address line 2
-                    </label>
-                    <input
-                      className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                      value={addressDraft.line2 ?? ""}
-                      onChange={(e) =>
-                        setAddressDraft((prev) => ({
-                          ...prev,
-                          line2: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-gray-600">City</label>
-                      <input
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                        value={addressDraft.city}
-                        onChange={(e) =>
-                          setAddressDraft((prev) => ({
-                            ...prev,
-                            city: e.target.value,
-                          }))
-                        }
-                      />
+                    <div className="pt-6">
+                      <button
+                        type="submit"
+                        disabled={profileLoading}
+                        className="px-8 py-3 bg-[#2D2A26] text-white rounded-xl font-bold uppercase tracking-wider hover:bg-[#8B7355] transition-colors disabled:opacity-70"
+                      >
+                        {profileLoading ? 'Saving...' : 'Save Changes'}
+                      </button>
                     </div>
-                    <div>
-                      <label className="text-sm text-gray-600">State</label>
-                      <input
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                        value={addressDraft.state}
-                        onChange={(e) =>
-                          setAddressDraft((prev) => ({
-                            ...prev,
-                            state: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm text-gray-600">
-                        Postal code
-                      </label>
-                      <input
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                        value={addressDraft.postalCode}
-                        onChange={(e) =>
-                          setAddressDraft((prev) => ({
-                            ...prev,
-                            postalCode: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm text-gray-600">Country</label>
-                      <input
-                        className="w-full rounded-xl border border-gray-200 px-3 py-2 mt-1"
-                        value={addressDraft.country}
-                        onChange={(e) =>
-                          setAddressDraft((prev) => ({
-                            ...prev,
-                            country: e.target.value,
-                          }))
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={addressDraft.isDefault}
-                      onChange={(e) =>
-                        setAddressDraft((prev) => ({
-                          ...prev,
-                          isDefault: e.target.checked,
-                        }))
-                      }
-                      className="w-4 h-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-                    />
-                    <span className="text-sm text-gray-600">
-                      Set as default shipping address
-                    </span>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <button
-                      type="submit"
-                      disabled={addressesLoading}
-                      className="flex-1 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold py-3"
-                    >
-                      {addressDraft.id ? "Update address" : "Save address"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAddressFormOpen(false)}
-                      className="rounded-2xl border border-gray-200 px-6 py-3 font-semibold text-gray-600"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
+                  </form>
+                </div>
               )}
             </div>
-          </section>
+          </div>
         </div>
       </main>
       <Footer />

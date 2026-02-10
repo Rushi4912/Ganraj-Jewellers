@@ -1,5 +1,5 @@
 "use client";
-import { Search, ShoppingCart, User, Heart, Menu, X, GitCompare, LogOut, Settings } from "lucide-react";
+import { Search, ShoppingCart, User, Heart, Menu, X, LogOut, Settings } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
@@ -17,7 +17,7 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
-  const { cartCount, wishlist, compareList } = useCart();
+  const { cartCount, wishlist } = useCart();
   const { user, profile, signOut, loading } = useAuth();
   const userMenuRef = useRef<HTMLDivElement | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
@@ -102,8 +102,8 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
           <div className="hidden lg:flex flex-1 max-w-xl mx-8">
             <form onSubmit={handleSearchSubmit} className={`relative w-full transition-all duration-300 ${isSearchFocused ? 'scale-[1.02]' : ''}`}>
               <div className={`relative flex items-center w-full rounded-full border transition-all duration-300 ${isSearchFocused
-                  ? 'border-[#8B7355] shadow-lg bg-white ring-4 ring-[#E5E0D8]'
-                  : 'border-[#C5B4A5] bg-[#E5E0D8]/50 hover:border-[#8B7355]/50 hover:bg-[#E5E0D8]'
+                ? 'border-[#8B7355] shadow-lg bg-white ring-4 ring-[#E5E0D8]'
+                : 'border-[#C5B4A5] bg-[#E5E0D8]/50 hover:border-[#8B7355]/50 hover:bg-[#E5E0D8]'
                 }`}>
                 <Search className={`absolute left-4 w-5 h-5 transition-colors duration-300 ${isSearchFocused ? 'text-[#8B7355]' : 'text-[#6B5D52]'}`} />
                 <input
@@ -128,8 +128,8 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
                 <button
                   type="submit"
                   className={`absolute right-1.5 p-1.5 rounded-full transition-all duration-300 ${isSearchFocused
-                      ? 'bg-[#8B7355] text-white hover:bg-[#6B5D52]'
-                      : 'bg-[#2D2A26] text-white hover:bg-[#8B7355]'
+                    ? 'bg-[#8B7355] text-white hover:bg-[#6B5D52]'
+                    : 'bg-[#2D2A26] text-white hover:bg-[#8B7355]'
                     }`}
                 >
                   <Search size={14} />
@@ -160,19 +160,6 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
               {wishlist.length > 0 && (
                 <span className="absolute top-0 right-0 bg-[#8B7355] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#F2F0EB]">
                   {wishlist.length}
-                </span>
-              )}
-            </Link>
-
-            <Link
-              href="/compare"
-              className="hidden sm:flex p-2 text-[#5A4D41] hover:text-[#8B7355] hover:bg-[#E5E0D8] rounded-full transition-all relative group"
-              title="Compare"
-            >
-              <GitCompare size={20} className="transition-transform group-hover:scale-110" />
-              {compareList.length > 0 && (
-                <span className="absolute top-0 right-0 bg-[#B8923A] text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center border-2 border-[#F2F0EB]">
-                  {compareList.length}
                 </span>
               )}
             </Link>

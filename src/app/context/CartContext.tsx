@@ -6,14 +6,14 @@ import { useToast } from './ToastContext';
 interface CartContextType {
   cart: CartItem[];
   wishlist: number[];
-  compareList: number[];
+
   appliedDiscount: DiscountCode | null;
   addToCart: (product: Product, selectedVariants?: SelectedVariants) => void;
   removeFromCart: (productId: number, variantId?: string) => void;
   updateCartQuantity: (productId: number, delta: number, variantId?: string) => void;
   clearCart: () => void;
   toggleWishlist: (productId: number) => void;
-  toggleCompare: (productId: number) => void;
+
   applyDiscount: (code: DiscountCode) => void;
   removeDiscount: () => void;
   cartCount: number;
@@ -27,10 +27,10 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<number[]>([]);
-  const [compareList, setCompareList] = useState<number[]>([]);
+
   const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  
+
   const toast = useToast();
 
   // Load cart data from localStorage on component mount
@@ -38,7 +38,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const savedCart = localStorage.getItem('cart');
       const savedWishlist = localStorage.getItem('wishlist');
-      const savedCompareList = localStorage.getItem('compareList');
       const savedDiscount = localStorage.getItem('appliedDiscount');
 
       if (savedCart) {
@@ -47,9 +46,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (savedWishlist) {
         setWishlist(JSON.parse(savedWishlist));
       }
-      if (savedCompareList) {
-        setCompareList(JSON.parse(savedCompareList));
-      }
+
       if (savedDiscount) {
         setAppliedDiscount(JSON.parse(savedDiscount));
       }
@@ -73,11 +70,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [wishlist, isLoaded]);
 
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('compareList', JSON.stringify(compareList));
-    }
-  }, [compareList, isLoaded]);
+
 
   useEffect(() => {
     if (isLoaded) {
@@ -104,7 +97,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // Calculate variant price
   const calculateVariantPrice = (product: Product, selectedVariants?: SelectedVariants): number => {
     let price = product.price;
-    
+
     if (selectedVariants && product.variants) {
       product.variants.forEach(variantOption => {
         const selectedValue = selectedVariants[variantOption.type];
@@ -116,7 +109,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
       });
     }
-    
+
     return price;
   };
 
@@ -124,12 +117,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // If product has variants but none selected, just use base product
     const variantId = generateVariantId(product.id, selectedVariants);
     const finalPrice = calculateVariantPrice(product, selectedVariants);
-    
+
     setCart((prevCart) => {
-      const existing = prevCart.find((item) => 
+      const existing = prevCart.find((item) =>
         item.variantId ? item.variantId === variantId : item.id === product.id
       );
-      
+
       if (existing) {
         toast.success("Cart quantity updated!");
         return prevCart.map((item) =>
@@ -138,26 +131,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : item
         );
       }
-      
+
       toast.success("Added to cart!");
-      return [...prevCart, { 
-        ...product, 
+      return [...prevCart, {
+        ...product,
         price: finalPrice,
-        quantity: 1, 
+        quantity: 1,
         selectedVariants,
-        variantId 
+        variantId
       }];
     });
   };
 
   const removeFromCart = (productId: number, variantId?: string) => {
-    const product = cart.find(item => 
+    const product = cart.find(item =>
       variantId ? item.variantId === variantId : item.id === productId
     );
     if (product) {
       toast.info(`${product.name} removed from cart`);
     }
-    setCart((prevCart) => prevCart.filter((item) => 
+    setCart((prevCart) => prevCart.filter((item) =>
       variantId ? item.variantId !== variantId : item.id !== productId
     ));
   };
@@ -166,10 +159,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart((prevCart) => {
       return prevCart
         .map((item) => {
-          const matches = variantId 
-            ? item.variantId === variantId 
+          const matches = variantId
+            ? item.variantId === variantId
             : item.id === productId;
-            
+
           if (matches) {
             const newQuantity = item.quantity + delta;
             return newQuantity > 0 ? { ...item, quantity: newQuantity } : item;
@@ -198,20 +191,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const toggleCompare = (productId: number) => {
-    setCompareList((prev) => {
-      if (prev.includes(productId)) {
-        toast.info('Removed from comparison');
-        return prev.filter((id) => id !== productId);
-      }
-      if (prev.length >= 3) {
-        toast.warning('You can compare maximum 3 products');
-        return prev;
-      }
-      toast.success('Added to comparison!');
-      return [...prev, productId];
-    });
-  };
+
 
   const applyDiscount = (code: DiscountCode) => {
     setAppliedDiscount(code);
@@ -233,14 +213,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       value={{
         cart,
         wishlist,
-        compareList,
+
         appliedDiscount,
         addToCart,
         removeFromCart,
         updateCartQuantity,
         clearCart,
         toggleWishlist,
-        toggleCompare,
+
         applyDiscount,
         removeDiscount,
         cartCount,

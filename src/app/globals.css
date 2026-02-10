@@ -13,7 +13,6 @@
   --color-warm-gray: #6B6B6B;
 }
 
-/* Typography Classes */
 .font-display {
   font-family: 'Playfair Display', Georgia, serif;
 }
@@ -23,7 +22,7 @@
   font-style: italic;
 }
 
-/* Hero Animations */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -161,9 +160,7 @@
   animation: pulse-gold 2s ease-in-out infinite;
 }
 
-/* ===================== */
-/* Original Animations   */
-/* ===================== */
+
 
 @keyframes slideIn {
   from {
@@ -230,7 +227,6 @@
   animation: ken-burns 5s ease-out forwards;
 }
 
-/* Subtle pulse for badge */
 @keyframes pulse-subtle {
 
   0%,

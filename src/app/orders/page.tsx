@@ -16,22 +16,24 @@ import {
   statusLabels,
 } from "../utils/orderUtils";
 import {
-  PackageCheck,
+  Package,
   ArrowRight,
   Truck,
   Download,
   Repeat,
   Eye,
-  InboxIcon,
-  BadgeCheck,
+  ShoppingBag,
+  Calendar,
+  MapPin,
+  Clock
 } from "lucide-react";
 
-const statusColors: Record<string, string> = {
-  pending: "bg-gray-100 text-gray-700",
-  processing: "bg-amber-100 text-amber-700",
-  shipped: "bg-blue-100 text-blue-700",
-  delivered: "bg-green-100 text-green-700",
-  cancelled: "bg-red-100 text-red-700",
+const statusStyles: Record<string, string> = {
+  pending: "bg-gray-100 text-gray-600 border-gray-200",
+  processing: "bg-amber-50 text-amber-700 border-amber-100",
+  shipped: "bg-blue-50 text-blue-700 border-blue-100",
+  delivered: "bg-[#F2F0EB] text-[#8B7355] border-[#E5E0D8]",
+  cancelled: "bg-red-50 text-red-700 border-red-100",
 };
 
 const OrdersPage = () => {
@@ -39,11 +41,6 @@ const OrdersPage = () => {
   const { addToCart } = useCart();
   const toast = useToast();
   const router = useRouter();
-
-  const totalSpent = useMemo(
-    () => orders.reduce((sum, order) => sum + order.total, 0),
-    [orders]
-  );
 
   const reorder = (orderId: string) => {
     const order = orders.find((o) => o.id === orderId);
@@ -55,7 +52,7 @@ const OrdersPage = () => {
       }
     });
 
-    toast.success("Items added to your cart");
+    toast.success("Items added to your bag");
     router.push("/checkout");
   };
 
@@ -67,21 +64,24 @@ const OrdersPage = () => {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-          <div className="max-w-xl w-full bg-white rounded-3xl shadow-xl p-10 text-center space-y-6">
-            <InboxIcon size={72} className="mx-auto text-gray-300" />
-            <h1 className="text-3xl font-bold text-gray-900">
-              No orders just yet
-            </h1>
-            <p className="text-gray-600">
-              Explore our latest drops and start building your collection.
-            </p>
+        <div className="min-h-screen bg-[#F2F0EB] flex items-center justify-center px-6 py-20">
+          <div className="max-w-xl w-full text-center space-y-8 animate-fadeIn">
+            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto text-[#C5B4A5] shadow-sm">
+              <Package size={32} />
+            </div>
+            <div>
+              <h1 className="font-display text-4xl text-[#2D2A26] mb-4">
+                No Orders Yet
+              </h1>
+              <p className="text-[#6B5D52] text-lg leading-relaxed max-w-sm mx-auto">
+                Your jewellery journey hasn't begun. Explore our atelier to find your first treasure.
+              </p>
+            </div>
             <Link
               href="/shop"
-              className="inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/30"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full bg-[#2D2A26] text-white font-bold uppercase tracking-wider hover:bg-[#8B7355] transition-all duration-300"
             >
-              Browse the atelier
-              <ArrowRight size={18} />
+              Start Shopping <ArrowRight size={18} />
             </Link>
           </div>
         </div>
@@ -93,156 +93,139 @@ const OrdersPage = () => {
   return (
     <>
       <Navbar />
-      <main className="bg-gray-50 py-12">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          <header className="bg-white rounded-3xl shadow-xl p-8 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="bg-amber-100 text-amber-600 rounded-2xl p-4">
-                <PackageCheck size={36} />
-              </div>
-              <div>
-                <p className="uppercase text-xs tracking-[0.4em] text-gray-400 mb-2">
-                  MY ORDERS
-                </p>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  Your jewellery journey
-                </h1>
-                <p className="text-gray-600">
-                  Track, reorder, and manage every atelier dispatch in one
-                  place.
-                </p>
-              </div>
+      <main className="bg-[#F2F0EB] min-h-screen py-24">
+        <div className="max-w-5xl mx-auto px-6 lg:px-12">
+
+          <header className="mb-16 animate-fadeInUp">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="w-12 h-[1px] bg-[#8B7355]"></span>
+              <span className="text-[#8B7355] text-xs font-bold uppercase tracking-widest">My Collection</span>
             </div>
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div className="bg-gray-50 rounded-2xl p-4">
-                <p className="text-xs text-gray-500">Active orders</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {
-                    orders.filter(
-                      (order) => order.status !== "delivered" && order.status !== "cancelled"
-                    ).length
-                  }
-                </p>
-              </div>
-              <div className="bg-gray-50 rounded-2xl p-4">
-                <p className="text-xs text-gray-500">Lifetime spend</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(totalSpent)}
-                </p>
-              </div>
-            </div>
+            <h1 className="font-display text-4xl md:text-5xl text-[#2D2A26] mb-4">
+              Jewellery Journey
+            </h1>
+            <p className="text-[#6B5D52] max-w-lg leading-relaxed">
+              A curated timeline of your acquisitions. Track parcels, revisit past selections, and manage your growing collection.
+            </p>
           </header>
 
-          <section className="space-y-6">
-            {orders.map((order) => (
+          <div className="space-y-12">
+            {orders.map((order, index) => (
               <div
                 key={order.id}
-                className="bg-white rounded-3xl shadow-sm p-6 space-y-6"
+                className="bg-white rounded-[24px] p-8 md:p-10 shadow-sm border border-[#E5E0D8] hover:shadow-md transition-shadow animate-fadeInUp"
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">Order</p>
-                    <p className="text-xl font-semibold text-gray-900">
+                {/* Order Header */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-8 border-b border-[#F2F0EB]">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-3 text-[#6B5D52] text-sm mb-1">
+                      <Calendar size={14} />
+                      <span>Ordered on {formatDate(order.date)}</span>
+                    </div>
+                    <h2 className="font-display text-2xl text-[#2D2A26]">
                       {order.orderNumber}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      Placed {formatDateTime(order.date)}
-                    </p>
+                    </h2>
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                    <span
-                      className={`px-4 py-2 rounded-full text-sm font-semibold ${statusColors[order.status]}`}
-                    >
+                  <div className="flex items-center gap-4">
+                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${statusStyles[order.status] || 'bg-gray-100 border-gray-200 text-gray-600'}`}>
                       {statusLabels[order.status] || order.status}
                     </span>
-                    <span className="px-4 py-2 rounded-full bg-gray-100 text-sm text-gray-600">
-                      {order.items.length} items
-                    </span>
-                    <span className="px-4 py-2 rounded-full bg-gray-100 text-sm text-gray-600">
-                      Total {formatCurrency(order.total)}
+                    <span className="font-display text-xl text-[#2D2A26]">
+                      {formatCurrency(order.total)}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4 md:flex-row md:gap-6">
-                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {order.items.slice(0, 2).map((item) => (
-                      <div
-                        key={`${item.id}-${item.variantId || "base"}`}
-                        className="border border-gray-100 rounded-2xl p-3 flex items-center gap-3"
-                      >
-                        <Image
-                          src={item.image || "/placeholder.jpg"}
-                          alt={item.name}
-                          width={80}
-                          height={80}
-                          className="w-20 h-20 rounded-xl object-cover bg-gray-50"
-                        />
-                        <div className="text-sm">
-                          <p className="font-semibold text-gray-900">
-                            {item.name}
-                          </p>
-                          <p className="text-gray-500">
-                            Qty {item.quantity} ·{" "}
-                            {formatCurrency(item.price * item.quantity)}
-                          </p>
+                {/* Order Body */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+                  {/* Product List */}
+                  <div className="lg:col-span-2 space-y-6">
+                    {order.items.map((item) => (
+                      <div key={`${item.id}-${item.variantId}`} className="flex gap-6 group">
+                        <div className="relative w-24 h-24 bg-[#F2F0EB] rounded-2xl overflow-hidden flex-shrink-0 border border-[#E5E0D8]">
+                          <Image
+                            src={item.image || "/placeholder.jpg"}
+                            alt={item.name}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                        </div>
+                        <div className="flex-1 py-1">
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="font-display text-lg text-[#2D2A26]">{item.name}</h3>
+                            <span className="text-sm font-medium text-[#6B5D52]">{formatCurrency(item.price)}</span>
+                          </div>
+                          <p className="text-xs text-[#8B7355] font-bold uppercase tracking-wider mb-2">Qty: {item.quantity}</p>
+                          {item.selectedVariants && Object.keys(item.selectedVariants).length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {Object.entries(item.selectedVariants).map(([key, value]) => (
+                                <span key={key} className="text-xs text-[#6B5D52] bg-[#F2F0EB] px-2 py-1 rounded-md">
+                                  {value}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}
-                    {order.items.length > 2 && (
-                      <div className="border border-dashed border-gray-200 rounded-2xl p-3 flex items-center justify-center text-gray-500 text-sm">
-                        +{order.items.length - 2} more pieces
-                      </div>
-                    )}
                   </div>
 
-                  <div className="w-full md:w-64 bg-gray-50 rounded-2xl p-4 space-y-3">
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <Truck size={18} />
-                      <div>
-                        <p className="text-xs uppercase tracking-wide text-gray-500">
-                          Ships to
-                        </p>
-                        <p className="font-semibold">
-                          {order.shipping.city}, {order.shipping.country}
-                        </p>
+                  {/* Actions & Info */}
+                  <div className="flex flex-col justify-between gap-6 lg:border-l lg:border-[#F2F0EB] lg:pl-10">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-[#F2F0EB] flex items-center justify-center text-[#8B7355] flex-shrink-0">
+                          <MapPin size={14} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-[#6B5D52] mb-1">Shipping To</p>
+                          <p className="text-sm text-[#2D2A26] leading-relaxed">
+                            {order.shipping.fullName}<br />
+                            {order.shipping.city}, {order.shipping.country}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full bg-[#F2F0EB] flex items-center justify-center text-[#8B7355] flex-shrink-0">
+                          <Clock size={14} />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-wider text-[#6B5D52] mb-1">Estimated Arrival</p>
+                          <p className="text-sm text-[#2D2A26]">
+                            {formatDate(order.estimatedDelivery)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-700">
-                      <BadgeCheck size={18} className="text-green-500" />
-                      <p className="text-sm">
-                        Arrives by {formatDate(order.estimatedDelivery)}
-                      </p>
+
+                    <div className="flex flex-col gap-3 pt-6 border-t border-[#F2F0EB]">
+                      <button
+                        onClick={() => viewOrder(order.id)}
+                        className="w-full py-3 rounded-xl border border-[#C5B4A5] text-[#2D2A26] font-bold uppercase tracking-wider text-xs hover:bg-[#2D2A26] hover:text-white transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Eye size={14} /> View Details
+                      </button>
+                      <button
+                        onClick={() => reorder(order.id)}
+                        className="w-full py-3 rounded-xl bg-[#2D2A26] text-white font-bold uppercase tracking-wider text-xs hover:bg-[#8B7355] transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Repeat size={14} /> Reorder
+                      </button>
+                      <button
+                        onClick={() => downloadInvoice(order)}
+                        className="w-full py-3 text-[#6B5D52] font-bold uppercase tracking-wider text-xs hover:text-[#2D2A26] flex items-center justify-center gap-2"
+                      >
+                        <Download size={14} /> Download Invoice
+                      </button>
                     </div>
                   </div>
-                </div>
-
-                <div className="flex flex-wrap gap-3 border-t pt-4">
-                  <button
-                    onClick={() => viewOrder(order.id)}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl border border-gray-200 hover:border-gray-300"
-                  >
-                    <Eye size={16} />
-                    View details
-                  </button>
-                  <button
-                    onClick={() => reorder(order.id)}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl border border-gray-200 hover:border-gray-300"
-                  >
-                    <Repeat size={16} />
-                    Reorder
-                  </button>
-                  <button
-                    onClick={() => downloadInvoice(order)}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl border border-gray-200 hover:border-gray-300"
-                  >
-                    <Download size={16} />
-                    Invoice
-                  </button>
                 </div>
               </div>
             ))}
-          </section>
+          </div>
+
         </div>
       </main>
       <Footer />
@@ -251,4 +234,3 @@ const OrdersPage = () => {
 };
 
 export default OrdersPage;
-

@@ -5,19 +5,18 @@ import Link from "next/link";
 import {
   Heart,
   Share2,
-  ShoppingCart,
-  Sparkles,
   Star,
-  ShieldCheck,
   Truck,
-  BadgeCheck,
   RotateCcw,
   Plus,
   Minus,
+  ArrowRight,
+  ShieldCheck,
+  RefreshCcw,
+  Lock
 } from "lucide-react";
 import { Product, SelectedVariants } from "../../types/product";
 import { useCart } from "../../context/CartContext";
-import VariantSelector from "./VariantSelector";
 import Image from "next/image";
 
 interface ProductShowcaseProps {
@@ -36,27 +35,26 @@ const AccordionItem = ({
   onClick: () => void;
 }) => {
   return (
-    <div className="border-b border-gray-200">
+    <div className="border-b border-[#E5E0D8]">
       <button
         type="button"
         className="w-full py-4 flex items-center justify-between text-left group"
         onClick={onClick}
       >
-        <span className="text-base font-medium text-gray-900 group-hover:text-amber-600 transition-colors">
+        <span className={`text-sm tracking-wide font-medium transition-colors ${isOpen ? 'text-[#2D2A26]' : 'text-[#6B5D52] group-hover:text-[#8B7355]'}`}>
           {title}
         </span>
         {isOpen ? (
-          <Minus size={20} className="text-gray-900" />
+          <Minus size={16} className="text-[#2D2A26]" />
         ) : (
-          <Plus size={20} className="text-gray-900" />
+          <Plus size={16} className="text-[#C5B4A5] group-hover:text-[#2D2A26]" />
         )}
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-96 opacity-100 mb-4" : "max-h-0 opacity-0"
-        }`}
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96 opacity-100 mb-6" : "max-h-0 opacity-0"
+          }`}
       >
-        <div className="text-sm text-gray-600 leading-relaxed">{children}</div>
+        <div className="text-sm text-[#6B5D52] leading-relaxed font-light pt-2">{children}</div>
       </div>
     </div>
   );
@@ -66,26 +64,34 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
   const { addToCart, wishlist, toggleWishlist } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>({});
-  const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const [openAccordion, setOpenAccordion] = useState<string | null>("Description");
+  const [isAdding, setIsAdding] = useState(false);
 
   const isInWishlist = wishlist.includes(product.id);
 
-  // Ensure at least 3 images for the gallery layout as requested
+  // Robust image handling
   const galleryImages = useMemo(() => {
-    const images =
-      product.images.length > 0 ? product.images : [product.image];
-    
-    // If we have fewer than 3 images, duplicate the first one to fill the slots
-    // to meet the "need 3 images" requirement for the layout
-    if (images.length < 3) {
-      const filledImages = [...images];
-      while (filledImages.length < 3) {
-        filledImages.push(images[0]);
-      }
-      return filledImages;
+    const images: string[] = [];
+
+    // Add product.images if available
+    if (product.images && Array.isArray(product.images)) {
+      product.images.forEach(img => {
+        if (img && typeof img === 'string') images.push(img);
+      });
     }
+
+    // Fallback to product.image
+    if (images.length === 0 && product.image) {
+      images.push(product.image);
+    }
+
+    // Ultimate fallback
+    if (images.length === 0) {
+      return ["/placeholder.jpg"];
+    }
+
     return images;
-  }, [product.images, product.image]);
+  }, [product]);
 
   const finalPrice = useMemo(() => {
     if (!product.variants || product.variants.length === 0) {
@@ -116,14 +122,10 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
   const averageRating =
     product.userReviews.length > 0
       ? (
-          product.userReviews.reduce((sum, review) => sum + review.rating, 0) /
-          product.userReviews.length
-        ).toFixed(1)
+        product.userReviews.reduce((sum, review) => sum + review.rating, 0) /
+        product.userReviews.length
+      ).toFixed(1)
       : product.rating.toFixed(1);
-
-  const ringSizes = product.ringSizes?.length ? product.ringSizes : ["6", "7", "8", "9"];
-  const braceletSizes = product.braceletSizes?.length ? product.braceletSizes : ["6.5\"", "7\"", "7.5\""];
-  const payalSizes = product.payalSizes?.length ? product.payalSizes : ["8\"", "9\"", "10\""];
 
   const handleVariantChange = (type: string, value: string) => {
     setSelectedVariants((prev) => ({
@@ -132,61 +134,83 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
     }));
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!canAddToCart || !product.inStock) return;
+    setIsAdding(true);
+    await new Promise(resolve => setTimeout(resolve, 500));
     addToCart(product, selectedVariants);
+    setIsAdding(false);
   };
 
   const toggleAccordion = (title: string) => {
-    // Keep interactions lightweight; avoid scroll jumps
-    requestAnimationFrame(() => {
-      setOpenAccordion((prev) => (prev === title ? null : title));
-    });
+    setOpenAccordion((prev) => (prev === title ? null : title));
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: `Check out ${product.name} on Ganraj Jewellers`,
+        url: window.location.href,
+      }).catch(console.error);
+    } else {
+      // Fallback for browsers that don't support Web Share API
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
+    }
   };
 
   return (
-    <div className="bg-white">
-      <section className="relative py-12 md:py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+    <div className="bg-[#FAF9F6] min-h-screen font-sans">
+      {/* Reduced top padding to fix margin issues */}
+      <section className="relative pt-8 pb-16 lg:pt-12 lg:pb-24">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8">
+
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-[10px] md:text-xs uppercase tracking-widest text-[#8B8B8B] mb-8">
+            <Link href="/" className="hover:text-[#2D2A26] transition-colors">Home</Link>
+            <span>/</span>
+            <Link href="/shop" className="hover:text-[#2D2A26] transition-colors">Shop</Link>
+            <span>/</span>
+            <span className="text-[#2D2A26] font-medium">{product.category}</span>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 xl:gap-20">
+
             {/* Gallery Section */}
-            <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-              <div className="relative aspect-square rounded-none overflow-hidden bg-gray-100">
+            <div className="space-y-4">
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-white shadow-sm border border-[#E5E0D8]">
                 <Image
-                  src={galleryImages[selectedImage] || product.image}
-                  alt={`${product.name} view ${selectedImage + 1}`}
+                  src={galleryImages[selectedImage]}
+                  alt={`${product.name} - View ${selectedImage + 1}`}
                   fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  unoptimized
+                  className="object-cover transition-transform duration-700 hover:scale-105"
                   priority
                 />
                 {product.badge && (
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-black text-white text-xs font-bold tracking-wider uppercase">
+                  <div className="absolute top-4 left-4 px-3 py-1.5 bg-[#2D2A26] text-white text-[10px] font-bold tracking-widest uppercase">
                     {product.badge}
                   </div>
                 )}
               </div>
 
+              {/* Thumbnails */}
               {galleryImages.length > 1 && (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-4 gap-4">
                   {galleryImages.map((img, index) => (
                     <button
-                      key={img + index}
+                      key={index}
                       onClick={() => setSelectedImage(index)}
-                      className={`relative aspect-square overflow-hidden transition-all duration-200 ${
-                        selectedImage === index
-                          ? "ring-1 ring-black opacity-100"
-                          : "opacity-70 hover:opacity-100"
-                      }`}
+                      className={`relative aspect-square overflow-hidden border transition-all duration-300 ${selectedImage === index
+                          ? "border-[#2D2A26] ring-1 ring-[#2D2A26]"
+                          : "border-transparent opacity-70 hover:opacity-100 hover:border-[#E5E0D8]"
+                        }`}
                     >
                       <Image
                         src={img}
-                        alt={`${product.name} thumbnail ${index + 1}`}
+                        alt={`Thumbnail ${index + 1}`}
                         fill
                         className="object-cover"
-                        sizes="150px"
-                        unoptimized
                       />
                     </button>
                   ))}
@@ -194,262 +218,207 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
               )}
             </div>
 
-            {/* Product Info Section */}
-            <div className="flex flex-col pt-6 lg:pt-0">
-              <div className="border-b border-gray-200 pb-6 mb-6">
-                <div className="flex flex-col gap-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <Link
-                      href="/shop"
-                      className="hover:text-black transition-colors uppercase tracking-wider text-xs"
-                    >
-                      Home
-                    </Link>
-                    <span>/</span>
-                    <span className="uppercase tracking-wider text-xs">
-                      {product.category}
+            {/* Product Details Section */}
+            <div className="flex flex-col">
+
+              <div className="mb-6 border-b border-[#E5E0D8] pb-6">
+                {/* Category & Title */}
+                <span className="text-xs font-bold tracking-widest text-[#8B8B8B] uppercase mb-2 block">
+                  {product.category}
+                </span>
+                <h1 className="font-serif text-3xl md:text-4xl text-[#2D2A26] mb-4 leading-tight">
+                  {product.name}
+                </h1>
+
+                {/* Price & Rating */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-2xl font-medium text-[#2D2A26]">
+                      ₹{finalPrice.toLocaleString()}
                     </span>
-                  </div>
-                  <h1 className="text-3xl md:text-4xl font-medium text-gray-900 tracking-tight">
-                    {product.name}
-                  </h1>
-                </div>
-
-                <div className="flex items-end gap-4 mb-4">
-                  <div className="text-2xl font-medium text-gray-900">
-                    ₹ {finalPrice.toFixed(2)}
-                  </div>
-                  {product.originalPrice && (
-                    <div className="text-lg text-gray-400 line-through mb-1">
-                      ₹ {product.originalPrice.toFixed(2)}
-                    </div>
-                  )}
-                  {product.originalPrice && (
-                    <span className="text-green-600 text-sm font-medium mb-1">
-                      Save{" "}
-                      {Math.round(
-                        ((product.originalPrice - product.price) /
-                          product.originalPrice) *
-                          100
-                      )}
-                      %
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-4 text-sm">
-                  <div className="flex items-center gap-1">
-                    <Star className="text-black fill-black" size={14} />
-                    <span className="font-medium">{averageRating}</span>
-                  </div>
-                  <span className="text-gray-300">|</span>
-                  <span className="text-gray-600">
-                    {product.reviews} Reviews
-                  </span>
-                  <span className="text-gray-300">|</span>
-                  <span
-                    className={`${
-                      product.inStock ? "text-green-600" : "text-red-600"
-                    } font-medium`}
-                  >
-                    {product.inStock ? "In Stock" : "Out of Stock"}
-                  </span>
-                </div>
-              </div>
-
-              {product.variants && product.variants.length > 0 && (
-                <div className="mb-8">
-                  <p className="text-sm font-medium text-gray-900 mb-3 uppercase tracking-wide">
-                    Customize
-                  </p>
-                  <VariantSelector
-                    variants={product.variants}
-                    selectedVariants={selectedVariants}
-                    onChange={handleVariantChange}
-                  />
-                </div>
-              )}
-
-              <div className="flex flex-col gap-4 mb-8">
-                <button
-                  onClick={handleAddToCart}
-                  disabled={!product.inStock || !canAddToCart}
-                  className="w-full bg-black text-white h-14 flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                >
-                  {product.inStock ? (
-                    canAddToCart ? (
+                    {product.originalPrice && (
                       <>
-                        ADD TO BAG <span className="ml-2">→</span>
+                        <span className="text-sm text-[#8B8B8B] line-through">
+                          ₹{product.originalPrice.toLocaleString()}
+                        </span>
+                        <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded">
+                          Save {Math.round(((product.originalPrice - finalPrice) / product.originalPrice) * 100)}%
+                        </span>
                       </>
-                    ) : (
-                      "Select Options"
-                    )
-                  ) : (
-                    "Out of Stock"
-                  )}
-                </button>
+                    )}
+                  </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => toggleWishlist(product.id)}
-                    className={`h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider border transition-colors ${
-                      isInWishlist
-                        ? "border-black bg-black text-white"
-                        : "border-gray-200 hover:border-black text-gray-900"
-                    }`}
-                  >
-                    <Heart
-                      size={16}
-                      className={isInWishlist ? "fill-white" : ""}
-                    />
-                    {isInWishlist ? "Saved" : "Wishlist"}
-                  </button>
-                  <button className="h-12 flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider border border-gray-200 hover:border-black text-gray-900 transition-colors">
-                    <Share2 size={16} />
-                    Share
-                  </button>
+                  <div className="flex items-center gap-4 text-xs font-medium">
+                    <div className="flex items-center gap-1">
+                      <Star className="fill-black text-black" size={12} />
+                      <span className="text-[#2D2A26]">{averageRating}</span>
+                    </div>
+                    <span className="text-[#8B8B8B]">|</span>
+                    <span className="text-[#8B8B8B] decoration-solid underline">{product.reviews} Reviews</span>
+                    <span className="text-[#8B8B8B]">|</span>
+                    <span className={`${product.inStock ? 'text-green-700' : 'text-red-600'}`}>
+                      {product.inStock ? 'In Stock' : 'Out of Stock'}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Accordion Section */}
-              <div className="border-t border-gray-200">
-                <AccordionItem
-                  title="Description"
-                  isOpen={openAccordion === "Description"}
-                  onClick={() => toggleAccordion("Description")}
-                >
-                  <p>
-                    {product.description ||
-                      "Each piece is crafted by artisans with over two decades of experience, blending traditional workmanship with contemporary silhouettes."}
-                  </p>
-                  <ul className="mt-4 space-y-2 list-disc pl-4">
-                    <li>Authentic 999 Fine Silver / S925 Sterling Silver</li>
-                    <li>Hypoallergenic & Nickel-Free</li>
-                    <li>Handcrafted with precision</li>
-                  </ul>
-                </AccordionItem>
+              <div className="space-y-8">
 
-                <AccordionItem
-                  title="Specification"
-                  isOpen={openAccordion === "Specification"}
-                  onClick={() => toggleAccordion("Specification")}
-                >
-                  {product.specification ? (
-                    <p className="text-sm text-gray-700 leading-relaxed">{product.specification}</p>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                      <span className="text-gray-500">Material</span>
-                      <span className="font-medium">Sterling Silver</span>
-                      <span className="text-gray-500">Purity</span>
-                      <span className="font-medium">925 / 999</span>
-                      <span className="text-gray-500">Finish</span>
-                      <span className="font-medium">High Polish / Matte</span>
-                      <span className="text-gray-500">Origin</span>
-                      <span className="font-medium">India</span>
-                    </div>
-                  )}
-                </AccordionItem>
-
-                <AccordionItem
-                  title="Supplier Information"
-                  isOpen={openAccordion === "Supplier Information"}
-                  onClick={() => toggleAccordion("Supplier Information")}
-                >
-                  <p>
-                    {product.supplierInfo ||
-                      "Sourced directly from our trusted artisan network in Mumbai and Jaipur. We ensure fair trade practices and sustainable sourcing for all our materials."}
-                  </p>
-                </AccordionItem>
-
-                <AccordionItem
-                  title="Size Guide"
-                  isOpen={openAccordion === "Size Guide"}
-                  onClick={() => toggleAccordion("Size Guide")}
-                >
+                {/* Variants */}
+                {product.variants && product.variants.length > 0 && (
                   <div className="space-y-4">
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Ring sizes</p>
-                      <div className="flex flex-wrap gap-2">
-                        {ringSizes.map((size) => (
-                          <span
-                            key={size}
-                            className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-800"
-                          >
-                            {size}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Bracelet sizes</p>
-                      <div className="flex flex-wrap gap-2">
-                        {braceletSizes.map((size) => (
-                          <span
-                            key={size}
-                            className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-800"
-                          >
-                            {size}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-gray-500 mb-2">Payal sizes</p>
-                      <div className="flex flex-wrap gap-2">
-                        {payalSizes.map((size) => (
-                          <span
-                            key={size}
-                            className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-800"
-                          >
-                            {size}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </AccordionItem>
+                    {product.variants.map((variant) => (
+                      <div key={variant.type}>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-bold uppercase tracking-widest text-[#2D2A26]">{variant.label}</span>
+                          {variant.required && <span className="text-[10px] text-[#8B8B8B] uppercase">* Required</span>}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {variant.options.map((option) => {
+                            const isSelected = selectedVariants[variant.type] === option.id;
+                            const isAvailable = option.inStock ?? true;
 
-                <AccordionItem
-                  title="Returns"
-                  isOpen={openAccordion === "Returns"}
-                  onClick={() => toggleAccordion("Returns")}
-                >
-                  <p>
-                    We offer a 15-day return policy for unused and unworn items. 
-                    Returns must include original packaging and purity certificates.
-                    Personalized items are non-returnable.
-                  </p>
-                </AccordionItem>
-              </div>
+                            return (
+                              <button
+                                key={option.id}
+                                onClick={() => isAvailable && handleVariantChange(variant.type, option.id)}
+                                disabled={!isAvailable}
+                                className={`
+                                            min-w-[3.5rem] px-3 py-2 border text-xs font-medium transition-all duration-200
+                                            ${isSelected
+                                    ? 'border-[#2D2A26] bg-[#2D2A26] text-white'
+                                    : isAvailable
+                                      ? 'border-[#E5E0D8] bg-white text-[#6B5D52] hover:border-[#2D2A26]'
+                                      : 'border-dashed border-[#E5E0D8] text-[#C5B4A5] cursor-not-allowed'
+                                  }
+                                         `}
+                              >
+                                {option.name}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-              {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-gray-200">
-                <div className="text-center space-y-2">
-                  <div className="mx-auto w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                    <Truck size={20} className="text-gray-900" />
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={!product.inStock || !canAddToCart || isAdding}
+                    className="w-full py-4 bg-black text-white font-bold uppercase tracking-[0.15em] text-xs hover:bg-[#2D2A26]/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isAdding ? 'Adding...' : !product.inStock ? 'Out of Stock' : 'Add to Bag'}
+                    {product.inStock && !isAdding && <ArrowRight size={16} />}
+                  </button>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => toggleWishlist(product.id)}
+                      className={`py-3 border uppercase tracking-widest text-[10px] font-bold flex items-center justify-center gap-2 transition-all duration-300 ${isInWishlist ? 'border-[#2D2A26] bg-[#2D2A26] text-white' : 'border-[#E5E0D8] text-[#2D2A26] hover:border-[#2D2A26]'}`}
+                    >
+                      <Heart size={14} className={isInWishlist ? "fill-white" : ""} />
+                      Wishlist
+                    </button>
+                    <button
+                      onClick={handleShare}
+                      className="py-3 border border-[#E5E0D8] text-[#2D2A26] uppercase tracking-widest text-[10px] font-bold flex items-center justify-center gap-2 hover:border-[#2D2A26] transition-all duration-300"
+                    >
+                      <Share2 size={14} />
+                      Share
+                    </button>
                   </div>
-                  <p className="text-xs font-medium uppercase tracking-wide">
-                    Fast Shipping
-                  </p>
                 </div>
-                <div className="text-center space-y-2">
-                  <div className="mx-auto w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                    <ShieldCheck size={20} className="text-gray-900" />
+
+                {/* Accordions */}
+                <div className="pt-2">
+                  <AccordionItem
+                    title="Description"
+                    isOpen={openAccordion === "Description"}
+                    onClick={() => toggleAccordion("Description")}
+                  >
+                    <div className="prose prose-sm max-w-none text-[#6B5D52]">
+                      {product.description || "No description available."}
+                    </div>
+                  </AccordionItem>
+
+                  <AccordionItem
+                    title="Specification"
+                    isOpen={openAccordion === "Specification"}
+                    onClick={() => toggleAccordion("Specification")}
+                  >
+                    <div className="prose prose-sm max-w-none text-[#6B5D52]">
+                      {product.specification ? (
+                        <p>{product.specification}</p>
+                      ) : (
+                        <ul className="list-disc pl-4 space-y-1">
+                          <li>Material: Sterling Silver / Gold Vermeil</li>
+                          <li>Gemstone: Cubic Zirconia (if applicable)</li>
+                          <li>Weight: Approx 5g</li>
+                          <li>Warranty: 1 Year</li>
+                        </ul>
+                      )}
+                    </div>
+                  </AccordionItem>
+
+                  <AccordionItem
+                    title="Supplier Information"
+                    isOpen={openAccordion === "Supplier"}
+                    onClick={() => toggleAccordion("Supplier")}
+                  >
+                    <p className="text-[#6B5D52]">
+                      {product.supplierInfo || "Sourced from certified ethical artisanal workshops in Jaipur, India."}
+                    </p>
+                  </AccordionItem>
+
+                  <AccordionItem
+                    title="Size Guide"
+                    isOpen={openAccordion === "Size"}
+                    onClick={() => toggleAccordion("Size")}
+                  >
+                    <div className="text-[#6B5D52]">
+                      <p className="mb-2">Find your perfect fit:</p>
+                      <ul className="list-disc pl-4 space-y-1">
+                        {product.ringSizes && <li>Rings: US Sizes {product.ringSizes.join(", ")}</li>}
+                        {product.braceletSizes && <li>Bracelets: {product.braceletSizes.join(", ")}</li>}
+                        {!product.ringSizes && !product.braceletSizes && <li>Standard sizing applies. Please refer to our general size chart.</li>}
+                      </ul>
+                    </div>
+                  </AccordionItem>
+
+                  <AccordionItem
+                    title="Returns"
+                    isOpen={openAccordion === "Returns"}
+                    onClick={() => toggleAccordion("Returns")}
+                  >
+                    <p className="text-[#6B5D52]">
+                      We offer a 15-day return policy for all unused and unworn items. Original packaging must be intact. Custom orders are non-refundable.
+                    </p>
+                  </AccordionItem>
+                </div>
+
+                {/* Trust Badges */}
+                <div className="grid grid-cols-3 gap-4 pt-8 border-t border-[#E5E0D8]">
+                  <div className="flex flex-col items-center text-center gap-2">
+                    <Truck size={20} className="text-[#2D2A26]" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#2D2A26]">Fast Shipping</span>
                   </div>
-                  <p className="text-xs font-medium uppercase tracking-wide">
-                    Lifetime Warranty
-                  </p>
-                </div>
-                <div className="text-center space-y-2">
-                  <div className="mx-auto w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                    <RotateCcw size={20} className="text-gray-900" />
+                  <div className="flex flex-col items-center text-center gap-2">
+                    <ShieldCheck size={20} className="text-[#2D2A26]" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#2D2A26]">Lifetime Warranty</span>
                   </div>
-                  <p className="text-xs font-medium uppercase tracking-wide">
-                    Easy Returns
-                  </p>
+                  <div className="flex flex-col items-center text-center gap-2">
+                    <RefreshCcw size={20} className="text-[#2D2A26]" />
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-[#2D2A26]">Easy Returns</span>
+                  </div>
                 </div>
+
               </div>
             </div>
+
           </div>
         </div>
       </section>

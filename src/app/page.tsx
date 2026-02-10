@@ -2,7 +2,6 @@
  import { useState } from 'react';
  import Navbar from "./components/layout/Navbar";
  import HeroSection from "./components/home/HeroSection";
- import Features from "./components/home/Features";
  import TrendingProducts from "./components/products/TrendingProducts";
  import VideoSection from "./components/products/VideoSection";
  import PopularCategories from "./components/products/PopularCategories";
@@ -19,8 +18,6 @@ export default function HomePage(){
    <div>
     <Navbar onCartOpen={() => setShowCart(true)} />
     <HeroSection/>
-    
-    {/* <Features/> */}
     <VideoSection/>
     <TrendingProducts/>
     <PopularCategories/>
