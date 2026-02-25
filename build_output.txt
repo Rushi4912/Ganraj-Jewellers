@@ -10,14 +10,14 @@ SyntaxError: Unexpected non-whitespace character after JSON at position 232003
   Creating an optimized production build ...
 SyntaxError: Unexpected non-whitespace character after JSON at position 232003
     at JSON.parse (<anonymous>)
-✓ Compiled successfully in 2.1s
+✓ Compiled successfully in 4.7s
   Running TypeScript ...
   Collecting page data using 15 workers ...
   Generating static pages using 15 workers (0/27) ...
   Generating static pages using 15 workers (6/27) 
   Generating static pages using 15 workers (13/27) 
   Generating static pages using 15 workers (20/27) 
-✓ Generating static pages using 15 workers (27/27) in 247.7ms
+✓ Generating static pages using 15 workers (27/27) in 276.9ms
   Finalizing page optimization ...
 
 Route (app)

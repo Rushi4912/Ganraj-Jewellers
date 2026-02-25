@@ -161,7 +161,7 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
   };
 
   return (
-    <div className="bg-[#FAF9F6] min-h-screen font-sans">
+    <div className="bg-[#F2F0EB] min-h-screen font-sans">
       {/* Reduced top padding to fix margin issues */}
       <section className="relative pt-8 pb-16 lg:pt-12 lg:pb-24">
         <div className="max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8">
@@ -202,8 +202,8 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
                       key={index}
                       onClick={() => setSelectedImage(index)}
                       className={`relative aspect-square overflow-hidden border transition-all duration-300 ${selectedImage === index
-                          ? "border-[#2D2A26] ring-1 ring-[#2D2A26]"
-                          : "border-transparent opacity-70 hover:opacity-100 hover:border-[#E5E0D8]"
+                        ? "border-[#2D2A26] ring-1 ring-[#2D2A26]"
+                        : "border-transparent opacity-70 hover:opacity-100 hover:border-[#E5E0D8]"
                         }`}
                     >
                       <Image

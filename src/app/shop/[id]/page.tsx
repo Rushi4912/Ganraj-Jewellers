@@ -41,6 +41,7 @@ const fetchProductById = async (identifier: string) => {
   return null;
 };
 
+
 export default async function ProductPage({
   params,
 }: {

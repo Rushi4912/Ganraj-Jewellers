@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
 import Link from "next/link";
-import { Crown, Gem, Lock, CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
+import { Crown, Lock, CheckCircle2, ArrowRight, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 
 export default function SignupPage() {
@@ -55,97 +55,65 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#F2F0EB]">
-
-      {/* ================= LEFT: IMAGE ================= */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-[#2D2A26] items-center justify-center p-12">
-
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://images.unsplash.com/photo-1615655406736-b37c4fabf923?auto=format&fit=crop&w=1200&q=80"
-            alt="Craftsmanship"
-            fill
-            className="object-cover opacity-50 mix-blend-overlay"
-            unoptimized
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2D2A26] via-[#2D2A26]/40 to-transparent"></div>
-        </div>
-
-        <div className="relative z-10 max-w-lg text-[#F2F0EB]">
-          <div className="inline-flex items-center gap-2 mb-6 border border-[#8B7355] text-[#8B7355] px-4 py-2 rounded-full uppercase tracking-[0.2em] text-xs">
-            <Crown size={14} />
-            Private Membership
-          </div>
-          <h1 className="font-display text-5xl lg:text-6xl mb-6 leading-tight">
-            Craft your <br />
-            <span className="italic text-[#8B7355]">legacy story.</span>
-          </h1>
-          <p className="text-[#F2F0EB]/70 text-lg leading-relaxed mb-10">
-            Unlock order histories, atelier alerts, and a personalized address book across our luxury ecosystem.
-          </p>
-
-          <div className="space-y-4">
-            {[
-              "Priority previews & limited drops",
-              "Saved measurements & preferences",
-              "Seamless checkout with encrypted data",
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm font-medium text-[#F2F0EB]/90">
-                <CheckCircle2 size={18} className="text-[#8B7355]" />
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-[#F2F0EB] relative px-4 py-12">
+      {/* Background Decor */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -right-[10%] w-[70%] h-[70%] bg-gradient-to-b from-[#E5E0D8]/40 to-transparent rounded-full blur-3xl mix-blend-multiply opacity-70"></div>
+        <div className="absolute -bottom-[20%] -left-[10%] w-[60%] h-[60%] bg-gradient-to-t from-[#E5E0D8]/50 to-transparent rounded-full blur-3xl mix-blend-multiply opacity-60"></div>
       </div>
 
-      {/* ================= RIGHT: FORM ================= */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center p-8 lg:p-20 relative overflow-y-auto">
-        <Link href="/" className="absolute top-8 left-8 text-[#6B5D52] hover:text-[#2D2A26] transition-colors flex items-center gap-2 text-sm font-medium uppercase tracking-wider">
-          <ArrowLeft size={16} /> Back to Home
+      <div className="w-full max-w-lg relative z-10">
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-[#6B5D52] hover:text-[#8B7355] transition-colors mb-8 group">
+          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Return to Atelier
         </Link>
 
-        <div className="max-w-md mx-auto w-full mt-10 lg:mt-0">
-          <div className="mb-10 text-center lg:text-left">
-            <span className="text-[#8B7355] text-xs font-bold tracking-[0.2em] uppercase block mb-3">
-              Join the Atelier
-            </span>
-            <h2 className="font-display text-4xl text-[#2D2A26]">Create your account</h2>
+        <div className="bg-white rounded-3xl shadow-xl shadow-[#C5B4A5]/10 border border-[#E5E0D8] p-8 sm:p-12 overflow-hidden relative">
+
+          {/* Subtle Top Accent */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#8B7355] to-transparent opacity-60"></div>
+
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#E5E0D8] text-[#8B7355] mb-5">
+              <Crown size={20} />
+            </div>
+            <h1 className="font-display text-3xl text-[#2D2A26] mb-2">Private Membership</h1>
+            <p className="text-[#6B5D52] text-sm">Craft your legacy story with us</p>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs uppercase tracking-wider text-[#6B5D52] font-semibold">Email Address</label>
+          <form onSubmit={handleSignup} className="space-y-5">
+            <div className="space-y-1.5">
+              <label className="text-[11px] uppercase tracking-wider text-[#6B5D52] font-semibold pl-1">Email Address</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white border border-[#C5B4A5]/50 focus:border-[#8B7355] rounded-xl px-4 py-4 outline-none transition-colors text-[#2D2A26]"
-                placeholder="you@example.com"
+                className="w-full bg-[#FAF8F5] border border-[#E5E0D8] focus:border-[#8B7355] focus:bg-white focus:ring-4 focus:ring-[#8B7355]/5 rounded-xl px-4 py-3.5 outline-none transition-all text-[#2D2A26] text-sm placeholder:text-[#A89F91]"
+                placeholder="registered@email.com"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs uppercase tracking-wider text-[#6B5D52] font-semibold">Password</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <label className="text-[11px] uppercase tracking-wider text-[#6B5D52] font-semibold pl-1">Password</label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white border border-[#C5B4A5]/50 focus:border-[#8B7355] rounded-xl px-4 py-4 outline-none transition-colors text-[#2D2A26]"
+                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] focus:border-[#8B7355] focus:bg-white focus:ring-4 focus:ring-[#8B7355]/5 rounded-xl px-4 py-3.5 outline-none transition-all text-[#2D2A26] text-sm placeholder:text-[#A89F91]"
                   placeholder="••••••••"
                   required
                   minLength={8}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-xs uppercase tracking-wider text-[#6B5D52] font-semibold">Confirm</label>
+              <div className="space-y-1.5">
+                <label className="text-[11px] uppercase tracking-wider text-[#6B5D52] font-semibold pl-1">Confirm</label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-white border border-[#C5B4A5]/50 focus:border-[#8B7355] rounded-xl px-4 py-4 outline-none transition-colors text-[#2D2A26]"
+                  className="w-full bg-[#FAF8F5] border border-[#E5E0D8] focus:border-[#8B7355] focus:bg-white focus:ring-4 focus:ring-[#8B7355]/5 rounded-xl px-4 py-3.5 outline-none transition-all text-[#2D2A26] text-sm placeholder:text-[#A89F91]"
                   placeholder="••••••••"
                   required
                   minLength={8}
@@ -154,35 +122,38 @@ export default function SignupPage() {
             </div>
 
             {error && (
-              <div className="text-red-500 text-sm bg-red-50 border border-red-100 rounded-lg px-4 py-3 flex items-center gap-2">
-                <Lock size={14} />
-                {error}
+              <div className="text-red-600 text-[13px] bg-red-50 border border-red-100 rounded-xl px-4 py-3 flex items-center gap-2 animate-fadeInUp">
+                <Lock size={14} className="shrink-0" />
+                <p className="leading-tight">{error}</p>
               </div>
             )}
 
             {success && (
-              <div className="text-green-600 text-sm bg-green-50 border border-green-100 rounded-lg px-4 py-3 flex items-center gap-2">
-                <CheckCircle2 size={14} />
-                {success}
+              <div className="text-green-700 text-[13px] bg-green-50 border border-green-100 rounded-xl px-4 py-3 flex items-center gap-2 animate-fadeInUp">
+                <CheckCircle2 size={16} className="shrink-0" />
+                <p className="leading-tight">{success}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#2D2A26] text-white py-4 rounded-xl font-medium hover:bg-[#8B7355] transition-colors duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#2D2A26] text-white py-3.5 rounded-xl text-sm font-medium hover:bg-[#8B7355] hover:shadow-lg hover:shadow-[#8B7355]/20 transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed mt-4"
             >
               {loading ? "Creating Account..." : "Join Membership"}
-              {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
+              {!loading && <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />}
             </button>
           </form>
 
-          <p className="mt-10 text-center text-[#6B5D52] text-sm">
-            Already a member?{" "}
-            <Link href="/login" className="text-[#8B7355] font-semibold hover:text-[#2D2A26] transition-colors">
-              Sign In
-            </Link>
-          </p>
+          <div className="mt-8 text-center bg-[#FAF8F5] -mx-8 sm:-mx-12 -mb-8 sm:-mb-12 p-6 border-t border-[#E5E0D8]">
+            <p className="text-[#6B5D52] text-xs">
+              Already a member?{" "}
+              <Link href="/login" className="text-[#8B7355] font-semibold hover:text-[#2D2A26] transition-colors relative inline-block group">
+                Sign In
+                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-[#2D2A26] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
