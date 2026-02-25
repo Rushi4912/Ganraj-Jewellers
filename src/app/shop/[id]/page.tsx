@@ -56,3 +56,4 @@ export default async function ProductPage({
   return <ProductPageClient product={product} />;
 }
 
+

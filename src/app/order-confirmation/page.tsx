@@ -222,11 +222,10 @@ const OrderConfirmationContent = () => {
                   return (
                     <div key={status} className="flex items-start gap-4">
                       <div
-                        className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border-2 ${
-                          isComplete
+                        className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border-2 ${isComplete
                             ? "bg-gradient-to-r from-amber-500 to-orange-500 border-transparent text-white"
                             : "bg-white border-gray-200 text-gray-400"
-                        }`}
+                          }`}
                       >
                         {index + 1}
                       </div>
@@ -238,12 +237,12 @@ const OrderConfirmationContent = () => {
                           {index === 0
                             ? formatDateTime(order.date)
                             : index === orderStatusSteps.length - 1
-                            ? formatDate(order.estimatedDelivery, {
+                              ? formatDate(order.estimatedDelivery, {
                                 weekday: "short",
                                 month: "short",
                                 day: "numeric",
                               })
-                            : "Awaiting update"}
+                              : "Awaiting update"}
                         </p>
                       </div>
                     </div>
@@ -402,15 +401,15 @@ const OrderConfirmationContent = () => {
                       {order.payment.type === "card"
                         ? "Credit Card"
                         : order.payment.type === "cod"
-                        ? "Cash on Delivery"
-                        : "PayPal"}
+                          ? "Cash on Delivery"
+                          : "PayPal"}
                     </span>
                   </p>
                   {order.payment.type === "card" && order.payment.cardNumber && (
                     <p>
                       Ending in{" "}
                       <span className="font-semibold">
-                        {order.payment.cardNumber.slice(-4)}
+                        {order.payment.cardNumber?.slice(-4)}
                       </span>
                     </p>
                   )}

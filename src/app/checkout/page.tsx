@@ -473,7 +473,7 @@ export default function CheckoutPage() {
                       <div>
                         <span className="text-xs font-bold uppercase tracking-wider block mb-1 text-[#8B7355]">Payment Method</span>
                         <p className="font-medium text-[#2D2A26] uppercase">{payment.type === 'cod' ? 'Cash on Delivery' : payment.type}</p>
-                        {payment.type === 'card' && <p className="text-sm">Ending in {payment.cardNumber.slice(-4)}</p>}
+                        {payment.type === 'card' && payment.cardNumber && <p className="text-sm">Ending in {payment.cardNumber.slice(-4)}</p>}
                       </div>
                       <button onClick={() => setCurrentStep(2)} className="text-xs font-bold underline">Edit</button>
                     </div>

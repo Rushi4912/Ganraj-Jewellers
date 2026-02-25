@@ -1,0 +1,55 @@
+
+> jwellery4u@0.1.0 build
+> next build
+
+SyntaxError: Unexpected non-whitespace character after JSON at position 232003
+    at JSON.parse (<anonymous>)
+▲ Next.js 16.1.1 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+SyntaxError: Unexpected non-whitespace character after JSON at position 232003
+    at JSON.parse (<anonymous>)
+✓ Compiled successfully in 2.1s
+  Running TypeScript ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/27) ...
+  Generating static pages using 15 workers (6/27) 
+  Generating static pages using 15 workers (13/27) 
+  Generating static pages using 15 workers (20/27) 
+✓ Generating static pages using 15 workers (27/27) in 247.7ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ○ /account
+├ ○ /admin
+├ ƒ /api/admin/categories
+├ ƒ /api/admin/coupons
+├ ƒ /api/admin/orders
+├ ƒ /api/admin/products
+├ ƒ /api/admin/upload
+├ ƒ /api/admin/users
+├ ƒ /api/profiles/ensure
+├ ○ /blog
+├ ○ /checkout
+├ ○ /collections
+├ ƒ /collections/[slug]
+├ ○ /contact
+├ ○ /faq
+├ ○ /login
+├ ○ /order-confirmation
+├ ○ /orders
+├ ○ /privacy-policy
+├ ○ /shop
+├ ƒ /shop/[id]
+├ ○ /signup
+├ ○ /terms-of-service
+└ ○ /wishlist
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
