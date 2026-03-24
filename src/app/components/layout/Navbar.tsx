@@ -77,20 +77,17 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
           {/* Left section (Logo + Menu toggle) */}
           <div className="flex items-center flex-shrink-0">
             <button
-              className="lg:hidden mr-4 text-[#5A4D41] hover:text-[#8B7355] transition-colors"
+              className="lg:hidden mr-2 sm:mr-4 text-[#5A4D41] hover:text-[#8B7355] transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
             <Link href="/" className="flex flex-col group">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-serif tracking-wider uppercase text-[#2D2A26] group-hover:text-[#8B7355] transition-colors duration-300">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <span className="text-xl sm:text-2xl font-serif tracking-widest sm:tracking-wider uppercase text-[#2D2A26] group-hover:text-[#8B7355] transition-colors duration-300">
                   Ganraj
                 </span>
                 <div className="w-1.5 h-1.5 bg-[#B8923A] rounded-full mt-1 group-hover:scale-125 transition-transform duration-300"></div>
-                <span className="text-[10px] font-bold text-[#8B7355] bg-[#E5E0D8] px-2 py-0.5 rounded-full border border-[#C5B4A5] uppercase tracking-wider ml-2 self-start transform -translate-y-1">
-                  Beta
-                </span>
               </div>
               <span className="text-[10px] tracking-[0.3em] text-[#6B5D52] uppercase ml-0.5">
                 Jewellers
@@ -139,10 +136,10 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
           </div>
 
           {/* Right section (Icons) */}
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-0.5 sm:gap-1.5 flex-shrink-0">
             {/* Mobile Search Icon */}
             <button
-              className="lg:hidden p-2 text-[#5A4D41] hover:text-[#8B7355] hover:bg-[#E5E0D8] rounded-full transition-all"
+              className="lg:hidden p-1.5 sm:p-2 text-[#5A4D41] hover:text-[#8B7355] hover:bg-[#E5E0D8] rounded-full transition-all"
               onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
             >
               <Search size={20} />
@@ -150,7 +147,7 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
 
             <Link
               href="/wishlist"
-              className="p-2 text-[#5A4D41] hover:text-[#8B7355] hover:bg-[#E5E0D8] rounded-full transition-all relative group"
+              className="p-1.5 sm:p-2 text-[#5A4D41] hover:text-[#8B7355] hover:bg-[#E5E0D8] rounded-full transition-all relative group"
               title="Wishlist"
             >
               <Heart
@@ -169,7 +166,7 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
                 <>
                   <button
                     onClick={() => setUserMenuOpen((prev) => !prev)}
-                    className="flex items-center gap-2 p-1 pl-2 rounded-full border border-[#C5B4A5] hover:border-[#8B7355] hover:bg-[#E5E0D8] transition-all ml-2"
+                    className="flex items-center gap-2 p-1 pl-1 sm:pl-2 rounded-full border border-[#C5B4A5] hover:border-[#8B7355] hover:bg-[#E5E0D8] transition-all ml-1 sm:ml-2"
                   >
                     <div className="w-8 h-8 bg-gradient-to-br from-[#C5B4A5] to-[#8B7355] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-inner">
                       {profile?.fullName ? profile.fullName.charAt(0).toUpperCase() : user.email?.charAt(0).toUpperCase()}
@@ -221,7 +218,7 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
               ) : (
                 <Link
                   href={loading ? "#" : "/login"}
-                  className="ml-2 px-5 py-2 rounded-full bg-[#2D2A26] text-white text-sm font-medium hover:bg-[#8B7355] transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2"
+                  className="ml-1 sm:ml-2 px-3 sm:px-5 py-2 rounded-full bg-[#2D2A26] text-white text-sm font-medium hover:bg-[#8B7355] transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-1 sm:gap-2"
                 >
                   <User size={16} />
                   <span className="hidden lg:inline">
@@ -233,7 +230,7 @@ export default function Navbar({ onCartOpen }: NavbarProps) {
 
             <button
               onClick={onCartOpen}
-              className="p-2 text-[#5A4D41] hover:text-[#8B7355] hover:bg-[#E5E0D8] rounded-full transition-all relative group ml-1"
+              className="p-1.5 sm:p-2 text-[#5A4D41] hover:text-[#8B7355] hover:bg-[#E5E0D8] rounded-full transition-all relative group ml-0.5 sm:ml-1"
             >
               <ShoppingCart size={20} className="transition-transform group-hover:scale-110" />
               {cartCount > 0 && (

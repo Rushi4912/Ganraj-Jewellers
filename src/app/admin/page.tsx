@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useRef, useState, ChangeEvent } from "react";
+import React, { FormEvent, useCallback, useEffect, useMemo, useRef, useState, ChangeEvent } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -24,6 +24,8 @@ import {
   X,
   ImageIcon,
   Eye,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
@@ -71,11 +73,21 @@ type OrderRecord = {
   status: OrderStatus;
   total_amount: string | number;
   items?: Array<{
+    id?: string | number;
     productId?: string;
     name?: string;
     quantity: number;
     price: number;
   }> | null;
+  shipping_address?: {
+    fullName?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+  } | null;
   created_at?: string;
 };
 
@@ -222,9 +234,8 @@ function ConfirmModal({
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 sm:p-6">
         <div className="flex items-start gap-3 sm:gap-4">
           <div
-            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 ${
-              variant === "danger" ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"
-            }`}
+            className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 ${variant === "danger" ? "bg-red-100 text-red-600" : "bg-amber-100 text-amber-600"
+              }`}
           >
             <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
@@ -244,9 +255,8 @@ function ConfirmModal({
           <button
             onClick={onConfirm}
             disabled={loading}
-            className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-50 ${
-              variant === "danger" ? "bg-red-600 hover:bg-red-700" : "bg-amber-600 hover:bg-amber-700"
-            }`}
+            className={`flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 disabled:opacity-50 ${variant === "danger" ? "bg-red-600 hover:bg-red-700" : "bg-amber-600 hover:bg-amber-700"
+              }`}
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
             {confirmLabel}
@@ -330,9 +340,8 @@ function ImageUploader({ images, onImagesChange, maxImages = 5 }: ImageUploaderP
   return (
     <div className="space-y-3">
       <div
-        className={`border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-colors ${
-          dragOver ? "border-amber-500 bg-amber-50" : "border-gray-200 hover:border-gray-300"
-        }`}
+        className={`border-2 border-dashed rounded-xl p-4 sm:p-6 text-center transition-colors ${dragOver ? "border-amber-500 bg-amber-50" : "border-gray-200 hover:border-gray-300"
+          }`}
         onDragOver={(e) => {
           e.preventDefault();
           setDragOver(true);
@@ -437,6 +446,7 @@ export default function AdminPage() {
   const [savingCoupon, setSavingCoupon] = useState(false);
   const [orderUpdatingId, setOrderUpdatingId] = useState<string | null>(null);
   const [userUpdatingId, setUserUpdatingId] = useState<string | null>(null);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
 
   // Confirmation modal state
   const [confirmModal, setConfirmModal] = useState<{
@@ -452,7 +462,7 @@ export default function AdminPage() {
     title: "",
     message: "",
     confirmLabel: "Confirm",
-    onConfirm: () => {},
+    onConfirm: () => { },
     loading: false,
     variant: "danger",
   });
@@ -598,6 +608,11 @@ export default function AdminPage() {
 
   const fetchUsers = useCallback(async () => {
     try {
+      try {
+        await fetch("/api/admin/users", { method: "POST" });
+      } catch (e) {
+        console.error("Sync failed", e);
+      }
       const response = await fetch("/api/admin/users");
       if (!response.ok) throw new Error("Failed to fetch");
       const data = await response.json();
@@ -1060,15 +1075,14 @@ export default function AdminPage() {
                       {formatCurrency(Number(order.total_amount ?? 0))}
                     </p>
                     <span
-                      className={`inline-block text-[10px] sm:text-xs px-2 py-0.5 rounded-full capitalize ${
-                        order.status === "delivered"
-                          ? "bg-emerald-100 text-emerald-700"
-                          : order.status === "pending"
+                      className={`inline-block text-[10px] sm:text-xs px-2 py-0.5 rounded-full capitalize ${order.status === "delivered"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : order.status === "pending"
                           ? "bg-amber-100 text-amber-700"
                           : order.status === "cancelled"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-gray-100 text-gray-700"
-                      }`}
+                            ? "bg-red-100 text-red-700"
+                            : "bg-gray-100 text-gray-700"
+                        }`}
                     >
                       {order.status}
                     </span>
@@ -1376,9 +1390,8 @@ export default function AdminPage() {
                 </span>
               )}
               <span
-                className={`absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full ${
-                  (product.stock ?? 0) < 5 ? "bg-red-500 text-white" : "bg-green-500 text-white"
-                }`}
+                className={`absolute top-2 right-2 text-[10px] px-2 py-0.5 rounded-full ${(product.stock ?? 0) < 5 ? "bg-red-500 text-white" : "bg-green-500 text-white"
+                  }`}
               >
                 {product.stock ?? 0} in stock
               </span>
@@ -1588,36 +1601,85 @@ export default function AdminPage() {
             </thead>
             <tbody className="divide-y divide-gray-100">
               {orders.map((order) => (
-                <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <p className="font-medium text-gray-900">#{order.id.slice(0, 8)}</p>
-                    <p className="text-xs text-gray-500 sm:hidden">{formatDate(order.created_at)}</p>
-                  </td>
-                  <td className="px-4 py-3 text-gray-600 hidden sm:table-cell">{formatDate(order.created_at)}</td>
-                  <td className="px-4 py-3 font-semibold">{formatCurrency(Number(order.total_amount ?? 0))}</td>
-                  <td className="px-4 py-3">
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleOrderStatusChange(order.id, e.target.value as OrderStatus)}
-                      disabled={orderUpdatingId === order.id}
-                      className={`rounded-lg border px-2 py-1 text-xs font-semibold capitalize ${
-                        order.status === "delivered"
+                <React.Fragment key={order.id}>
+                  <tr className="hover:bg-gray-50 cursor-pointer" onClick={() => setExpandedOrderId(expandedOrderId === order.id ? null : order.id)}>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="text-gray-400">
+                          {expandedOrderId === order.id ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                        </div>
+                        <p className="font-medium text-gray-900">#{order.id.slice(0, 8)}</p>
+                      </div>
+                      <p className="text-xs text-gray-500 sm:hidden mt-1 pl-6">{formatDate(order.created_at)}</p>
+                    </td>
+                    <td className="px-4 py-3 text-gray-600 hidden sm:table-cell">{formatDate(order.created_at)}</td>
+                    <td className="px-4 py-3 font-semibold">{formatCurrency(Number(order.total_amount ?? 0))}</td>
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleOrderStatusChange(order.id, e.target.value as OrderStatus)}
+                        disabled={orderUpdatingId === order.id}
+                        className={`rounded-lg border px-2 py-1 text-xs font-semibold capitalize ${order.status === "delivered"
                           ? "bg-emerald-50 border-emerald-200 text-emerald-700"
                           : order.status === "cancelled"
-                          ? "bg-red-50 border-red-200 text-red-700"
-                          : order.status === "pending"
-                          ? "bg-amber-50 border-amber-200 text-amber-700"
-                          : "bg-gray-50 border-gray-200 text-gray-700"
-                      } disabled:opacity-50`}
-                    >
-                      {statusOptions.map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
+                            ? "bg-red-50 border-red-200 text-red-700"
+                            : order.status === "pending"
+                              ? "bg-amber-50 border-amber-200 text-amber-700"
+                              : "bg-gray-50 border-gray-200 text-gray-700"
+                          } disabled:opacity-50`}
+                      >
+                        {statusOptions.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                  {expandedOrderId === order.id && (
+                    <tr className="bg-gray-50/50">
+                      <td colSpan={4} className="px-4 py-4 border-t border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Shipping Information</h4>
+                            <div className="text-gray-600 space-y-1 bg-white p-3 rounded border border-gray-100">
+                              <p><span className="font-medium text-gray-800">Name:</span> {order.shipping_address?.fullName || "N/A"}</p>
+                              <p><span className="font-medium text-gray-800">Email:</span> {order.shipping_address?.email || "N/A"}</p>
+                              <p><span className="font-medium text-gray-800">Phone:</span> {order.shipping_address?.phone || "N/A"}</p>
+                              <p className="flex mt-2 pt-2 border-t border-gray-50">
+                                <span className="font-medium text-gray-800 min-w-[65px]">Address:</span>
+                                <span>{order.shipping_address?.address}, {order.shipping_address?.city}, {order.shipping_address?.state} {order.shipping_address?.zipCode}</span>
+                              </p>
+                            </div>
+                            <h4 className="font-semibold text-gray-900 mt-4 mb-2">System Info</h4>
+                            <div className="text-gray-600 space-y-1 bg-white p-3 rounded border border-gray-100">
+                              <p><span className="font-medium text-gray-800">Order ID:</span> <span className="font-mono text-xs">{order.id}</span></p>
+                              <p><span className="font-medium text-gray-800">User ID:</span> {order.user_id ? <span className="font-mono text-xs">{order.user_id}</span> : "Guest Customer"}</p>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2">Order Items</h4>
+                            <ul className="space-y-2 border border-gray-100 rounded-lg p-3 bg-white">
+                              {order.items && order.items.length > 0 ? (
+                                order.items.map((item, idx) => (
+                                  <li key={idx} className="flex justify-between items-start border-b border-gray-50 pb-2 mb-2 last:border-0 last:pb-0 last:mb-0">
+                                    <div className="pr-4">
+                                      <p className="font-medium text-gray-900">{item.name || "Unknown Product"}</p>
+                                      <p className="text-xs text-gray-500 mt-0.5">Qty: {item.quantity}</p>
+                                    </div>
+                                    <p className="font-semibold text-gray-900 whitespace-nowrap">{formatCurrency(item.price * item.quantity)}</p>
+                                  </li>
+                                ))
+                              ) : (
+                                <li className="text-gray-500 text-xs py-2 text-center">No items recorded</li>
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
@@ -1833,11 +1895,10 @@ export default function AdminPage() {
                       value={userRecord.role ?? "customer"}
                       onChange={(e) => handleUserRoleChange(userRecord.id, e.target.value as "admin" | "customer")}
                       disabled={userUpdatingId === userRecord.id}
-                      className={`rounded-lg border px-2 py-1 text-xs font-semibold capitalize ${
-                        userRecord.role === "admin"
-                          ? "bg-purple-50 border-purple-200 text-purple-700"
-                          : "bg-gray-50 border-gray-200 text-gray-700"
-                      } disabled:opacity-50`}
+                      className={`rounded-lg border px-2 py-1 text-xs font-semibold capitalize ${userRecord.role === "admin"
+                        ? "bg-purple-50 border-purple-200 text-purple-700"
+                        : "bg-gray-50 border-gray-200 text-gray-700"
+                        } disabled:opacity-50`}
                     >
                       <option value="customer">Customer</option>
                       <option value="admin">Admin</option>
@@ -1941,9 +2002,8 @@ export default function AdminPage() {
                     setActiveView(id);
                     setMobileMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
-                    activeView === id ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"
-                  }`}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${activeView === id ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"
+                    }`}
                 >
                   <Icon size={18} />
                   {label}
@@ -1976,9 +2036,8 @@ export default function AdminPage() {
               <button
                 key={id}
                 onClick={() => setActiveView(id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
-                  activeView === id ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"
-                }`}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${activeView === id ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"
+                  }`}
               >
                 <Icon size={18} />
                 {label}

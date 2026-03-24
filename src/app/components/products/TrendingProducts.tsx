@@ -32,7 +32,7 @@ export default function TrendingProducts() {
   const [activeTab, setActiveTab] = useState(0);
   const initialLoadRef = useRef(true);
   const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { addToCart, wishlist, toggleWishlist } = useCart();
+  const { addToCart } = useCart();
   const router = useRouter();
 
   useEffect(() => {

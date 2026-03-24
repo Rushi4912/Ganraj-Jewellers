@@ -1,7 +1,6 @@
 "use client";
 
 import { useCart } from "../context/CartContext";
-import { products as allProducts } from "../data/products";
 import Link from "next/link";
 import Image from "next/image";
 import { ShoppingBag, Trash2, ArrowRight, Heart } from "lucide-react";
@@ -14,10 +13,8 @@ export default function WishlistPage() {
   const { wishlist, toggleWishlist, addToCart } = useCart();
   const [showCart, setShowCart] = useState(false);
 
-  // Filter products that are in the wishlist
-  const wishlistProducts = allProducts.filter((product) =>
-    wishlist.includes(product.id)
-  );
+  // Products are now fully stored in the wishlist
+  const wishlistProducts = wishlist;
 
   return (
     <>
@@ -82,7 +79,7 @@ export default function WishlistPage() {
                         Add to Bag
                       </button>
                       <button
-                        onClick={() => toggleWishlist(product.id)}
+                        onClick={() => toggleWishlist(product)}
                         className="w-10 h-10 bg-white/90 backdrop-blur rounded-full flex items-center justify-center text-[#2D2A26] hover:bg-red-50 hover:text-red-500 transition-colors"
                       >
                         <Trash2 size={16} />

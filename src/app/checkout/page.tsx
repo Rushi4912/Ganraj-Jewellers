@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { useOrder } from '../../app/context/OrderContext';
+import { useAuth } from '../context/AuthContext';
 import {
   CreditCard,
   Truck,
@@ -40,6 +41,7 @@ export default function CheckoutPage() {
   const [isClient, setIsClient] = useState(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const { addOrder } = useOrder();
+  const { user } = useAuth();
 
   // Shipping Information
   const [shipping, setShipping] = useState<ShippingAddress>({
@@ -174,8 +176,31 @@ export default function CheckoutPage() {
       date: new Date().toISOString(),
       estimatedDelivery: estimatedDelivery.toISOString(),
       status: 'processing' as const,
+      user_id: user?.id || null, // For API schema parity
+      shipping_address: shipping,
+      payment_method: payment.type,
+      total_amount: finalTotal,
     };
 
+    // Save to Supabase (so admin can see it)
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(order),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save order to Supabase:', await response.text());
+        // We continue with local save even if Supabase fails so user isn't blocked
+      }
+    } catch (err) {
+      console.error('Network error saving to Supabase:', err);
+    }
+
+    // Save to local context (for immediate UI updates/redirects)
     addOrder(order);
     toast.success('Order placed successfully!');
     clearCart();

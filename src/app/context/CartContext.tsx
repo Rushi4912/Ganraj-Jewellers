@@ -5,14 +5,15 @@ import { useToast } from './ToastContext';
 
 interface CartContextType {
   cart: CartItem[];
-  wishlist: number[];
+  wishlist: Product[];
 
   appliedDiscount: DiscountCode | null;
   addToCart: (product: Product, selectedVariants?: SelectedVariants) => void;
   removeFromCart: (productId: number, variantId?: string) => void;
   updateCartQuantity: (productId: number, delta: number, variantId?: string) => void;
   clearCart: () => void;
-  toggleWishlist: (productId: number) => void;
+  toggleWishlist: (product: Product) => void;
+  isInWishlist: (productId: number) => boolean;
 
   applyDiscount: (code: DiscountCode) => void;
   removeDiscount: () => void;
@@ -26,7 +27,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [wishlist, setWishlist] = useState<Product[]>([]);
 
   const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -44,7 +45,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCart(JSON.parse(savedCart));
       }
       if (savedWishlist) {
-        setWishlist(JSON.parse(savedWishlist));
+        const parsedWishlist = JSON.parse(savedWishlist);
+        if (Array.isArray(parsedWishlist)) {
+          // If the array contains numbers (old format), clear it to avoid crashes
+          if (parsedWishlist.length > 0 && typeof parsedWishlist[0] === 'number') {
+            setWishlist([]);
+            localStorage.removeItem('wishlist');
+          } else {
+            setWishlist(parsedWishlist);
+          }
+        }
       }
 
       if (savedDiscount) {
@@ -118,29 +128,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const variantId = generateVariantId(product.id, selectedVariants);
     const finalPrice = calculateVariantPrice(product, selectedVariants);
 
-    setCart((prevCart) => {
-      const existing = prevCart.find((item) =>
-        item.variantId ? item.variantId === variantId : item.id === product.id
-      );
+    const existing = cart.find((item) =>
+      item.variantId ? item.variantId === variantId : item.id === product.id
+    );
 
-      if (existing) {
-        toast.success("Cart quantity updated!");
-        return prevCart.map((item) =>
-          (item.variantId ? item.variantId === variantId : item.id === product.id)
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-
-      toast.success("Added to cart!");
-      return [...prevCart, {
+    if (existing) {
+      setCart((prevCart) => prevCart.map((item) =>
+        (item.variantId ? item.variantId === variantId : item.id === product.id)
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+      toast.success("Cart quantity updated!");
+    } else {
+      setCart((prevCart) => [...prevCart, {
         ...product,
         price: finalPrice,
         quantity: 1,
         selectedVariants,
         variantId
-      }];
-    });
+      }]);
+      toast.success("Added to cart!");
+    }
   };
 
   const removeFromCart = (productId: number, variantId?: string) => {
@@ -179,16 +187,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     toast.info('Cart cleared');
   };
 
-  const toggleWishlist = (productId: number) => {
-    setWishlist((prev) => {
-      if (prev.includes(productId)) {
-        toast.info('Removed from wishlist');
-        return prev.filter((id) => id !== productId);
-      } else {
-        toast.success('Added to wishlist!');
-        return [...prev, productId];
-      }
-    });
+  const isInWishlist = (productId: number) => {
+    return wishlist.some((item) => item.id === productId);
+  };
+
+  const toggleWishlist = (product: Product) => {
+    const isExisting = wishlist.some((item) => item.id === product.id);
+    if (isExisting) {
+      setWishlist((prev) => prev.filter((item) => item.id !== product.id));
+      toast.info('Removed from wishlist');
+    } else {
+      setWishlist((prev) => [...prev, product]);
+      toast.success('Added to wishlist!');
+    }
   };
 
 
@@ -220,6 +231,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updateCartQuantity,
         clearCart,
         toggleWishlist,
+        isInWishlist,
 
         applyDiscount,
         removeDiscount,

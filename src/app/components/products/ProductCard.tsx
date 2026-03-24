@@ -18,10 +18,10 @@ export default function ProductCard({
   className = "",
 }: ProductCardProps) {
   const router = useRouter();
-  const { addToCart, wishlist, toggleWishlist } = useCart();
+  const { addToCart, isInWishlist, toggleWishlist } = useCart();
   const [imageError, setImageError] = useState(false);
 
-  const isInWishlist = wishlist.includes(product.id);
+  const inWishlist = isInWishlist(product.id);
   const currentImage =
     !imageError && product.image
       ? product.image
@@ -46,7 +46,7 @@ export default function ProductCard({
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleWishlist(product.id);
+    toggleWishlist(product);
   };
 
   return (
@@ -90,10 +90,10 @@ export default function ProductCard({
 
           <button
             onClick={handleWishlistClick}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${isInWishlist ? 'bg-[#8B7355] text-white' : 'bg-white text-[#5A4D41] hover:bg-[#8B7355] hover:text-white'
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${inWishlist ? 'bg-[#8B7355] text-white' : 'bg-white text-[#5A4D41] hover:bg-[#8B7355] hover:text-white'
               }`}
           >
-            <Heart size={16} className={isInWishlist ? 'fill-current' : ''} />
+            <Heart size={16} className={inWishlist ? 'fill-current' : ''} />
           </button>
 
           <button
