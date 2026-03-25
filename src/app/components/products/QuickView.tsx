@@ -34,7 +34,7 @@ export default function QuickView({
 
   if (!isOpen || !product) return null;
 
-  const isInWishlist = wishlist.includes(product.id);
+  const isInWishlist = wishlist.some(item => item.id === product.id);
   const handleVariantChange = (type: string, value: string) => {
     setSelectedVariants((prev) => ({
       ...prev,
@@ -129,9 +129,8 @@ export default function QuickView({
                 {/* Badge */}
                 {product.badge && (
                   <span
-                    className={`absolute top-4 left-4 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-lg ${
-                      product.badge === "SALE" ? "bg-red-500" : "bg-green-500"
-                    }`}
+                    className={`absolute top-4 left-4 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-lg ${product.badge === "SALE" ? "bg-red-500" : "bg-green-500"
+                      }`}
                   >
                     {product.badge}
                   </span>
@@ -214,7 +213,7 @@ export default function QuickView({
                     </div>
                   )}
 
-              
+
 
                   {/* Features */}
                   <div className="bg-amber-50 rounded-lg p-4 mb-6 border border-amber-200">
@@ -254,12 +253,11 @@ export default function QuickView({
                   <div className="grid grid-cols-2 gap-3">
                     {/* Add to Wishlist */}
                     <button
-                      onClick={() => toggleWishlist(product.id)}
-                      className={`py-3 rounded-lg border-2 flex items-center justify-center gap-2 font-semibold transition-all ${
-                        isInWishlist
+                      onClick={() => toggleWishlist(product)}
+                      className={`py-3 rounded-lg border-2 flex items-center justify-center gap-2 font-semibold transition-all ${isInWishlist
                           ? "border-red-500 text-red-500 bg-red-50"
                           : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50"
-                      }`}
+                        }`}
                     >
                       <Heart
                         size={20}

@@ -67,7 +67,7 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
   const [openAccordion, setOpenAccordion] = useState<string | null>("Description");
   const [isAdding, setIsAdding] = useState(false);
 
-  const isInWishlist = wishlist.includes(product.id);
+  const isInWishlist = wishlist.some(item => item.id === product.id);
 
   // Robust image handling
   const galleryImages = useMemo(() => {
@@ -317,7 +317,7 @@ export default function ProductShowcase({ product }: ProductShowcaseProps) {
 
                   <div className="grid grid-cols-2 gap-3">
                     <button
-                      onClick={() => toggleWishlist(product.id)}
+                      onClick={() => toggleWishlist(product)}
                       className={`py-3 border uppercase tracking-widest text-[10px] font-bold flex items-center justify-center gap-2 transition-all duration-300 ${isInWishlist ? 'border-[#2D2A26] bg-[#2D2A26] text-white' : 'border-[#E5E0D8] text-[#2D2A26] hover:border-[#2D2A26]'}`}
                     >
                       <Heart size={14} className={isInWishlist ? "fill-white" : ""} />

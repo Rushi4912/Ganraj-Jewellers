@@ -43,8 +43,7 @@ export default function ProductDetail({
   }, [product, isOpen]);
 
   if (!isOpen || !product) return null;
-
-  const isInWishlist = wishlist.includes(product.id);
+  const isInWishlist = wishlist.some(item => item.id === product.id);
 
   // Handle variant selection
   const handleVariantChange = (type: string, value: string) => {
@@ -152,9 +151,8 @@ export default function ProductDetail({
                   {/* Badge */}
                   {product.badge && (
                     <span
-                      className={`absolute top-6 left-6 px-4 py-2 rounded-full text-sm font-bold text-white shadow-lg ${
-                        product.badge === "SALE" ? "bg-red-500" : "bg-green-500"
-                      }`}
+                      className={`absolute top-6 left-6 px-4 py-2 rounded-full text-sm font-bold text-white shadow-lg ${product.badge === "SALE" ? "bg-red-500" : "bg-green-500"
+                        }`}
                     >
                       {product.badge}
                     </span>
@@ -177,11 +175,10 @@ export default function ProductDetail({
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
-                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                          selectedImage === index
-                            ? "border-amber-500 shadow-lg"
-                            : "border-gray-200 hover:border-gray-300"
-                        }`}
+                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index
+                          ? "border-amber-500 shadow-lg"
+                          : "border-gray-200 hover:border-gray-300"
+                          }`}
                       >
                         <Image
                           src={img}
@@ -238,7 +235,7 @@ export default function ProductDetail({
                           {Math.round(
                             ((product.originalPrice - product.price) /
                               product.originalPrice) *
-                              100
+                            100
                           )}
                           %
                         </span>
@@ -345,17 +342,16 @@ export default function ProductDetail({
                     {!product.inStock
                       ? "Out of Stock"
                       : !canAddToCart()
-                      ? "Select Options"
-                      : "Add to Cart"}
+                        ? "Select Options"
+                        : "Add to Cart"}
                   </button>
 
                   <button
-                    onClick={() => toggleWishlist(product.id)}
-                    className={`w-full py-4 rounded-lg border-2 flex items-center justify-center gap-3 font-bold text-lg transition-all ${
-                      isInWishlist
-                        ? "border-red-500 text-red-500 bg-red-50"
-                        : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50"
-                    }`}
+                    onClick={() => toggleWishlist(product)}
+                    className={`w-full py-4 rounded-lg border-2 flex items-center justify-center gap-3 font-bold text-lg transition-all ${isInWishlist
+                      ? "border-red-500 text-red-500 bg-red-50"
+                      : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50"
+                      }`}
                   >
                     <Heart
                       size={24}
@@ -373,11 +369,10 @@ export default function ProductDetail({
               <div className="flex gap-8 mb-8 border-b">
                 <button
                   onClick={() => setActiveTab("description")}
-                  className={`pb-4 font-semibold transition-colors relative ${
-                    activeTab === "description"
-                      ? "text-amber-600"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`pb-4 font-semibold transition-colors relative ${activeTab === "description"
+                    ? "text-amber-600"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   Description
                   {activeTab === "description" && (
@@ -386,11 +381,10 @@ export default function ProductDetail({
                 </button>
                 <button
                   onClick={() => setActiveTab("reviews")}
-                  className={`pb-4 font-semibold transition-colors relative ${
-                    activeTab === "reviews"
-                      ? "text-amber-600"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`pb-4 font-semibold transition-colors relative ${activeTab === "reviews"
+                    ? "text-amber-600"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   Reviews ({product.userReviews.length})
                   {activeTab === "reviews" && (
@@ -399,11 +393,10 @@ export default function ProductDetail({
                 </button>
                 <button
                   onClick={() => setActiveTab("details")}
-                  className={`pb-4 font-semibold transition-colors relative ${
-                    activeTab === "details"
-                      ? "text-amber-600"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
+                  className={`pb-4 font-semibold transition-colors relative ${activeTab === "details"
+                    ? "text-amber-600"
+                    : "text-gray-500 hover:text-gray-700"
+                    }`}
                 >
                   Details
                   {activeTab === "details" && (
@@ -452,9 +445,9 @@ export default function ProductDetail({
                                     size={20}
                                     className={
                                       i <
-                                      Math.floor(
-                                        parseFloat(calculateAverageRating())
-                                      )
+                                        Math.floor(
+                                          parseFloat(calculateAverageRating())
+                                        )
                                         ? "text-amber-400 fill-amber-400"
                                         : "text-gray-300"
                                     }
@@ -546,11 +539,10 @@ export default function ProductDetail({
                         <div className="flex justify-between py-2 border-b">
                           <dt className="text-gray-600">Availability:</dt>
                           <dd
-                            className={`font-semibold ${
-                              product.inStock
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
+                            className={`font-semibold ${product.inStock
+                              ? "text-green-600"
+                              : "text-red-600"
+                              }`}
                           >
                             {product.inStock ? "In Stock" : "Out of Stock"}
                           </dd>
