@@ -1,12 +1,13 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
-import { X, ShoppingCart, Heart, Star } from "lucide-react";
+import { X, ShoppingCart, Heart, Star, Zap } from "lucide-react";
 import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import VariantSelector from "./VariantSelector";
 import { SelectedVariants } from "../../types/product";
 import Image from "next/image";
+import BuyNowModal from "./BuyNowModal";
 
 interface QuickViewProps {
   product: Product | null;
@@ -25,6 +26,7 @@ export default function QuickView({
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>(
     {}
   );
+  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
 
   useEffect(() => {
     if (product && isOpen) {
@@ -236,14 +238,27 @@ export default function QuickView({
 
                 {/* Actions */}
                 <div className="space-y-3">
-                  {/* Add to Cart Button */}
+                  {/* Buy Now — Primary CTA */}
+                  <button
+                    onClick={() => setIsBuyNowOpen(true)}
+                    disabled={!product.inStock}
+                    className="w-full bg-[#2D2A26] text-white py-4 rounded-lg hover:bg-[#8B7355] hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed group"
+                  >
+                    <Zap
+                      size={22}
+                      className="fill-amber-300 group-hover:scale-110 transition-transform"
+                    />
+                    {product.inStock ? "Buy Now" : "Out of Stock"}
+                  </button>
+
+                  {/* Add to Cart */}
                   <button
                     onClick={handleAddToCart}
                     disabled={!product.inStock || !canAddToCart()}
-                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed group"
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-3 rounded-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 font-bold disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
                     <ShoppingCart
-                      size={22}
+                      size={20}
                       className="group-hover:scale-110 transition-transform"
                     />
                     {product.inStock ? "Add to Cart" : "Out of Stock"}
@@ -255,8 +270,8 @@ export default function QuickView({
                     <button
                       onClick={() => toggleWishlist(product)}
                       className={`py-3 rounded-lg border-2 flex items-center justify-center gap-2 font-semibold transition-all ${isInWishlist
-                          ? "border-red-500 text-red-500 bg-red-50"
-                          : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50"
+                        ? "border-red-500 text-red-500 bg-red-50"
+                        : "border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50"
                         }`}
                     >
                       <Heart
@@ -283,6 +298,13 @@ export default function QuickView({
           </div>
         </div>
       </div>
+
+      {/* Buy Now Modal */}
+      <BuyNowModal
+        product={product}
+        isOpen={isBuyNowOpen}
+        onClose={() => setIsBuyNowOpen(false)}
+      />
     </>
   );
 }

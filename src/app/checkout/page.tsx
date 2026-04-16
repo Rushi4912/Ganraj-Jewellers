@@ -23,7 +23,9 @@ import {
   Phone,
   Home,
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  MapPin,
+  Loader2
 } from "lucide-react";
 
 export default function CheckoutPage() {
@@ -42,6 +44,10 @@ export default function CheckoutPage() {
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const { addOrder } = useOrder();
   const { user } = useAuth();
+
+  // Pincode autofill state
+  const [pincodeStatus, setPincodeStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [pincodeMessage, setPincodeMessage] = useState("");
 
   // Shipping Information
   const [shipping, setShipping] = useState<ShippingAddress>({
@@ -71,6 +77,38 @@ export default function CheckoutPage() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Pincode autofill via India Post free API
+  const handlePincodeChange = async (pincode: string) => {
+    setShipping(prev => ({ ...prev, zipCode: pincode }));
+    if (pincode.length !== 6 || !/^\d{6}$/.test(pincode)) {
+      setPincodeStatus('idle');
+      setPincodeMessage("");
+      return;
+    }
+    setPincodeStatus('loading');
+    setPincodeMessage("Looking up pincode...");
+    try {
+      const res = await fetch(`https://api.postalpincode.in/pincode/${pincode}`);
+      const data = await res.json();
+      if (data[0]?.Status === 'Success' && data[0]?.PostOffice?.length > 0) {
+        const po = data[0].PostOffice[0];
+        setShipping(prev => ({
+          ...prev,
+          city: po.District || po.Name,
+          state: po.State,
+        }));
+        setPincodeStatus('success');
+        setPincodeMessage(`${po.District}, ${po.State}`);
+      } else {
+        setPincodeStatus('error');
+        setPincodeMessage("Pincode not found");
+      }
+    } catch {
+      setPincodeStatus('error');
+      setPincodeMessage("Could not fetch location");
+    }
+  };
 
   if (isClient && cart.length === 0) {
     return (
@@ -273,8 +311,9 @@ export default function CheckoutPage() {
                             type="text"
                             value={shipping.fullName}
                             onChange={(e) => setShipping({ ...shipping, fullName: e.target.value })}
+                            autoComplete="name"
                             className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 pl-12 pr-4 focus:border-[#8B7355] outline-none transition-colors"
-                            placeholder="John Doe"
+                            placeholder="Riya Mehta"
                           />
                         </div>
                       </div>
@@ -283,11 +322,12 @@ export default function CheckoutPage() {
                         <div className="relative">
                           <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-[#C5B4A5]" size={16} />
                           <input
-                            type="text"
+                            type="tel"
                             value={shipping.phone}
                             onChange={(e) => setShipping({ ...shipping, phone: e.target.value })}
+                            autoComplete="tel"
                             className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 pl-12 pr-4 focus:border-[#8B7355] outline-none transition-colors"
-                            placeholder="+91 99999 99999"
+                            placeholder="+91 98765 43210"
                           />
                         </div>
                       </div>
@@ -301,8 +341,9 @@ export default function CheckoutPage() {
                           type="email"
                           value={shipping.email}
                           onChange={(e) => setShipping({ ...shipping, email: e.target.value })}
+                          autoComplete="email"
                           className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 pl-12 pr-4 focus:border-[#8B7355] outline-none transition-colors"
-                          placeholder="john@example.com"
+                          placeholder="riya@example.com"
                         />
                       </div>
                     </div>
@@ -314,19 +355,69 @@ export default function CheckoutPage() {
                         <textarea
                           value={shipping.address}
                           onChange={(e) => setShipping({ ...shipping, address: e.target.value })}
+                          autoComplete="street-address"
                           className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 pl-12 pr-4 focus:border-[#8B7355] outline-none transition-colors min-h-[100px]"
-                          placeholder="Flat No, Building, Street"
+                          placeholder="Flat No, Building, Street Name"
                         />
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    {/* Pincode FIRST — autofills city & state */}
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-wider text-[#6B5D52] font-bold flex items-center gap-2">
+                        <MapPin size={13} className="text-[#8B7355]" /> Pincode
+                        <span className="text-[10px] font-normal text-[#C5B4A5] normal-case tracking-normal">
+                          — city &amp; state will auto-fill
+                        </span>
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={shipping.zipCode}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                            handlePincodeChange(val);
+                          }}
+                          autoComplete="postal-code"
+                          maxLength={6}
+                          className={`w-full bg-[#FAFAFA] border rounded-xl py-3 px-4 pr-12 outline-none transition-colors ${pincodeStatus === 'success'
+                              ? 'border-green-400 focus:border-green-500'
+                              : pincodeStatus === 'error'
+                                ? 'border-red-300 focus:border-red-400'
+                                : 'border-[#E5E0D8] focus:border-[#8B7355]'
+                            }`}
+                          placeholder="400001"
+                        />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {pincodeStatus === 'loading' && (
+                            <Loader2 size={18} className="text-[#8B7355] animate-spin" />
+                          )}
+                          {pincodeStatus === 'success' && (
+                            <CheckCircle size={18} className="text-green-500" />
+                          )}
+                          {pincodeStatus === 'error' && (
+                            <span className="text-red-400 text-xs">✕</span>
+                          )}
+                        </div>
+                      </div>
+                      {pincodeMessage && (
+                        <p className={`text-xs flex items-center gap-1 ${pincodeStatus === 'success' ? 'text-green-600' :
+                            pincodeStatus === 'error' ? 'text-red-500' : 'text-[#8B7355]'
+                          }`}>
+                          {pincodeStatus === 'success' && '📍 '}
+                          {pincodeMessage}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label className="text-xs uppercase tracking-wider text-[#6B5D52] font-bold">City</label>
                         <input
                           type="text"
                           value={shipping.city}
                           onChange={(e) => setShipping({ ...shipping, city: e.target.value })}
+                          autoComplete="address-level2"
                           className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 px-4 focus:border-[#8B7355] outline-none transition-colors"
                           placeholder="Mumbai"
                         />
@@ -337,18 +428,9 @@ export default function CheckoutPage() {
                           type="text"
                           value={shipping.state}
                           onChange={(e) => setShipping({ ...shipping, state: e.target.value })}
+                          autoComplete="address-level1"
                           className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 px-4 focus:border-[#8B7355] outline-none transition-colors"
                           placeholder="Maharashtra"
-                        />
-                      </div>
-                      <div className="col-span-2 md:col-span-1 space-y-2">
-                        <label className="text-xs uppercase tracking-wider text-[#6B5D52] font-bold">Pincode</label>
-                        <input
-                          type="text"
-                          value={shipping.zipCode}
-                          onChange={(e) => setShipping({ ...shipping, zipCode: e.target.value })}
-                          className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 px-4 focus:border-[#8B7355] outline-none transition-colors"
-                          placeholder="400001"
                         />
                       </div>
                     </div>
@@ -410,7 +492,7 @@ export default function CheckoutPage() {
                           value={payment.cardName}
                           onChange={(e) => setPayment({ ...payment, cardName: e.target.value })}
                           className="w-full bg-[#FAFAFA] border border-[#E5E0D8] rounded-xl py-3 px-4 focus:border-[#8B7355] outline-none transition-colors uppercase"
-                          placeholder="JOHN DOE"
+                          placeholder="Rutvik Bedre"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-6">

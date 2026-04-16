@@ -2,9 +2,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Heart, ShoppingCart, Eye } from "lucide-react";
+import { Heart, ShoppingCart, Eye, Zap } from "lucide-react";
 import { Product as ShopProduct } from "../../types/product";
 import { useCart } from "../../context/CartContext";
+import BuyNowModal from "./BuyNowModal";
 
 interface ProductCardProps {
   product: ShopProduct;
@@ -20,6 +21,7 @@ export default function ProductCard({
   const router = useRouter();
   const { addToCart, isInWishlist, toggleWishlist } = useCart();
   const [imageError, setImageError] = useState(false);
+  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
 
   const inWishlist = isInWishlist(product.id);
   const currentImage =
@@ -49,83 +51,106 @@ export default function ProductCard({
     toggleWishlist(product);
   };
 
-  return (
-    <div className={`group flex flex-col ${className}`}>
-      {/* Image Container */}
-      <div
-        className="relative overflow-hidden rounded-[20px] bg-white shadow-sm mb-5 aspect-[4/5] cursor-pointer group-hover:shadow-[0_15px_30px_-5px_rgba(45,42,38,0.1)] transition-all duration-500"
-        onClick={handleProductClick}
-      >
-        <Image
-          src={currentImage}
-          alt={product.name}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          onError={() => setImageError(true)}
-          unoptimized
-        />
+  const handleBuyNowClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsBuyNowOpen(true);
+  };
 
-        {/* Badge */}
-        {product.badge && (
-          <div className="absolute top-3 left-3">
-            <span
-              className={`px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-white rounded-full ${product.badge === 'SALE' ? 'bg-[#B8923A]' : 'bg-[#2D2A26]'
+  return (
+    <>
+      <div className={`group flex flex-col ${className}`}>
+        {/* Image Container */}
+        <div
+          className="relative overflow-hidden rounded-[20px] bg-white shadow-sm mb-5 aspect-[4/5] cursor-pointer group-hover:shadow-[0_15px_30px_-5px_rgba(45,42,38,0.1)] transition-all duration-500"
+          onClick={handleProductClick}
+        >
+          <Image
+            src={currentImage}
+            alt={product.name}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            onError={() => setImageError(true)}
+            unoptimized
+          />
+
+          {/* Badge */}
+          {product.badge && (
+            <div className="absolute top-3 left-3">
+              <span
+                className={`px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-white rounded-full ${product.badge === 'SALE' ? 'bg-[#B8923A]' : 'bg-[#2D2A26]'
+                  }`}
+              >
+                {product.badge}
+              </span>
+            </div>
+          )}
+
+          {/* Quick Actions Overlay */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-20">
+            <button
+              onClick={handleQuickViewClick}
+              className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
+              title="Quick View"
+            >
+              <Eye size={16} />
+            </button>
+
+            <button
+              onClick={handleWishlistClick}
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${inWishlist ? 'bg-[#8B7355] text-white' : 'bg-white text-[#5A4D41] hover:bg-[#8B7355] hover:text-white'
                 }`}
             >
-              {product.badge}
-            </span>
+              <Heart size={16} className={inWishlist ? 'fill-current' : ''} />
+            </button>
+
+            <button
+              onClick={handleAddToCart}
+              className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
+              title="Add to Cart"
+            >
+              <ShoppingCart size={16} />
+            </button>
+
+            {/* Buy Now button */}
+            <button
+              onClick={handleBuyNowClick}
+              className="w-10 h-10 rounded-full bg-[#2D2A26] text-white flex items-center justify-center hover:bg-[#8B7355] transition-all shadow-md hover:scale-110"
+              title="Buy Now"
+            >
+              <Zap size={16} className="fill-amber-300" />
+            </button>
           </div>
-        )}
-
-        {/* Quick Actions Overlay */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out z-20">
-          <button
-            onClick={handleQuickViewClick}
-            className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
-            title="Quick View"
-          >
-            <Eye size={16} />
-          </button>
-
-          <button
-            onClick={handleWishlistClick}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-md hover:scale-110 ${inWishlist ? 'bg-[#8B7355] text-white' : 'bg-white text-[#5A4D41] hover:bg-[#8B7355] hover:text-white'
-              }`}
-          >
-            <Heart size={16} className={inWishlist ? 'fill-current' : ''} />
-          </button>
-
-          <button
-            onClick={handleAddToCart}
-            className="w-10 h-10 rounded-full bg-white text-[#5A4D41] flex items-center justify-center hover:bg-[#2D2A26] hover:text-white transition-all shadow-md hover:scale-110"
-            title="Add to Cart"
-          >
-            <ShoppingCart size={16} />
-          </button>
         </div>
-      </div>
 
-      {/* Product Details */}
-      <div className="text-center space-y-1 px-2">
-        <h3
-          onClick={handleProductClick}
-          className="text-base font-serif text-[#2D2A26] cursor-pointer hover:text-[#8B7355] transition-colors line-clamp-1"
-        >
-          {product.name}
-        </h3>
+        {/* Product Details */}
+        <div className="text-center space-y-1 px-2">
+          <h3
+            onClick={handleProductClick}
+            className="text-base font-serif text-[#2D2A26] cursor-pointer hover:text-[#8B7355] transition-colors line-clamp-1"
+          >
+            {product.name}
+          </h3>
 
-        <div className="flex items-center justify-center gap-3 text-sm">
-          <span className="font-semibold text-[#5A4D41]">
-            ₹{product.price.toLocaleString('en-IN')}
-          </span>
-          {product.originalPrice && (
-            <span className="text-[#C5B4A5] line-through text-xs">
-              ₹{product.originalPrice.toLocaleString('en-IN')}
+          <div className="flex items-center justify-center gap-3 text-sm">
+            <span className="font-semibold text-[#5A4D41]">
+              ₹{product.price.toLocaleString('en-IN')}
             </span>
-          )}
+            {product.originalPrice && (
+              <span className="text-[#C5B4A5] line-through text-xs">
+                ₹{product.originalPrice.toLocaleString('en-IN')}
+              </span>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Buy Now Modal */}
+      <BuyNowModal
+        product={product}
+        isOpen={isBuyNowOpen}
+        onClose={() => setIsBuyNowOpen(false)}
+      />
+    </>
   );
 }

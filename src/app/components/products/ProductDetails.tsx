@@ -9,12 +9,14 @@ import {
   Shield,
   Truck,
   Award,
+  Zap,
 } from "lucide-react";
 import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import VariantSelector from "./VariantSelector";
 import { SelectedVariants } from "../../types/product";
 import Image from "next/image";
+import BuyNowModal from "./BuyNowModal";
 interface ProductDetailProps {
   product: Product | null;
   isOpen: boolean;
@@ -34,6 +36,7 @@ export default function ProductDetail({
   const [selectedVariants, setSelectedVariants] = useState<SelectedVariants>(
     {}
   ); // NEW
+  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
 
   useEffect(() => {
     if (product && isOpen) {
@@ -330,13 +333,27 @@ export default function ProductDetail({
 
                 {/* Action Buttons */}
                 <div className="space-y-3 mt-auto">
+                  {/* Buy Now — Primary CTA */}
+                  <button
+                    onClick={() => setIsBuyNowOpen(true)}
+                    disabled={!product.inStock}
+                    className="w-full bg-[#2D2A26] text-white py-4 rounded-lg hover:bg-[#8B7355] hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed group"
+                  >
+                    <Zap
+                      size={22}
+                      className="fill-amber-300 group-hover:scale-110 transition-transform"
+                    />
+                    {product.inStock ? "Buy Now" : "Out of Stock"}
+                  </button>
+
+                  {/* Add to Cart — Secondary */}
                   <button
                     onClick={handleAddToCart}
                     disabled={!product.inStock || !canAddToCart()}
-                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed group"
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white py-4 rounded-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
                     <ShoppingCart
-                      size={24}
+                      size={22}
                       className="group-hover:scale-110 transition-transform"
                     />
                     {!product.inStock
@@ -579,6 +596,13 @@ export default function ProductDetail({
           </div>
         </div>
       </div>
+
+      {/* Buy Now Modal */}
+      <BuyNowModal
+        product={product}
+        isOpen={isBuyNowOpen}
+        onClose={() => setIsBuyNowOpen(false)}
+      />
     </>
   );
 }
